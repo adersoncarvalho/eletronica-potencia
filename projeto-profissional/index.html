@@ -1,0 +1,280 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LaboratÃ³rio Virtual de EletrÃ´nica de PotÃªncia</title>
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  
+  <!-- KaTeX CDN para renderizaÃ§Ã£o de fÃ³rmulas matemÃ¡ticas -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+  <!-- Folha de Estilos Modular -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Laboratório Virtual de Eletrônica de Potência</h1>
+      <p>Calculadora Didática, Memorial de Cálculos e Visualização Dinâmica de Formas de Onda</p>
+    </header>
+
+    <!-- 1. SELEÇÃO DINÂMICA (Menus Cascata) -->
+    <div class="card">
+      <div class="card-title">1. Configuração do Conversor</div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="select-categoria">Categoria do Conversor (Menu Principal)</label>
+          <select id="select-categoria" onchange="atualizarSubmodelos()">
+            <option value="monofasicos_nao_controlados" selected>Retificadores Monofásicos não controlados</option>
+            <option value="monofasicos_controlados">Retificadores Monofásicos controlados</option>
+            <option value="trifasicos_nao_controlados">Retificadores Trifásicos não controlados</option>
+            <option value="trifasicos_controlados">Retificadores Trifásicos controlados</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="select-topologia">Topologia Específica (Menu Secundário)</label>
+          <select id="select-topologia" onchange="atualizarInterface()">
+            <!-- Populado dinamicamente -->
+          </select>
+        </div>
+      </div>
+
+      <div id="status-mensagem"></div>
+    </div>
+
+    <!-- SEÇÃO DUPLA: ESQUEMÁTICO + PARÂMETROS -->
+    <div class="grid-circuito">
+      <!-- ESQUEMÁTICO DO CIRCUITO SELECIONADO -->
+      <div class="card">
+        <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
+          <span>2. Esquemático do Circuito</span>
+          <button type="button" class="btn-table-tag" onclick="toggleGuiaCircuitos()" title="Guia comparativo das topologias">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+              <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+            </svg>
+            Guia Rápido dos Circuitos
+          </button>
+        </div>
+        <div class="schematic-wrapper" id="schematic-display">
+          <!-- O diagrama SVG é injetado aqui imediatamente na seleção -->
+        </div>
+
+        <!-- Resumo Didático Direto do Funcionamento do Circuito Selecionado -->
+        <div id="circuit-summary-desc" style="margin-top: 14px; padding: 12px 14px; background: rgba(22, 27, 34, 0.7); border: 1px solid var(--card-border); border-radius: 6px; font-size: 0.85rem; line-height: 1.5; color: #c9d1d9;"></div>
+
+        <!-- Painel Expansível: O que cada circuito faz (Comparativo) -->
+        <div id="guia-circuitos-container" style="display: none; margin-top: 14px; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 14px;">
+          <div style="font-weight: 600; font-size: 0.9rem; color: #58a6ff; margin-bottom: 10px; border-bottom: 1px solid #21262d; padding-bottom: 6px;">
+            Síntese Comparativa: O que cada circuito faz
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.82rem; color: #c9d1d9;">
+            <div style="font-size: 0.8rem; font-weight: bold; color: #58a6ff; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px;">Meia Onda Não Controlada</div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #58a6ff; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">1. Carga Resistiva (R):</strong> Condução em \([0, \pi]\). Corrente proporcional e em fase com a tensão (\(i_o = v_o / R\)), sem condução no semiciclo negativo.
+            </div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #e3b341; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">2. Carga Indutiva (RL):</strong> O indutor armazena energia e estende a condução até \(\beta > \pi\). Apresenta tensão negativa momentânea na carga e reduz \(V_{o,méd}\).
+            </div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #2ea043; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">3. Carga RL com Roda Livre:</strong> O diodo \(D_2\) conduz em \([\pi, 2\pi]\), grampeando a saída em \(0\text{ V}\) e viabilizando Modo Contínuo (MCC).
+            </div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #f0883e; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">4. Carga RLE (Bateria / FEM):</strong> Condução em \([\alpha, \beta]\) onde \(v_i(t) > E\). Fora do pulso, a saída é fixada na tensão da bateria \(E\).
+            </div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #a371f7; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">5. Filtro Capacitivo (RC):</strong> O capacitor carrega no pico da senoide e descarrega suavemente na carga, reduzindo a ondulação de ripple (\(\Delta V_o\)).
+            </div>
+
+            <div style="font-size: 0.8rem; font-weight: bold; color: #2ea043; margin-top: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Onda Completa Não Controlada</div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #2ea043; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">6. Ponte com Carga R:</strong> Condução alternada em pares (\(D_1-D_4\) e \(D_2-D_3\)). Dobra a tensão média (\(V_{o,méd} = 2V_p/\pi\)) e opera com fator de potência unitário (\(FP = 1\)).
+            </div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #58a6ff; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">7. Ponto Médio (Tap Central) com Carga R:</strong> Usa transformador com derivação e apenas 2 diodos. Tensão média \(2V_{2p}/\pi\), mas exige diodos para o dobro da tensão reversa (\(2V_{2p}\)).
+            </div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #e3b341; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">8. Ponte com Carga RL:</strong> A comutação contínua mantém a corrente ininterrupta na carga. Análise harmônica em frequências pares (\(2\omega, 4\omega, 6\omega\)) define o ripple e \(I_{ef}\).
+            </div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #f0883e; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">9. Ponte com Carga RE:</strong> Condução em ambos os semiciclos sempre que \(|v_i(t)| > E\). Corrente e potência absorvida pela bateria calculadas por integrais analíticas exatas.
+            </div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #a371f7; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">10. Ponte com Carga RLE:</strong> Compara a energia indutiva: opera em Modo Descontínuo (MCD, \(\beta < \pi + \alpha\)) ou Contínuo (MCC, \(\beta \ge \pi + \alpha\)), mantendo corrente contínua estável.
+            </div>
+
+            <div style="font-size: 0.8rem; font-weight: bold; color: #f0883e; margin-top: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Meia Onda Controlada (Tiristor)</div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #f0883e; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">11. Carga R Controlada:</strong> Disparo no ângulo \(\alpha\), condução em \([\alpha, \pi]\). Controle linear do valor médio \(V_{o,méd} = 0{,}225 V_{ef}(1 + \cos\alpha)\).
+            </div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #e3b341; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">12. Carga RL Controlada:</strong> Disparo em \(\alpha\), extinção em \(\beta > \pi\). O indutor mantém a corrente com tensão negativa momentânea na carga; \(\beta\) é calculado analiticamente por \(i(\beta) = 0\).
+            </div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #2ea043; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">13. Carga RL com Roda Livre:</strong> O diodo \(D_2\) comuta em \(\pi\), eliminando tensão negativa na carga e mantendo \(V_{o,méd} = 0{,}225 V_{ef}(1 + \cos\alpha)\) independente de \(\beta\).
+            </div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #a371f7; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">14. Carga RLE Controlada:</strong> Disparo eficaz para \(\alpha \ge \arcsin(E/V_p)\). Carga com bateria e filtro indutivo, aplicando condução pulsada com nível \(E\) no bloqueio.
+            </div>
+
+            <div style="font-size: 0.8rem; font-weight: bold; color: #a371f7; margin-top: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Onda Completa Controlada (Ponte SCR)</div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #a371f7; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">15. Ponte com Carga R Controlada:</strong> Disparo em pares a \(\alpha\) e \(\pi+\alpha\). \(V_{o,méd} = \frac{\sqrt{2}V_{ef}}{\pi}(1 + \cos\alpha)\), controlável de zero a \(2V_p/\pi\).
+            </div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #58a6ff; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">16. Ponte com Carga RL Controlada:</strong> Transição entre Condução Crítica (\(L_{crit} = \frac{R\tan\alpha}{\omega}\)), Descontínua (MCD) e Contínua (MCC com \(V_{o,méd} = \frac{2\sqrt{2}V_{ef}}{\pi}\cos\alpha\)).
+            </div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #e3b341; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">17. Ponte com Carga RLE Controlada:</strong> Conversor nos dois quadrantes: retificador (\(\alpha < 90^\circ\)) e inversor não autônomo regenerativo (\(\alpha > 90^\circ\)).
+            </div>
+
+            <div style="font-size: 0.8rem; font-weight: bold; color: #58a6ff; margin-top: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Retificadores Trifásicos Não Controlados</div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #58a6ff; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">18. Retificador Trifásico com Ponto Médio:</strong> Alimentado por sistema trifásico com neutro; 3 diodos conduzem por \(120^\circ\) cada. Ondulação em \(3f = 180\text{ Hz}\) e \(V_{o,méd} \approx 1{,}17 V_{F,ef}\).
+            </div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #2ea043; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">19. Retificador Trifásico em Ponte Completa:</strong> Ponte de 6 diodos onde conduzem dois diodos simultaneamente. Ondulação de \(6f = 360\text{ Hz}\), \(V_{o,méd} = 1{,}35 V_{L,ef} = 2{,}339 V_{F,ef}\) e \(FP \approx 0{,}96\).
+            </div>
+
+            <div style="font-size: 0.8rem; font-weight: bold; color: #2ea043; margin-top: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Retificadores Trifásicos Controlados</div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #2ea043; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">20. Retificador Controlado de 3 Pulsos com Carga R:</strong> Retificador trifásico com ponto médio controlado por tiristores. Disparo com retardo \(\alpha\) referenciado a \(30^\circ\). Condução contínua para \(\alpha \le 30^\circ\) (\(V_{o,méd} = 1{,}17 V_{F,ef}\cos\alpha\)) e descontínua para \(\alpha > 30^\circ\).
+            </div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #f0883e; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">21. Retificador Trifásico Controlado em Ponte Completa:</strong> Ponte de 6 tiristores acionados com atraso \(\alpha\) referenciado a \(60^\circ\). Condução contínua para \(\alpha \le 60^\circ\) (\(V_{o,méd} = 1{,}35 V_{L,ef}\cos\alpha\)) e descontínua para \(\alpha > 60^\circ\). Padrão da indústria para acionamento de máquinas CC e transmissão HVDC.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORMULÁRIO DINÂMICO DE PARÂMETROS -->
+      <div class="card">
+        <div class="card-title">3. Parâmetros de Entrada</div>
+        <form id="circuito-form" onsubmit="event.preventDefault(); executarCalculo();">
+          <div id="dynamic-inputs">
+            <!-- Campos gerados dinamicamente com base no circuito -->
+          </div>
+
+          <button type="submit" class="btn">Recalcular Circuito</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 4. RESULTADOS E MEMORIAL DE CÁLCULO -->
+    <div class="card" id="card-resultados" style="display: none;">
+      <div class="card-title">4. Memorial de Cálculo Didático Passo a Passo</div>
+      
+      <!-- Cards Resumo das Grandezas Principais -->
+      <div class="results-grid" id="summary-stats"></div>
+
+      <!-- Detalhamento Teórico e Numérico -->
+      <div id="steps-container"></div>
+    </div>
+
+    <!-- 5. FORMAS DE ONDA TEMPORAIS (OSCILOSCÓPIO - 2 PERÍODOS) -->
+    <div class="card" id="card-grafico" style="display: none;">
+      <div class="card-title">5. Formas de Onda Temporais (Osciloscópio - 2 Períodos)</div>
+      
+      <div class="oscilloscope-card">
+        <!-- Barra de Instrumentação de Bancada -->
+        <div class="oscilloscope-toolbar">
+          <div class="osc-status-group">
+            <span class="osc-badge-live"><span class="osc-dot"></span> Sincronizado</span>
+            <span class="osc-badge-info" id="osc-badge-timebase">Base de Tempo: 2 Ciclos • 360 Amostras</span>
+            <span class="osc-badge-info" id="osc-badge-mode">CH1 - CH10 Ativos</span>
+          </div>
+          <div class="osc-btn-group">
+            <button type="button" class="btn-osc-action" onclick="exportarCSV()">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-4a.5.5 0 0 1 .5-.5h3zm-2 4h1v-3h-1v3z"/></svg> Exportar Dados (CSV)
+            </button>
+            <button type="button" class="btn-osc-action btn-osc-primary" onclick="salvarOsciloscopioPNG()">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V10.4a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V10.4a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg> Salvar Oscilograma (PNG)
+            </button>
+          </div>
+        </div>
+
+        <!-- Seletor Rápido de Canais -->
+        <div class="channel-filter-bar">
+          <span class="channel-filter-label">Filtro de Canais:</span>
+          <button type="button" class="btn-ch-filter active" onclick="filtrarCanais('todos', this)">Todos os Canais</button>
+          <button type="button" class="btn-ch-filter" onclick="filtrarCanais('carga', this)">Foco na Carga [vo, io]</button>
+          <button type="button" class="btn-ch-filter" onclick="filtrarCanais('semicondutores', this)">Semicondutores [vD, iD, Gate]</button>
+          <button type="button" class="btn-ch-filter" onclick="filtrarCanais('fontes', this)">Entrada & Fontes [vFase, vLinha, ig]</button>
+        </div>
+
+        <div id="plot-main-title" class="oscilloscope-title"></div>
+
+        <!-- Subplot 1: Tensão de entrada (V) / Tensões de Fase vfase(t) (V) -->
+        <div class="subplot-box" id="box-chartVin">
+          <canvas id="chartVin"></canvas>
+        </div>
+
+        <!-- Subplot 1.5: Tensões de Linha vlinha(t) (V) (Para pontes trifásicas) -->
+        <div class="subplot-box" id="box-chartVlinha" style="display: none;">
+          <canvas id="chartVlinha"></canvas>
+        </div>
+
+        <!-- Subplot 2: Tensão na carga (V) -->
+        <div class="subplot-box" id="box-chartVo">
+          <canvas id="chartVo"></canvas>
+        </div>
+
+        <!-- Subplot 2.2: Pulsos de Disparo / Gate G(t) (V) (Para circuitos controlados) -->
+        <div class="subplot-box" id="box-chartGate" style="display: none; height: 110px;">
+          <canvas id="chartGate"></canvas>
+        </div>
+
+        <!-- Subplot 2.5: Tensão no Semicondutor vD(t) / vT(t) (V) -->
+        <div class="subplot-box" id="box-chartVD" style="display: none;">
+          <canvas id="chartVD"></canvas>
+        </div>
+
+        <!-- Subplot 3: Corrente no diodo D1 / Tiristor T1 (A) -->
+        <div class="subplot-box" id="box-chartID1" style="display: none;">
+          <canvas id="chartID1"></canvas>
+        </div>
+
+        <!-- Subplot 4: Corrente no diodo D2 / Tiristor T2 / Roda Livre (A) -->
+        <div class="subplot-box" id="box-chartID2" style="display: none;">
+          <canvas id="chartID2"></canvas>
+        </div>
+
+        <!-- Subplot 4.5: Corrente no diodo D3 / Tiristor T3 / Fase C (A) -->
+        <div class="subplot-box" id="box-chartID3" style="display: none;">
+          <canvas id="chartID3"></canvas>
+        </div>
+
+        <!-- Subplot 5: Corrente na carga (A) -->
+        <div class="subplot-box" id="box-chartI">
+          <canvas id="chartI"></canvas>
+        </div>
+
+        <!-- Subplot 5.5: Corrente na Fonte CA ig(t) (A) -->
+        <div class="subplot-box" id="box-chartIg" style="display: none;">
+          <canvas id="chartIg"></canvas>
+        </div>
+
+        <!-- Subplot 6: Tensão e Corrente Juntas (Escala Dupla) -->
+        <div class="subplot-box" id="box-chartBoth" style="height: 185px;">
+          <canvas id="chartBoth"></canvas>
+        </div>
+
+        <div id="plot-footer-caption" class="oscilloscope-caption"></div>
+      </div>
+    </div>
+
+    <footer>
+      Desenvolvido por Aderson da Cruz Carvalho &bull; Calculadora de Eletrônica de Potência
+    </footer>
+  </div>
+  <!-- Ponto de Entrada Modular ES6 -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
