@@ -816,9 +816,4 @@ if (typeof window !== "undefined") {
   window.salvarOsciloscopioPNG = salvarOsciloscopioPNG;
 }
 
-export {
-  atualizarGrafico,
-  filtrarCanais,
-  exportarCSV,
-  salvarOsciloscopioPNG
-};
+// exports globais prontos

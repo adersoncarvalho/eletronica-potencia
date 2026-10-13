@@ -2271,14 +2271,4 @@ if (typeof window !== "undefined") {
   window.executarCalculo = executarCalculo;
 }
 
-export {
-  TABELA_BETA,
-  TABELA_IEFP,
-  TABELA_IEFP_RODA_LIVRE,
-  interpolarBeta,
-  interpolarIefp,
-  interpolarIefpRodaLivre,
-  gerarLinhasTabelaConferencia,
-  toggleTabelaBeta,
-  executarCalculo
-};
+// exports globais prontos

@@ -1932,9 +1932,4 @@ if (document.readyState === "loading") {
   atualizarSubmodelos();
 }
 
-export {
-  topologiasPorCategoria,
-  atualizarSubmodelos,
-  atualizarInterface,
-  atualizarEsquematico
-};
+// exports globais prontos
