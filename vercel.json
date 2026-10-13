@@ -1,5 +1,8 @@
-﻿{
+{
   "rewrites": [
-    { "source": "/(.*)", "destination": "/projeto-profissional/$1" }
+    {
+      "source": "/(.*)",
+      "destination": "/projeto-profissional/$1"
+    }
   ]
 }
