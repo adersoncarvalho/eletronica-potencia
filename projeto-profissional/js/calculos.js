@@ -1,9 +1,9 @@
-﻿// ============================================================================
+// ============================================================================
 // MÃ“DULO DE CÃLCULOS MATEMÃTICOS E ELETRÃ”NICA DE POTÃŠNCIA (calculos.js)
 // FunÃ§Ãµes puras, memorial de cÃ¡lculo e geraÃ§Ã£o das sÃ©ries de dados temporais
 // ============================================================================
 
-import { atualizarGrafico } from './graficos.js';
+// Carregado via graficos.js
 
 // Tabelas numÃ©ricas didÃ¡ticas de apoio
     // Tabela numérica para ângulo de carga phi (graus) vs ângulo de extinção beta (graus)
@@ -2256,6 +2256,20 @@ import { atualizarGrafico } from './graficos.js';
 
       atualizarGrafico(plotData);
     }
+
+
+// Compatibilidade Universal (DOM + MÃ³dulos)
+if (typeof window !== "undefined") {
+  window.TABELA_BETA = TABELA_BETA;
+  window.TABELA_IEFP = TABELA_IEFP;
+  window.TABELA_IEFP_RODA_LIVRE = TABELA_IEFP_RODA_LIVRE;
+  window.interpolarBeta = interpolarBeta;
+  window.interpolarIefp = interpolarIefp;
+  window.interpolarIefpRodaLivre = interpolarIefpRodaLivre;
+  window.gerarLinhasTabelaConferencia = gerarLinhasTabelaConferencia;
+  window.toggleTabelaBeta = toggleTabelaBeta;
+  window.executarCalculo = executarCalculo;
+}
 
 export {
   TABELA_BETA,

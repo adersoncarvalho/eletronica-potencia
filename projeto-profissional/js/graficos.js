@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // MÃ“DULO DE FORMAS DE ONDA E INSTRUMENTAÃ‡ÃƒO VIRTUAL (graficos.js)
 // Gerencia a renderizaÃ§Ã£o em Chart.js, filtros multicanal e exportaÃ§Ã£o
 // ============================================================================
@@ -806,6 +806,15 @@
       link.click();
       document.body.removeChild(link);
     }
+
+
+// Compatibilidade Universal (DOM + MÃ³dulos)
+if (typeof window !== "undefined") {
+  window.atualizarGrafico = atualizarGrafico;
+  window.filtrarCanais = filtrarCanais;
+  window.exportarCSV = exportarCSV;
+  window.salvarOsciloscopioPNG = salvarOsciloscopioPNG;
+}
 
 export {
   atualizarGrafico,

@@ -1,26 +1,11 @@
-﻿// ============================================================================
+// ============================================================================
 // CONTROLADOR PRINCIPAL / ENTRADA DO SISTEMA (main.js)
 // Orquestra DOM, esquemÃ¡ticos dinÃ¢micos, integraÃ§Ã£o com calculos.js e graficos.js
 // ============================================================================
 
-import {
-  TABELA_BETA,
-  TABELA_IEFP,
-  TABELA_IEFP_RODA_LIVRE,
-  interpolarBeta,
-  interpolarIefp,
-  interpolarIefpRodaLivre,
-  gerarLinhasTabelaConferencia,
-  toggleTabelaBeta,
-  executarCalculo
-} from './calculos.js';
+// calculos.js carregado
 
-import {
-  atualizarGrafico,
-  filtrarCanais,
-  exportarCSV,
-  salvarOsciloscopioPNG
-} from './graficos.js';
+// graficos.js carregado
 
     // Submodelos por categoria
     const topologiasPorCategoria = {
