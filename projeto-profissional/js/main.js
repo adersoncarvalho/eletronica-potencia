@@ -1,11 +1,25 @@
 // ============================================================================
 // CONTROLADOR PRINCIPAL / ENTRADA DO SISTEMA (main.js)
-// Orquestra DOM, esquemÃ¡ticos dinÃ¢micos, integraÃ§Ã£o com calculos.js e graficos.js
 // ============================================================================
 
-// calculos.js carregado
+import {
+  TABELA_BETA,
+  TABELA_IEFP,
+  TABELA_IEFP_RODA_LIVRE,
+  interpolarBeta,
+  interpolarIefp,
+  interpolarIefpRodaLivre,
+  gerarLinhasTabelaConferencia,
+  toggleTabelaBeta,
+  executarCalculo
+} from './calculos.js';
 
-// graficos.js carregado
+import {
+  atualizarGrafico,
+  filtrarCanais,
+  exportarCSV,
+  salvarOsciloscopioPNG
+} from './graficos.js';
 
     // Submodelos por categoria
     const topologiasPorCategoria = {
@@ -1324,47 +1338,6 @@
       }
     }
 
-    // Tabela numérica para ângulo de carga phi (graus) vs ângulo de extinção beta (graus)
-    const TABELA_BETA = {
-      1: 181, 2: 182, 3: 183, 4: 184, 5: 185, 6: 187, 7: 188, 8: 189, 9: 190, 10: 191,
-      11: 192, 12: 193, 13: 194, 14: 195, 15: 196, 16: 197, 17: 198, 18: 199, 19: 200, 20: 201,
-      21: 202, 22: 203, 23: 204, 24: 205, 25: 206, 26: 207, 27: 208, 28: 209, 29: 210, 30: 211,
-      31: 212, 32: 213, 33: 214, 34: 215, 35: 216, 36: 217, 37: 218, 38: 219, 39: 220, 40: 221,
-      41: 222, 42: 223, 43: 224, 44: 225, 45: 226, 46: 227, 47: 229, 48: 230, 49: 231, 50: 232,
-      51: 233, 52: 234, 53: 236, 54: 237, 55: 238, 56: 239, 57: 241, 58: 242, 59: 243, 60: 245,
-      61: 246, 62: 248, 63: 249, 64: 251, 65: 252, 66: 254, 67: 256, 68: 257, 69: 259, 70: 261,
-      71: 263, 72: 265, 73: 267, 74: 269, 75: 271, 76: 274, 77: 276, 78: 279, 79: 282, 80: 285,
-      81: 288, 82: 292, 83: 295, 84: 300, 85: 304, 86: 310, 87: 316, 88: 324, 89: 334, 90: 360
-    };
-
-    // Tabela de corrente eficaz normalizada Iefp(phi)
-    const TABELA_IEFP = {
-      1: 0.5000, 2: 0.5000, 3: 0.5000, 4: 0.5000, 5: 0.5001, 6: 0.5002, 7: 0.5002, 8: 0.5004, 9: 0.5005, 10: 0.5007,
-      11: 0.5009, 12: 0.5012, 13: 0.5015, 14: 0.5019, 15: 0.5024, 16: 0.5029, 17: 0.5034, 18: 0.5041, 19: 0.5048, 20: 0.5056,
-      21: 0.5064, 22: 0.5074, 23: 0.5084, 24: 0.5095, 25: 0.5108, 26: 0.5121, 27: 0.5135, 28: 0.5150, 29: 0.5167, 30: 0.5184,
-      31: 0.5203, 32: 0.5223, 33: 0.5244, 34: 0.5266, 35: 0.5290, 36: 0.5315, 37: 0.5341, 38: 0.5369, 39: 0.5399, 40: 0.5430,
-      41: 0.5462, 42: 0.5497, 43: 0.5533, 44: 0.5570, 45: 0.5610, 46: 0.5651, 47: 0.5695, 48: 0.5740, 49: 0.5788, 50: 0.5838,
-      51: 0.5890, 52: 0.5944, 53: 0.6001, 54: 0.6061, 55: 0.6123, 56: 0.6188, 57: 0.6256, 58: 0.6327, 59: 0.6402, 60: 0.6480,
-      61: 0.6561, 62: 0.6646, 63: 0.6735, 64: 0.6829, 65: 0.6926, 66: 0.7029, 67: 0.7136, 68: 0.7248, 69: 0.7366, 70: 0.7490,
-      71: 0.7620, 72: 0.7756, 73: 0.7900, 74: 0.8051, 75: 0.8211, 76: 0.8379, 77: 0.8556, 78: 0.8744, 79: 0.8942, 80: 0.9153,
-      81: 0.9376, 82: 0.9614, 83: 0.9867, 84: 1.0137, 85: 1.0426, 86: 1.0736, 87: 1.1069, 88: 1.1430, 89: 1.1820, 90: 1.2000
-    };
-
-    // Tabela de corrente eficaz no diodo D1 / fonte CA para carga RL com roda livre
-    const TABELA_IEFP_RODA_LIVRE = {
-      1: 0.5000, 2: 0.5000, 3: 0.5000, 4: 0.5000, 5: 0.5001, 6: 0.5001, 7: 0.5001, 8: 0.5002, 9: 0.5003, 10: 0.5004,
-      11: 0.5006, 12: 0.5007, 13: 0.5009, 14: 0.5012, 15: 0.5014, 16: 0.5017, 17: 0.5021, 18: 0.5025, 19: 0.5029, 20: 0.5034,
-      21: 0.5039, 22: 0.5045, 23: 0.5051, 24: 0.5058, 25: 0.5066, 26: 0.5074, 27: 0.5083, 28: 0.5092, 29: 0.5103, 30: 0.5114,
-      31: 0.5125, 32: 0.5138, 33: 0.5151, 34: 0.5165, 35: 0.5180, 36: 0.5196, 37: 0.5213, 38: 0.5230, 39: 0.5249, 40: 0.5269,
-      41: 0.5289, 42: 0.5311, 43: 0.5334, 44: 0.5357, 45: 0.5383, 46: 0.5409, 47: 0.5436, 48: 0.5465, 49: 0.5495, 50: 0.5526,
-      51: 0.5559, 52: 0.5593, 53: 0.5628, 54: 0.5665, 55: 0.5704, 56: 0.5744, 57: 0.5786, 58: 0.5829, 59: 0.5874, 60: 0.5921,
-      61: 0.5970, 62: 0.6021, 63: 0.6074, 64: 0.6129, 65: 0.6186, 66: 0.6246, 67: 0.6307, 68: 0.6371, 69: 0.6438, 70: 0.6507,
-      71: 0.6579, 72: 0.6654, 73: 0.6732, 74: 0.6813, 75: 0.6897, 76: 0.6984, 77: 0.7075, 78: 0.7169, 79: 0.7268, 80: 0.7370,
-      81: 0.7476, 82: 0.7587, 83: 0.7703, 84: 0.7823, 85: 0.7948, 86: 0.8079, 87: 0.8215, 88: 0.8357, 89: 0.8505, 90: 0.8600
-    };
-
-    let chartInstance = null;
-
     function atualizarSubmodelos() {
       const cat = document.getElementById("select-categoria").value;
       const subSelect = document.getElementById("select-topologia");
@@ -1909,8 +1882,7 @@
       });
     }
 
-
-// Expor funÃ§Ãµes e tabelas ao escopo global (para eventos HTML e compatibilidade)
+// Expor handlers inline para o DOM
 window.toggleGuiaCircuitos = toggleGuiaCircuitos;
 window.atualizarSubmodelos = atualizarSubmodelos;
 window.atualizarInterface = atualizarInterface;
@@ -1923,13 +1895,5 @@ window.TABELA_BETA = TABELA_BETA;
 window.TABELA_IEFP = TABELA_IEFP;
 window.TABELA_IEFP_RODA_LIVRE = TABELA_IEFP_RODA_LIVRE;
 
-// InicializaÃ§Ã£o imediata
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => {
-    atualizarSubmodelos();
-  });
-} else {
-  atualizarSubmodelos();
-}
-
-// exports globais prontos
+// Disparo inicial garantido
+atualizarSubmodelos();

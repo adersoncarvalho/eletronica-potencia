@@ -1,11 +1,9 @@
 // ============================================================================
 // MÃ“DULO DE CÃLCULOS MATEMÃTICOS E ELETRÃ”NICA DE POTÃŠNCIA (calculos.js)
-// FunÃ§Ãµes puras, memorial de cÃ¡lculo e geraÃ§Ã£o das sÃ©ries de dados temporais
 // ============================================================================
 
-// Carregado via graficos.js
+import { atualizarGrafico } from './graficos.js';
 
-// Tabelas numÃ©ricas didÃ¡ticas de apoio
     // Tabela numérica para ângulo de carga phi (graus) vs ângulo de extinção beta (graus)
     const TABELA_BETA = {
       1: 181, 2: 182, 3: 183, 4: 184, 5: 185, 6: 187, 7: 188, 8: 189, 9: 190, 10: 191,
@@ -2257,18 +2255,14 @@
       atualizarGrafico(plotData);
     }
 
-
-// Compatibilidade Universal (DOM + MÃ³dulos)
-if (typeof window !== "undefined") {
-  window.TABELA_BETA = TABELA_BETA;
-  window.TABELA_IEFP = TABELA_IEFP;
-  window.TABELA_IEFP_RODA_LIVRE = TABELA_IEFP_RODA_LIVRE;
-  window.interpolarBeta = interpolarBeta;
-  window.interpolarIefp = interpolarIefp;
-  window.interpolarIefpRodaLivre = interpolarIefpRodaLivre;
-  window.gerarLinhasTabelaConferencia = gerarLinhasTabelaConferencia;
-  window.toggleTabelaBeta = toggleTabelaBeta;
-  window.executarCalculo = executarCalculo;
-}
-
-// exports globais prontos
+export {
+  TABELA_BETA,
+  TABELA_IEFP,
+  TABELA_IEFP_RODA_LIVRE,
+  interpolarBeta,
+  interpolarIefp,
+  interpolarIefpRodaLivre,
+  gerarLinhasTabelaConferencia,
+  toggleTabelaBeta,
+  executarCalculo
+};

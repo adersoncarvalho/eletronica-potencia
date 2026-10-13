@@ -1,7 +1,7 @@
 // ============================================================================
 // MÃ“DULO DE FORMAS DE ONDA E INSTRUMENTAÃ‡ÃƒO VIRTUAL (graficos.js)
-// Gerencia a renderizaÃ§Ã£o em Chart.js, filtros multicanal e exportaÃ§Ã£o
 // ============================================================================
+
     // Instâncias independentes para os subplots sincronizados
     let chartVinInst = null;
     let chartVlinhaInst = null;
@@ -807,13 +807,12 @@
       document.body.removeChild(link);
     }
 
-
-// Compatibilidade Universal (DOM + MÃ³dulos)
-if (typeof window !== "undefined") {
-  window.atualizarGrafico = atualizarGrafico;
-  window.filtrarCanais = filtrarCanais;
-  window.exportarCSV = exportarCSV;
-  window.salvarOsciloscopioPNG = salvarOsciloscopioPNG;
-}
-
-// exports globais prontos
+export {
+  criarSubplot,
+  criarSubplotMulti,
+  criarSubplotCombinado,
+  atualizarGrafico,
+  filtrarCanais,
+  exportarCSV,
+  salvarOsciloscopioPNG
+};

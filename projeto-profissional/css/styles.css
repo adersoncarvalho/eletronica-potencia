@@ -1,4 +1,4 @@
-﻿    :root {
+    :root {
       --bg-color: #0d1117;
       --card-bg: #161b22;
       --card-border: #30363d;
@@ -451,3 +451,4 @@
         grid-template-columns: 1fr;
       }
     }
+  </style>
