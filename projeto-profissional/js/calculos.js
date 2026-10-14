@@ -100,6 +100,161 @@ import { atualizarGrafico } from './graficos.js';
       }
     }
 
+    // ============================================================================
+    // MATRIZES E ÁBACOS DE PUCHLOWSKI (UTFPR - Prof. Francisco José Viglus)
+    // Carga RL Monofásica Controlada (a = 0)
+    // ============================================================================
+    const ALPHAS_PUCHLOWSKI = [1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180];
+    const COS_PHIS_PUCHLOWSKI = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0];
+
+    const TABELA_PUCHLOWSKI_IEFP = {
+      1:   [1.2246, 1.0209, 0.8834, 0.7833, 0.7073, 0.6479, 0.6009, 0.5633, 0.5338, 0.5119, 0.5000],
+      10:  [1.2124, 1.0121, 0.8765, 0.7778, 0.7028, 0.6443, 0.5978, 0.5608, 0.5318, 0.5105, 0.4997],
+      20:  [1.1759, 0.9852, 0.8555, 0.7607, 0.6887, 0.6324, 0.5879, 0.5525, 0.5250, 0.5053, 0.4978],
+      30:  [1.1173, 0.9413, 0.8205, 0.7320, 0.6646, 0.6119, 0.5703, 0.5375, 0.5124, 0.4951, 0.4927],
+      40:  [1.0394, 0.8818, 0.7726, 0.6921, 0.6306, 0.5827, 0.5449, 0.5154, 0.4933, 0.4792, 0.4834],
+      50:  [0.9458, 0.8090, 0.7131, 0.6420, 0.5875, 0.5451, 0.5118, 0.4862, 0.4676, 0.4572, 0.4688],
+      60:  [0.8407, 0.7257, 0.6440, 0.5831, 0.5364, 0.5000, 0.4717, 0.4503, 0.4355, 0.4290, 0.4485],
+      70:  [0.7284, 0.6351, 0.5679, 0.5175, 0.4787, 0.4486, 0.4255, 0.4084, 0.3976, 0.3950, 0.4223],
+      80:  [0.6133, 0.5406, 0.4875, 0.4473, 0.4164, 0.3926, 0.3745, 0.3618, 0.3547, 0.3558, 0.3905],
+      90:  [0.5000, 0.4457, 0.4056, 0.3751, 0.3516, 0.3337, 0.3204, 0.3117, 0.3081, 0.3124, 0.3536],
+      100: [0.3924, 0.3540, 0.3252, 0.3033, 0.2865, 0.2739, 0.2650, 0.2598, 0.2592, 0.2661, 0.3123],
+      110: [0.2941, 0.2686, 0.2493, 0.2346, 0.2235, 0.2154, 0.2102, 0.2079, 0.2096, 0.2183, 0.2677],
+      120: [0.2080, 0.1924, 0.1805, 0.1716, 0.1650, 0.1605, 0.1580, 0.1579, 0.1611, 0.1707, 0.2211],
+      130: [0.1362, 0.1277, 0.1212, 0.1164, 0.1131, 0.1111, 0.1106, 0.1118, 0.1157, 0.1251, 0.1740],
+      140: [0.0801, 0.0760, 0.0731, 0.0710, 0.0698, 0.0693, 0.0698, 0.0716, 0.0753, 0.0835, 0.1280],
+      150: [0.0398, 0.0383, 0.0373, 0.0367, 0.0365, 0.0368, 0.0375, 0.0391, 0.0420, 0.0481, 0.0849],
+      160: [0.0147, 0.0143, 0.0141, 0.0141, 0.0142, 0.0145, 0.0150, 0.0160, 0.0176, 0.0210, 0.0469],
+      170: [0.0026, 0.0026, 0.0026, 0.0026, 0.0027, 0.0028, 0.0029, 0.0032, 0.0036, 0.0046, 0.0167],
+      180: [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    };
+
+    const TABELA_PUCHLOWSKI_BETA = {
+      1:   [359.0, 300.2, 279.7, 265.4, 254.0, 244.2, 235.2, 226.4, 217.1, 205.9, 180.0],
+      10:  [350.0, 299.6, 279.3, 265.2, 253.9, 244.2, 235.2, 226.4, 217.1, 205.9, 180.0],
+      20:  [340.0, 297.9, 278.3, 264.5, 253.5, 243.9, 235.0, 226.3, 217.0, 205.8, 180.0],
+      30:  [330.0, 294.9, 276.6, 263.4, 252.7, 243.3, 234.7, 226.1, 217.0, 205.8, 180.0],
+      40:  [320.0, 291.0, 274.1, 261.7, 251.5, 242.5, 234.2, 225.8, 216.8, 205.8, 180.0],
+      50:  [310.0, 286.1, 271.0, 259.5, 250.0, 241.4, 233.4, 225.4, 216.6, 205.8, 180.0],
+      60:  [300.0, 280.5, 267.2, 256.8, 248.0, 240.0, 232.4, 224.7, 216.3, 205.7, 180.0],
+      70:  [290.0, 274.2, 262.7, 253.5, 245.5, 238.2, 231.1, 223.9, 215.8, 205.5, 180.0],
+      80:  [280.0, 267.3, 257.6, 249.6, 242.5, 235.9, 229.5, 222.8, 215.2, 205.3, 180.0],
+      90:  [270.0, 260.0, 252.0, 245.2, 239.0, 233.2, 227.4, 221.3, 214.3, 205.0, 180.0],
+      100: [260.0, 252.3, 245.9, 240.2, 235.0, 230.0, 225.0, 219.5, 213.2, 204.6, 180.0],
+      110: [250.0, 244.2, 239.2, 234.7, 230.4, 226.3, 222.0, 217.3, 211.7, 203.9, 180.0],
+      120: [240.0, 235.8, 232.0, 228.6, 225.3, 221.9, 218.4, 214.6, 209.8, 203.0, 180.0],
+      130: [230.0, 227.1, 224.5, 222.0, 219.5, 217.0, 214.3, 211.2, 207.4, 201.6, 180.0],
+      140: [220.0, 218.2, 216.4, 214.8, 213.1, 211.3, 209.4, 207.1, 204.3, 199.8, 180.0],
+      150: [210.0, 209.0, 208.0, 207.0, 206.0, 204.9, 203.7, 202.2, 200.3, 197.1, 180.0],
+      160: [200.0, 199.5, 199.1, 198.6, 198.1, 197.6, 197.0, 196.3, 195.2, 193.4, 180.0],
+      170: [190.0, 189.9, 189.8, 189.6, 189.5, 189.4, 189.2, 189.0, 188.7, 188.1, 180.0],
+      180: [180.0, 180.0, 180.0, 180.0, 180.0, 180.0, 180.0, 180.0, 180.0, 180.0, 180.0]
+    };
+
+    function obterPuchlowski(alphaDeg, cosPhi) {
+      let closestAlpha = ALPHAS_PUCHLOWSKI[0];
+      let minDiffA = Math.abs(alphaDeg - closestAlpha);
+      for (let a of ALPHAS_PUCHLOWSKI) {
+        let diff = Math.abs(alphaDeg - a);
+        if (diff < minDiffA) {
+          minDiffA = diff;
+          closestAlpha = a;
+        }
+      }
+
+      let clampedCos = Math.max(0.0, Math.min(1.0, cosPhi));
+      let closestColIdx = 0;
+      let minDiffC = Math.abs(clampedCos - COS_PHIS_PUCHLOWSKI[0]);
+      for (let idx = 0; idx < COS_PHIS_PUCHLOWSKI.length; idx++) {
+        let diff = Math.abs(clampedCos - COS_PHIS_PUCHLOWSKI[idx]);
+        if (diff < minDiffC) {
+          minDiffC = diff;
+          closestColIdx = idx;
+        }
+      }
+
+      const iefpVal = TABELA_PUCHLOWSKI_IEFP[closestAlpha][closestColIdx];
+      const betaVal = TABELA_PUCHLOWSKI_BETA[closestAlpha][closestColIdx];
+      return {
+        alphaMatch: closestAlpha,
+        cosMatch: COS_PHIS_PUCHLOWSKI[closestColIdx],
+        colIdx: closestColIdx,
+        iefp: iefpVal,
+        beta: betaVal
+      };
+    }
+
+    function gerarTabelaPuchlowskiHTML(alphaAtual, cosPhiAtual) {
+      const pMatch = obterPuchlowski(alphaAtual, cosPhiAtual);
+
+      let headerCols = '<th>α [°]</th>';
+      for (let c of COS_PHIS_PUCHLOWSKI) {
+        const isColMatch = (c === pMatch.cosMatch);
+        headerCols += `<th class="${isColMatch ? 'col-destaque' : ''}">cosφ=${c.toFixed(1)}</th>`;
+      }
+
+      let bodyRows = '';
+      for (let a of ALPHAS_PUCHLOWSKI) {
+        const isRowMatch = (a === pMatch.alphaMatch);
+        let rowCells = `<td><strong>${a}°</strong></td>`;
+        for (let cIdx = 0; cIdx < COS_PHIS_PUCHLOWSKI.length; cIdx++) {
+          const isCellMatch = isRowMatch && (cIdx === pMatch.colIdx);
+          const val = TABELA_PUCHLOWSKI_IEFP[a][cIdx].toFixed(4);
+          const bVal = TABELA_PUCHLOWSKI_BETA[a][cIdx].toFixed(1);
+          if (isCellMatch) {
+            rowCells += `<td class="cell-destaque" style="background: rgba(227, 179, 65, 0.3) !important; border: 2px solid #e3b341 !important; color: #fff !important; font-weight: bold;" title="α=${a}°, cosφ=${pMatch.cosMatch.toFixed(1)} → β=${bVal}°, Iefp=${val}">
+              <span style="color: #e3b341; font-weight: 700; display: block; font-size: 0.82rem;">${val}</span>
+              <span style="color: #79c0ff; font-size: 0.70rem; display: block;">β=${Math.round(bVal)}°</span>
+            </td>`;
+          } else {
+            rowCells += `<td title="α=${a}°, cosφ=${COS_PHIS_PUCHLOWSKI[cIdx].toFixed(1)} → β=${bVal}°">${val}</td>`;
+          }
+        }
+        bodyRows += `<tr class="${isRowMatch ? 'row-destaque' : ''}">${rowCells}</tr>`;
+      }
+
+      return `
+        <div style="margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <span style="font-size: 0.88rem; font-weight: 700; color: #58a6ff;">Tabela de Corrente Eficaz Parametrizada (Iefp) e Ábaco de Puchlowski (a = 0)</span>
+            <div style="font-size: 0.76rem; color: #8b949e;">Fonte: UTFPR (Prof. Francisco José Viglus) / K. P. Puchlowski</div>
+          </div>
+          <div style="font-size: 0.8rem; background: rgba(227, 179, 65, 0.15); border: 1px solid #e3b341; padding: 4px 10px; border-radius: 4px; color: #f0e6c5;">
+            Cruzamento: <strong>α = ${pMatch.alphaMatch}°</strong> e <strong>cos(φ) = ${pMatch.cosMatch.toFixed(1)}</strong> ➔ 
+            <span style="color: #e3b341; font-weight: bold;">Iefp = ${pMatch.iefp.toFixed(4)}</span> | 
+            <span style="color: #58a6ff; font-weight: bold;">β = ${Math.round(pMatch.beta)}°</span>
+          </div>
+        </div>
+        <div style="max-height: 260px; overflow-x: auto; overflow-y: auto; border: 1px solid #30363d; border-radius: 6px;">
+          <table class="tabela-conferencia tabela-puchlowski">
+            <thead>
+              <tr>${headerCols}</tr>
+            </thead>
+            <tbody>
+              ${bodyRows}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function toggleTabelaPuchlowski() {
+      const box = document.getElementById("tabela-puchlowski-container");
+      if (box) {
+        const isHidden = (box.style.display === "none");
+        box.style.display = isHidden ? "block" : "none";
+        if (isHidden) {
+          setTimeout(() => {
+            const row = box.querySelector(".row-destaque");
+            if (row) {
+              row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          }, 40);
+        }
+      }
+    }
+
+
     function executarCalculo() {
       const topologia = document.getElementById("select-topologia").value;
       const cat = document.getElementById("select-categoria").value;
@@ -996,76 +1151,93 @@ import { atualizarGrafico } from './graficos.js';
         const cos_phi = R / Z;
         const tan_phi = XL / R;
 
-        function i_theta(th) {
-          return (V_p / Z) * (Math.sin(th - phi_rad) - Math.sin(a_rad - phi_rad) * Math.exp(-(th - a_rad) / tan_phi));
-        }
+        // Metodologia Oficial UTFPR / Puchlowski (Ábacos e Tabela Parametrizada)
+        const pMatch = obterPuchlowski(alpha, cos_phi);
+        const beta_tab = pMatch.beta;
+        const beta_tab_rad = (beta_tab * Math.PI) / 180;
+        const I_efp_tab = pMatch.iefp;
 
-        let bMin = Math.max(Math.PI, a_rad + 0.001);
-        let bMax = 2 * Math.PI;
-        for (let iter = 0; iter < 50; iter++) {
-          const bMid = (bMin + bMax) / 2;
-          if (i_theta(bMid) > 0) bMin = bMid; else bMax = bMid;
-        }
-        const beta_rad = (bMin + bMax) / 2;
-        const beta_deg = (beta_rad * 180) / Math.PI;
-
-        const V_o_med = (V_p / (2 * Math.PI)) * (Math.cos(a_rad) - Math.cos(beta_rad));
+        // Cálculos formais analíticos
+        const V_o_med = 0.225 * V_rms * (Math.cos(a_rad) - Math.cos(beta_tab_rad));
         const I_o_med = V_o_med / R;
-
-        let soma_i2 = 0;
-        const nSteps = 200;
-        const dTh = (beta_rad - a_rad) / nSteps;
-        for (let p = 0; p < nSteps; p++) {
-          const th = a_rad + (p + 0.5) * dTh;
-          const i_val = Math.max(0, i_theta(th));
-          soma_i2 += i_val * i_val * dTh;
-        }
-        const I_o_ef = Math.sqrt(soma_i2 / (2 * Math.PI));
-
+        const I_o_ef = (Math.SQRT2 * V_rms / Z) * I_efp_tab;
         const P_R = R * Math.pow(I_o_ef, 2);
         const S = V_rms * I_o_ef;
         const FP = S > 0 ? (P_R / S) : 0;
 
         summaryHTML = `
           <div class="stat-box"><div class="stat-label">Ângulo Disparo α</div><div class="stat-value">${alpha}°</div></div>
-          <div class="stat-box"><div class="stat-label">Ângulo Extinção β</div><div class="stat-value">${beta_deg.toFixed(1)}°</div></div>
-          <div class="stat-box"><div class="stat-label">Vo,méd (Saída)</div><div class="stat-value">${V_o_med.toFixed(2)} V</div></div>
+          <div class="stat-box"><div class="stat-label">Ângulo Extinção β (Ábaco)</div><div class="stat-value">${Math.round(beta_tab)}°</div></div>
+          <div class="stat-box"><div class="stat-label">Vo,méd (Carga)</div><div class="stat-value">${V_o_med.toFixed(2)} V</div></div>
           <div class="stat-box"><div class="stat-label">Io,méd (Carga)</div><div class="stat-value">${I_o_med.toFixed(3)} A</div></div>
-          <div class="stat-box"><div class="stat-label">Io,ef (RMS Carga)</div><div class="stat-value">${I_o_ef.toFixed(3)} A</div></div>
+          <div class="stat-box"><div class="stat-label">Io,ef (RMS Tabela)</div><div class="stat-value">${I_o_ef.toFixed(3)} A</div></div>
           <div class="stat-box"><div class="stat-label">Potência Ativa Po</div><div class="stat-value">${P_R.toFixed(2)} W</div></div>
           <div class="stat-box"><div class="stat-label">Fator de Potência</div><div class="stat-value">${FP.toFixed(3)}</div></div>
         `;
 
         stepsHTML = `
           <div class="step-box">
-            <div class="step-title">Etapa 1: Impedância e Ângulo de Defasagem da Carga</div>
-            <div class="step-desc">Reatância indutiva, impedância total e ângulo de carga \\(\\phi\\):</div>
-            <div class="math-block">\\[ X_L = \\omega L = ${omega.toFixed(2)} \\cdot ${L} = ${XL.toFixed(2)}\\,\\Omega \\qquad Z = \\sqrt{R^2 + X_L^2} = ${Z.toFixed(2)}\\,\\Omega \\]</div>
-            <div class="math-block">\\[ \\phi = \\operatorname{arctg}\\left(\\frac{X_L}{R}\\right) = ${phi_deg.toFixed(2)}^\\circ \\quad (${phi_rad.toFixed(3)}\\text{ rad}) \\qquad \\cos\\phi = ${cos_phi.toFixed(3)} \\]</div>
+            <div class="step-title">Etapa 1: Parâmetros da Carga (Reatância, Impedância e Fator de Potência)</div>
+            <div class="step-desc">Para frequência de \(${freq.toFixed(1)}\text{ Hz}\) (\(\omega = ${omega.toFixed(2)}\text{ rad/s}\)):</div>
+            <div class="math-block">\[ X_L = \omega L = ${omega.toFixed(2)} \cdot ${L} = ${XL.toFixed(3)}\,\Omega \qquad Z = \sqrt{R^2 + X_L^2} = \sqrt{${R}^2 + (${XL.toFixed(3)})^2} = ${Z.toFixed(3)}\,\Omega \]</div>
+            <div class="math-block">\[ \cos(\phi) = \frac{R}{Z} = \frac{${R}}{${Z.toFixed(3)}} \approx ${cos_phi.toFixed(3)} \implies \phi = ${phi_deg.toFixed(2)}^\circ \]</div>
           </div>
 
           <div class="step-box">
-            <div class="step-title">Etapa 2: Equação Transcendental da Corrente e Ângulo de Extinção (\\(\\beta\\))</div>
-            <div class="step-desc">A equação analítica da corrente com condição inicial \\(i(\\alpha) = 0\\) resulta em:</div>
-            <div class="math-block">\\[ i(\\omega t) = \\frac{V_p}{Z}\\left[\\operatorname{sen}(\\omega t - \\phi) - \\operatorname{sen}(\\alpha - \\phi)e^{-\\frac{\\omega t - \\alpha}{\\operatorname{tg}\\phi}}\\right] \\]</div>
-            <div class="step-desc">No instante de extinção da condução \\(\\omega t = \\beta\\), a corrente anula-se (\\(i(\\beta) = 0\\)), fornecendo:</div>
-            <div class="math-block">\\[ \\beta = ${beta_deg.toFixed(1)}^\\circ \\quad (${beta_rad.toFixed(3)}\\text{ rad}) \\]</div>
+            <div class="step-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+              <span>Etapa 2: Obtenção do Ângulo de Extinção (\(\beta\)) via Ábaco de Puchlowski</span>
+              <button type="button" class="btn-table-tag" onclick="toggleTabelaPuchlowski()" title="Visualizar Ábaco e Tabela de Puchlowski">
+                📊 Ábaco / Tabela de Puchlowski
+              </button>
+            </div>
+            <div class="step-desc">
+              Como não há força contraeletromotriz na carga (\(E = 0\)), temos \(a = \frac{E}{\sqrt{2}V_{ef}} = 0\).
+              Consultando o <strong>Ábaco de Puchlowski</strong> para \(a = 0\) com \(\alpha = ${alpha}^\circ\) e \(\cos\phi \approx ${pMatch.cosMatch.toFixed(1)}\):
+              <button type="button" class="btn-table-tag" style="margin-left: 6px; padding: 2px 7px; font-size: 0.74rem;" onclick="toggleTabelaPuchlowski()">📊 Ver Tabela</button>
+            </div>
+            <div class="math-block">\[ \beta \approx ${Math.round(beta_tab)}^\circ \quad (${beta_tab_rad.toFixed(3)}\text{ rad}) \]</div>
+            <div class="step-desc">
+              <strong>Nota Física:</strong> O tiristor conduz além de \(180^\circ\) (atingindo \(\beta = ${Math.round(beta_tab)}^\circ\)) porque a força contraeletromotriz induzida no indutor (\(-L\frac{di}{dt}\)) polariza o tiristor diretamente, sustentando a circulação de corrente mesmo enquanto a tensão da fonte é negativa.
+            </div>
+
+            <!-- Painel Expansível da Tabela de Puchlowski -->
+            <div id="tabela-puchlowski-container" style="display: none; margin-top: 12px; background: #0d1117; border: 1px solid var(--card-border); border-radius: 6px; padding: 12px;">
+              ${gerarTabelaPuchlowskiHTML(alpha, cos_phi)}
+            </div>
           </div>
 
           <div class="step-box">
             <div class="step-title">Etapa 3: Tensão Média e Corrente Média na Carga</div>
-            <div class="step-desc">A tensão na saída é positiva de \\(\\alpha\\) a \\(\\pi\\) e negativa de \\(\\pi\\) a \\(\\beta\\):</div>
-            <div class="math-block">\\[ V_{R,med} = \\frac{1}{2\\pi} \\int_{\\alpha}^{\\beta} V_p \\operatorname{sen}(\\omega t)\\,d(\\omega t) = \\frac{V_p}{2\\pi}(\\cos\\alpha - \\cos\\beta) \\approx 0{,}225 V_{ef}(\\cos\\alpha - \\cos\\beta) \\]</div>
-            <div class="math-block">\\[ V_{R,med} = \\frac{${V_p.toFixed(2)}}{2\\pi}(\\cos(${alpha}^\\circ) - \\cos(${beta_deg.toFixed(1)}^\\circ)) = ${V_o_med.toFixed(2)}\\text{ V} \\]</div>
-            <div class="math-block">\\[ I_{R,med} = \\frac{V_{R,med}}{R} = \\frac{${V_o_med.toFixed(2)}}{${R}} = ${I_o_med.toFixed(3)}\\text{ A} \\]</div>
+            <div class="step-desc">A tensão na saída é positiva de \(\alpha\) a \(180^\circ\) e negativa de \(180^\circ\) a \(\beta\):</div>
+            <div class="math-block">\[ V_{o,med} = 0{,}225 \cdot V_{ef} \cdot [\cos(\alpha) - \cos(\beta)] \]</div>
+            <div class="math-block">\[ V_{o,med} = 0{,}225 \cdot ${V_rms.toFixed(1)} \cdot [\cos(${alpha}^\circ) - \cos(${Math.round(beta_tab)}^\circ)] = 0{,}225 \cdot ${V_rms.toFixed(1)} \cdot [${Math.cos(a_rad).toFixed(4)} - (${Math.cos(beta_tab_rad).toFixed(4)})] = ${V_o_med.toFixed(2)}\text{ V} \]</div>
+            <div class="step-desc">Como o indutor em regime permanente tem tensão média nula (\(\bar{v}_L = 0\)):</div>
+            <div class="math-block">\[ I_{o,med} = \frac{V_{o,med}}{R} = \frac{${V_o_med.toFixed(2)}}{${R}} = ${I_o_med.toFixed(3)}\text{ A} \]</div>
           </div>
 
           <div class="step-box">
-            <div class="step-title">Etapa 4: Corrente Eficaz, Potência e Fator de Potência</div>
-            <div class="math-block">\\[ I_{R,ef} = \\sqrt{\\frac{1}{2\\pi} \\int_{\\alpha}^{\\beta} [i(\\omega t)]^2\\,d(\\omega t)} = ${I_o_ef.toFixed(3)}\\text{ A} \\]</div>
-            <div class="math-block">\\[ P = R \\cdot (I_{R,ef})^2 = ${R}\\,\\Omega \\cdot (${I_o_ef.toFixed(3)}\\text{ A})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
-            <div class="math-block">\\[ S = V_{ef} \\cdot I_{R,ef} = ${V_rms.toFixed(2)}\\text{ V} \\cdot ${I_o_ef.toFixed(3)}\\text{ A} = ${S.toFixed(2)}\\text{ VA} \\]</div>
-            <div class="math-block">\\[ FP = \\frac{P}{S} = \\frac{${P_R.toFixed(2)}}{${S.toFixed(2)}} = ${FP.toFixed(3)} \\]</div>
+            <div class="step-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+              <span>Etapa 4: Corrente Eficaz na Carga (Tabela Parametrizada \(I_{efp}\))</span>
+              <button type="button" class="btn-table-tag" onclick="toggleTabelaPuchlowski()" title="Visualizar Tabela de Iefp">
+                📊 Consultar Tabela
+              </button>
+            </div>
+            <div class="step-desc">
+              Consultando a <strong>Tabela de Corrente Eficaz Parametrizada</strong> (Slide 13 da UTFPR) para \(\alpha = ${alpha}^\circ\) e \(\cos\phi \approx ${pMatch.cosMatch.toFixed(1)}\):
+            </div>
+            <div class="math-block">\[ I_{efp} = ${I_efp_tab.toFixed(4)} \]</div>
+            <div class="step-desc">Calculando a corrente eficaz na carga:</div>
+            <div class="math-block">\[ I_{o,ef} = \frac{\sqrt{2} \cdot V_{ef}}{Z} \cdot I_{efp} = \frac{\sqrt{2} \cdot ${V_rms.toFixed(1)}}{${Z.toFixed(3)}} \cdot ${I_efp_tab.toFixed(4)} = ${I_o_ef.toFixed(3)}\text{ A} \]</div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 5: Potências e Fator de Potência</div>
+            <div class="step-desc">Potência ativa real dissipada no resistor \(R\):</div>
+            <div class="math-block">\[ P = R \cdot (I_{o,ef})^2 = ${R}\,\Omega \cdot (${I_o_ef.toFixed(3)}\text{ A})^2 = ${P_R.toFixed(2)}\text{ W} \]</div>
+            <div class="step-desc">Potência aparente total entregue pela rede CA:</div>
+            <div class="math-block">\[ S = V_{ef} \cdot I_{o,ef} = ${V_rms.toFixed(1)}\text{ V} \cdot ${I_o_ef.toFixed(3)}\text{ A} = ${S.toFixed(2)}\text{ VA} \]</div>
+            <div class="step-desc">Fator de potência do sistema:</div>
+            <div class="math-block">\[ F_P = \frac{P}{S} = \frac{${P_R.toFixed(2)}}{${S.toFixed(2)}} = ${FP.toFixed(3)} \]</div>
           </div>
         `;
       } else if (topologia === "mono_meia_onda_controlado_rl_roda_livre") {
@@ -2263,10 +2435,15 @@ export {
   TABELA_BETA,
   TABELA_IEFP,
   TABELA_IEFP_RODA_LIVRE,
+  TABELA_PUCHLOWSKI_IEFP,
+  TABELA_PUCHLOWSKI_BETA,
   interpolarBeta,
   interpolarIefp,
   interpolarIefpRodaLivre,
   gerarLinhasTabelaConferencia,
   toggleTabelaBeta,
+  obterPuchlowski,
+  gerarTabelaPuchlowskiHTML,
+  toggleTabelaPuchlowski,
   executarCalculo
 };

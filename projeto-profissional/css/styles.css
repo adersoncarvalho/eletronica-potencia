@@ -271,6 +271,31 @@
       font-weight: bold;
     }
 
+    /* Estilos Específicos para a Tabela de Puchlowski / UTFPR */
+    .tabela-puchlowski {
+      min-width: 720px;
+    }
+    .tabela-puchlowski th {
+      font-size: 0.74rem;
+      padding: 6px 7px;
+      white-space: nowrap;
+    }
+    .tabela-puchlowski th.col-destaque {
+      background: rgba(88, 166, 255, 0.25) !important;
+      color: #58a6ff !important;
+      border-bottom: 2px solid #58a6ff !important;
+    }
+    .tabela-puchlowski td {
+      font-size: 0.76rem;
+      padding: 5px 6px;
+      white-space: nowrap;
+    }
+    .tabela-puchlowski td.cell-destaque {
+      background: rgba(227, 179, 65, 0.28) !important;
+      border: 1.5px solid #e3b341 !important;
+      color: #ffffff !important;
+    }
+
     /* Painel do Osciloscópio (Dark Theme Integrado - Estilo Bancada Laboratorial) */
     .oscilloscope-card {
       background-color: #0b0f14;

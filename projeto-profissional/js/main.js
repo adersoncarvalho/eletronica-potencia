@@ -6,11 +6,16 @@ import {
   TABELA_BETA,
   TABELA_IEFP,
   TABELA_IEFP_RODA_LIVRE,
+  TABELA_PUCHLOWSKI_IEFP,
+  TABELA_PUCHLOWSKI_BETA,
   interpolarBeta,
   interpolarIefp,
   interpolarIefpRodaLivre,
   gerarLinhasTabelaConferencia,
   toggleTabelaBeta,
+  obterPuchlowski,
+  gerarTabelaPuchlowskiHTML,
+  toggleTabelaPuchlowski,
   executarCalculo
 } from './calculos.js';
 
@@ -1888,12 +1893,17 @@ window.atualizarSubmodelos = atualizarSubmodelos;
 window.atualizarInterface = atualizarInterface;
 window.executarCalculo = executarCalculo;
 window.toggleTabelaBeta = toggleTabelaBeta;
+window.toggleTabelaPuchlowski = toggleTabelaPuchlowski;
+window.gerarTabelaPuchlowskiHTML = gerarTabelaPuchlowskiHTML;
+window.obterPuchlowski = obterPuchlowski;
 window.filtrarCanais = filtrarCanais;
 window.exportarCSV = exportarCSV;
 window.salvarOsciloscopioPNG = salvarOsciloscopioPNG;
 window.TABELA_BETA = TABELA_BETA;
 window.TABELA_IEFP = TABELA_IEFP;
 window.TABELA_IEFP_RODA_LIVRE = TABELA_IEFP_RODA_LIVRE;
+window.TABELA_PUCHLOWSKI_IEFP = TABELA_PUCHLOWSKI_IEFP;
+window.TABELA_PUCHLOWSKI_BETA = TABELA_PUCHLOWSKI_BETA;
 
 // Disparo inicial garantido
 atualizarSubmodelos();
