@@ -8,6 +8,8 @@ import {
   TABELA_IEFP_RODA_LIVRE,
   TABELA_PUCHLOWSKI_IEFP,
   TABELA_PUCHLOWSKI_BETA,
+  TABELA_RODA_LIVRE_IEF,
+  TABELA_RODA_LIVRE_IG_EFP,
   interpolarBeta,
   interpolarIefp,
   interpolarIefpRodaLivre,
@@ -17,6 +19,12 @@ import {
   gerarTabelaPuchlowskiHTML,
   toggleTabelaPuchlowski,
   mostrarPuchlowskiAba,
+  obterIefRodaLivre,
+  obterIgEfpRodaLivre,
+  gerarTabelaRodaLivreHTML,
+  toggleTabelaRodaLivre,
+  mostrarRodaLivreAba,
+  toggleAbacoRLE,
   executarCalculo
 } from './calculos.js';
 
@@ -1906,6 +1914,14 @@ window.TABELA_IEFP = TABELA_IEFP;
 window.TABELA_IEFP_RODA_LIVRE = TABELA_IEFP_RODA_LIVRE;
 window.TABELA_PUCHLOWSKI_IEFP = TABELA_PUCHLOWSKI_IEFP;
 window.TABELA_PUCHLOWSKI_BETA = TABELA_PUCHLOWSKI_BETA;
+window.TABELA_RODA_LIVRE_IEF = TABELA_RODA_LIVRE_IEF;
+window.TABELA_RODA_LIVRE_IG_EFP = TABELA_RODA_LIVRE_IG_EFP;
+window.toggleTabelaRodaLivre = toggleTabelaRodaLivre;
+window.mostrarRodaLivreAba = mostrarRodaLivreAba;
+window.gerarTabelaRodaLivreHTML = gerarTabelaRodaLivreHTML;
+window.obterIefRodaLivre = obterIefRodaLivre;
+window.obterIgEfpRodaLivre = obterIgEfpRodaLivre;
+window.toggleAbacoRLE = toggleAbacoRLE;
 
 // Disparo inicial garantido
 atualizarSubmodelos();

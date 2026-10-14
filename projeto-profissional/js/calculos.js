@@ -64,6 +64,264 @@ import { atualizarGrafico } from './graficos.js';
       return TABELA_IEFP_RODA_LIVRE[phiInt] || 0.5000;
     }
 
+    // Tabela 2D de Corrente Eficaz na Carga Ief(alpha, cos_phi) para Diodo de Roda Livre em MCD (Slide 35 - Prof. Francisco Viglus)
+    const ALPHAS_RODA_LIVRE = [1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180];
+    const COS_PHIS_RODA_LIVRE = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0];
+
+    const TABELA_RODA_LIVRE_IEF = {
+      1:   [1.2246, 1.0209, 0.8834, 0.7833, 0.7073, 0.6479, 0.6009, 0.5633, 0.5338, 0.5119, 0.5000],
+      10:  [1.2124, 1.0121, 0.8765, 0.7778, 0.7028, 0.6443, 0.5978, 0.5608, 0.5318, 0.5105, 0.4997],
+      20:  [1.1759, 0.9852, 0.8555, 0.7607, 0.6887, 0.6324, 0.5879, 0.5525, 0.5250, 0.5053, 0.4978],
+      30:  [1.1173, 0.9413, 0.8205, 0.7320, 0.6646, 0.6119, 0.5703, 0.5375, 0.5124, 0.4951, 0.4927],
+      40:  [1.0394, 0.8818, 0.7726, 0.6921, 0.6306, 0.5827, 0.5449, 0.5154, 0.4933, 0.4792, 0.4834],
+      50:  [0.9458, 0.8090, 0.7131, 0.6420, 0.5875, 0.5451, 0.5118, 0.4862, 0.4676, 0.4572, 0.4688],
+      60:  [0.8407, 0.7257, 0.6440, 0.5831, 0.5364, 0.5000, 0.4717, 0.4503, 0.4355, 0.4290, 0.4485],
+      70:  [0.7284, 0.6351, 0.5679, 0.5175, 0.4787, 0.4486, 0.4255, 0.4084, 0.3976, 0.3950, 0.4223],
+      80:  [0.6133, 0.5406, 0.4875, 0.4473, 0.4164, 0.3926, 0.3745, 0.3618, 0.3547, 0.3558, 0.3905],
+      90:  [0.5000, 0.4457, 0.4056, 0.3751, 0.3516, 0.3337, 0.3204, 0.3117, 0.3081, 0.3124, 0.3536],
+      100: [0.3924, 0.3540, 0.3252, 0.3033, 0.2865, 0.2739, 0.2650, 0.2598, 0.2592, 0.2661, 0.3123],
+      110: [0.2941, 0.2686, 0.2493, 0.2346, 0.2235, 0.2154, 0.2102, 0.2079, 0.2096, 0.2183, 0.2677],
+      120: [0.2080, 0.1924, 0.1805, 0.1716, 0.1650, 0.1605, 0.1580, 0.1579, 0.1611, 0.1707, 0.2211],
+      130: [0.1362, 0.1277, 0.1212, 0.1164, 0.1131, 0.1111, 0.1106, 0.1118, 0.1157, 0.1251, 0.1740],
+      140: [0.0801, 0.0760, 0.0731, 0.0710, 0.0698, 0.0693, 0.0698, 0.0716, 0.0753, 0.0835, 0.1280],
+      150: [0.0398, 0.0383, 0.0373, 0.0367, 0.0365, 0.0368, 0.0375, 0.0391, 0.0420, 0.0481, 0.0849],
+      160: [0.0147, 0.0143, 0.0141, 0.0141, 0.0142, 0.0145, 0.0150, 0.0160, 0.0176, 0.0210, 0.0469],
+      170: [0.0026, 0.0026, 0.0026, 0.0026, 0.0027, 0.0028, 0.0029, 0.0032, 0.0036, 0.0046, 0.0167],
+      180: [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    };
+
+    // Tabela 2D de Corrente Eficaz na Fonte CA Ig,efp(alpha, cos_phi) para Diodo de Roda Livre em MCD (Slide 36 - Prof. Francisco Viglus)
+    const TABELA_RODA_LIVRE_IG_EFP = {
+      1:   [0.8659, 0.7854, 0.7214, 0.6695, 0.6271, 0.5921, 0.5633, 0.5397, 0.5210, 0.5073, 0.5000],
+      10:  [0.8573, 0.7783, 0.7154, 0.6645, 0.6228, 0.5885, 0.5602, 0.5372, 0.5190, 0.5058, 0.4997],
+      20:  [0.8315, 0.7567, 0.6971, 0.6488, 0.6093, 0.5769, 0.5503, 0.5288, 0.5122, 0.5006, 0.4978],
+      30:  [0.7901, 0.7215, 0.6668, 0.6225, 0.5864, 0.5568, 0.5328, 0.5137, 0.4994, 0.4904, 0.4927],
+      40:  [0.7350, 0.6741, 0.6254, 0.5862, 0.5542, 0.5283, 0.5075, 0.4914, 0.4801, 0.4744, 0.4834],
+      50:  [0.6688, 0.6164, 0.5746, 0.5409, 0.5137, 0.4919, 0.4747, 0.4621, 0.4541, 0.4522, 0.4688],
+      60:  [0.5945, 0.5508, 0.5161, 0.4883, 0.4660, 0.4485, 0.4352, 0.4261, 0.4217, 0.4237, 0.4485],
+      70:  [0.5150, 0.4800, 0.4522, 0.4302, 0.4128, 0.3995, 0.3900, 0.3844, 0.3834, 0.3894, 0.4223],
+      80:  [0.4337, 0.4067, 0.3854, 0.3687, 0.3559, 0.3465, 0.3405, 0.3381, 0.3403, 0.3499, 0.3905],
+      90:  [0.3536, 0.3336, 0.3181, 0.3062, 0.2974, 0.2914, 0.2884, 0.2888, 0.2936, 0.3062, 0.3536],
+      100: [0.2775, 0.2635, 0.2529, 0.2450, 0.2395, 0.2363, 0.2357, 0.2381, 0.2449, 0.2595, 0.3123],
+      110: [0.2079, 0.1988, 0.1921, 0.1873, 0.1843, 0.1832, 0.1843, 0.1880, 0.1958, 0.2114, 0.2677],
+      120: [0.1471, 0.1416, 0.1377, 0.1352, 0.1340, 0.1343, 0.1362, 0.1404, 0.1483, 0.1637, 0.2211],
+      130: [0.0963, 0.0934, 0.0914, 0.0904, 0.0903, 0.0912, 0.0934, 0.0974, 0.1045, 0.1182, 0.1740],
+      140: [0.0566, 0.0553, 0.0545, 0.0543, 0.0546, 0.0557, 0.0576, 0.0608, 0.0663, 0.0773, 0.1280],
+      150: [0.0282, 0.0277, 0.0275, 0.0276, 0.0280, 0.0288, 0.0301, 0.0322, 0.0358, 0.0431, 0.0849],
+      160: [0.0104, 0.0103, 0.0103, 0.0104, 0.0106, 0.0110, 0.0117, 0.0126, 0.0144, 0.0180, 0.0469],
+      170: [0.0018, 0.0018, 0.0019, 0.0019, 0.0020, 0.0020, 0.0022, 0.0024, 0.0028, 0.0037, 0.0167],
+      180: [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
+    };
+
+    function obterIefRodaLivre(alphaDeg, cosPhi) {
+      let closestAlpha = ALPHAS_RODA_LIVRE[0];
+      let minDiffA = Math.abs(alphaDeg - closestAlpha);
+      for (let a of ALPHAS_RODA_LIVRE) {
+        let diff = Math.abs(alphaDeg - a);
+        if (diff < minDiffA) {
+          minDiffA = diff;
+          closestAlpha = a;
+        }
+      }
+
+      let clampedCos = Math.max(0.0, Math.min(1.0, cosPhi));
+      let closestColIdx = 0;
+      let minDiffC = Math.abs(clampedCos - COS_PHIS_RODA_LIVRE[0]);
+      for (let idx = 0; idx < COS_PHIS_RODA_LIVRE.length; idx++) {
+        let diff = Math.abs(clampedCos - COS_PHIS_RODA_LIVRE[idx]);
+        if (diff < minDiffC) {
+          minDiffC = diff;
+          closestColIdx = idx;
+        }
+      }
+
+      return {
+        alphaMatch: closestAlpha,
+        cosMatch: COS_PHIS_RODA_LIVRE[closestColIdx],
+        colIdx: closestColIdx,
+        ief: TABELA_RODA_LIVRE_IEF[closestAlpha][closestColIdx]
+      };
+    }
+
+    function obterIgEfpRodaLivre(alphaDeg, cosPhi) {
+      let closestAlpha = ALPHAS_RODA_LIVRE[0];
+      let minDiffA = Math.abs(alphaDeg - closestAlpha);
+      for (let a of ALPHAS_RODA_LIVRE) {
+        let diff = Math.abs(alphaDeg - a);
+        if (diff < minDiffA) {
+          minDiffA = diff;
+          closestAlpha = a;
+        }
+      }
+
+      let clampedCos = Math.max(0.0, Math.min(1.0, cosPhi));
+      let closestColIdx = 0;
+      let minDiffC = Math.abs(clampedCos - COS_PHIS_RODA_LIVRE[0]);
+      for (let idx = 0; idx < COS_PHIS_RODA_LIVRE.length; idx++) {
+        let diff = Math.abs(clampedCos - COS_PHIS_RODA_LIVRE[idx]);
+        if (diff < minDiffC) {
+          minDiffC = diff;
+          closestColIdx = idx;
+        }
+      }
+
+      return {
+        alphaMatch: closestAlpha,
+        cosMatch: COS_PHIS_RODA_LIVRE[closestColIdx],
+        colIdx: closestColIdx,
+        igEfp: TABELA_RODA_LIVRE_IG_EFP[closestAlpha][closestColIdx]
+      };
+    }
+
+    function mostrarRodaLivreAba(aba) {
+      const painelCarga = document.getElementById("rl-painel-carga");
+      const painelFonte = document.getElementById("rl-painel-fonte");
+      const btnCarga = document.getElementById("btn-rl-carga");
+      const btnFonte = document.getElementById("btn-rl-fonte");
+      if (aba === 'carga') {
+        if (painelCarga) painelCarga.style.display = 'block';
+        if (painelFonte) painelFonte.style.display = 'none';
+        if (btnCarga) btnCarga.classList.add('active');
+        if (btnFonte) btnFonte.classList.remove('active');
+      } else {
+        if (painelCarga) painelCarga.style.display = 'none';
+        if (painelFonte) painelFonte.style.display = 'block';
+        if (btnCarga) btnCarga.classList.remove('active');
+        if (btnFonte) btnFonte.classList.add('active');
+      }
+    }
+
+    function gerarTabelaRodaLivreHTML(alphaAtual, cosPhiAtual) {
+      const matchCarga = obterIefRodaLivre(alphaAtual, cosPhiAtual);
+      const matchFonte = obterIgEfpRodaLivre(alphaAtual, cosPhiAtual);
+
+      let headerCols = '<th>α [°]</th>';
+      for (let c of COS_PHIS_RODA_LIVRE) {
+        const isColMatch = (c === matchCarga.cosMatch);
+        headerCols += `<th class="${isColMatch ? 'col-destaque' : ''}">cosφ=${c.toFixed(1)}</th>`;
+      }
+
+      // Linhas da Tabela de Carga (Slide 35)
+      let bodyRowsCarga = '';
+      for (let a of ALPHAS_RODA_LIVRE) {
+        const isRowMatch = (a === matchCarga.alphaMatch);
+        let rowCells = `<td><strong>${a}°</strong></td>`;
+        for (let cIdx = 0; cIdx < COS_PHIS_RODA_LIVRE.length; cIdx++) {
+          const isCellMatch = isRowMatch && (cIdx === matchCarga.colIdx);
+          const val = TABELA_RODA_LIVRE_IEF[a][cIdx].toFixed(4);
+          if (isCellMatch) {
+            rowCells += `<td class="cell-destaque" style="background: rgba(227, 179, 65, 0.3) !important; border: 2px solid #e3b341 !important; color: #fff !important; font-weight: bold;" title="α=${a}°, cosφ=${matchCarga.cosMatch.toFixed(1)} → Ief=${val}">
+              <span style="color: #e3b341; font-weight: 700; display: block; font-size: 0.85rem;">${val}</span>
+            </td>`;
+          } else {
+            rowCells += `<td title="α=${a}°, cosφ=${COS_PHIS_RODA_LIVRE[cIdx].toFixed(1)} → Ief=${val}">${val}</td>`;
+          }
+        }
+        bodyRowsCarga += `<tr class="${isRowMatch ? 'row-destaque' : ''}">${rowCells}</tr>`;
+      }
+
+      // Linhas da Tabela da Fonte CA (Slide 36)
+      let bodyRowsFonte = '';
+      for (let a of ALPHAS_RODA_LIVRE) {
+        const isRowMatch = (a === matchFonte.alphaMatch);
+        let rowCells = `<td><strong>${a}°</strong></td>`;
+        for (let cIdx = 0; cIdx < COS_PHIS_RODA_LIVRE.length; cIdx++) {
+          const isCellMatch = isRowMatch && (cIdx === matchFonte.colIdx);
+          const val = TABELA_RODA_LIVRE_IG_EFP[a][cIdx].toFixed(4);
+          if (isCellMatch) {
+            rowCells += `<td class="cell-destaque" style="background: rgba(56, 139, 253, 0.3) !important; border: 2px solid #58a6ff !important; color: #fff !important; font-weight: bold;" title="α=${a}°, cosφ=${matchFonte.cosMatch.toFixed(1)} → Ig,efp=${val}">
+              <span style="color: #58a6ff; font-weight: 700; display: block; font-size: 0.85rem;">${val}</span>
+            </td>`;
+          } else {
+            rowCells += `<td title="α=${a}°, cosφ=${COS_PHIS_RODA_LIVRE[cIdx].toFixed(1)} → Ig,efp=${val}">${val}</td>`;
+          }
+        }
+        bodyRowsFonte += `<tr class="${isRowMatch ? 'row-destaque' : ''}">${rowCells}</tr>`;
+      }
+
+      return `
+        <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <span style="font-size: 0.88rem; font-weight: 700; color: #58a6ff;">Tabelas Numéricas Parametrizadas - Meia Onda com Roda Livre em MCD</span>
+            <div style="font-size: 0.76rem; color: #8b949e;">Fonte: UTFPR (Prof. Francisco José Viglus) - Slides 35 e 36</div>
+          </div>
+          <div style="font-size: 0.8rem; background: rgba(227, 179, 65, 0.15); border: 1px solid #e3b341; padding: 4px 10px; border-radius: 4px; color: #f0e6c5;">
+            Cruzamento: <strong>α = ${matchCarga.alphaMatch}°</strong> e <strong>cos(φ) = ${matchCarga.cosMatch.toFixed(1)}</strong> ➔ 
+            <span style="color: #e3b341; font-weight: bold;">Ief = ${matchCarga.ief.toFixed(4)}</span> | 
+            <span style="color: #58a6ff; font-weight: bold;">Ig,efp = ${matchFonte.igEfp.toFixed(4)}</span>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+          <button type="button" id="btn-rl-carga" class="btn-table-tag active" onclick="mostrarRodaLivreAba('carga')">
+            📊 Corrente na Carga: Ief (Slide 35)
+          </button>
+          <button type="button" id="btn-rl-fonte" class="btn-table-tag" onclick="mostrarRodaLivreAba('fonte')">
+            🔌 Corrente na Fonte CA: Ig,efp (Slide 36)
+          </button>
+        </div>
+
+        <!-- Painel 1: Tabela de Corrente na Carga (Slide 35) -->
+        <div id="rl-painel-carga" style="max-height: 270px; overflow-x: auto; overflow-y: auto; border: 1px solid #30363d; border-radius: 6px;">
+          <table class="tabela-conferencia tabela-puchlowski">
+            <thead>
+              <tr>${headerCols}</tr>
+            </thead>
+            <tbody>
+              ${bodyRowsCarga}
+            </tbody>
+          </table>
+          <div style="margin-top: 8px; text-align: center; font-size: 0.78rem;">
+            <a href="img/tabela_roda_livre_slide35.png" target="_blank" style="color: #58a6ff; text-decoration: underline;">
+              📄 Ver Imagem Original da Tabela de Carga (Slide 35 da Aula)
+            </a>
+          </div>
+        </div>
+
+        <!-- Painel 2: Tabela de Corrente na Fonte CA (Slide 36) -->
+        <div id="rl-painel-fonte" style="display: none; max-height: 270px; overflow-x: auto; overflow-y: auto; border: 1px solid #30363d; border-radius: 6px;">
+          <table class="tabela-conferencia tabela-puchlowski">
+            <thead>
+              <tr>${headerCols}</tr>
+            </thead>
+            <tbody>
+              ${bodyRowsFonte}
+            </tbody>
+          </table>
+          <div style="margin-top: 8px; text-align: center; font-size: 0.78rem;">
+            <a href="img/tabela_roda_livre_ig_slide36.png" target="_blank" style="color: #58a6ff; text-decoration: underline;">
+              📄 Ver Imagem Original da Tabela da Fonte CA (Slide 36 da Aula)
+            </a>
+          </div>
+        </div>
+      `;
+    }
+
+    function toggleTabelaRodaLivre() {
+      const box = document.getElementById("tabela-roda-livre-container");
+      if (box) {
+        const isHidden = (box.style.display === "none");
+        box.style.display = isHidden ? "block" : "none";
+        if (isHidden) {
+          setTimeout(() => {
+            const row = box.querySelector(".row-destaque");
+            if (row) {
+              row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          }, 40);
+        }
+      }
+    }
+
+    function toggleAbacoRLE() {
+      const box = document.getElementById("abaco-rle-container");
+      if (box) {
+        const isHidden = (box.style.display === "none");
+        box.style.display = isHidden ? "block" : "none";
+      }
+    }
+
+
     function gerarLinhasTabelaConferencia(phiAtual) {
       let rows = "";
       for (let p = 1; p <= 90; p++) {
@@ -1297,49 +1555,138 @@ import { atualizarGrafico } from './graficos.js';
 
         const XL = omega * L;
         const Z = Math.sqrt(R * R + XL * XL);
-        const phi_rad = Math.atan(XL / R);
-        const wtau = XL / R;
+        const cos_phi = R / Z;
+
+        // Verificação do modo de operação (Slide 41 / Slide 44):
+        const tau = L / R;
+        const tau_ms = tau * 1000;
+        const t_5tau_ms = 5 * tau_ms;
+        const t_lim_ms = ((Math.PI + a_rad) / omega) * 1000;
+        const isMCC = (t_5tau_ms >= t_lim_ms);
 
         const V_o_med = (V_p / (2 * Math.PI)) * (1 + Math.cos(a_rad));
         const I_o_med = V_o_med / R;
 
-        const V2_p = (V_p / Math.PI) * Math.sqrt(Math.pow((Math.PI - a_rad) * Math.cos(a_rad) + Math.sin(a_rad), 2) + Math.pow(Math.sin(a_rad), 2));
-        const I_o_ef = Math.sqrt(Math.pow(I_o_med, 2) + Math.pow(V2_p / (Math.SQRT2 * Z), 2));
-        const I_T_ef = I_o_ef * Math.sqrt((Math.PI - a_rad) / (2 * Math.PI));
+        let I_o_ef = 0;
+        let I_T_ef = 0;
+        let P_R = 0;
+        let S = 0;
+        let FP = 0;
+        let rlMatch = null;
+        let rlIgMatch = null;
 
-        const P_R = R * Math.pow(I_o_ef, 2);
-        const S = V_rms * I_T_ef;
-        const FP = S > 0 ? (P_R / S) : 0;
+        if (isMCC) {
+          // Modo de Condução Contínuo (MCC - Slides 43-46)
+          // "Assumir que o indutor é grande tal que: IR,med ≈ IR,ef = Io"
+          I_o_ef = I_o_med;
+          P_R = V_o_med * I_o_med;
+          I_T_ef = I_o_med * Math.sqrt((Math.PI - a_rad) / (2 * Math.PI));
+          S = V_rms * I_T_ef;
+          FP = S > 0 ? (P_R / S) : 0;
+        } else {
+          // Modo de Condução Descontínuo (MCD - Slides 35, 36, 40-42)
+          rlMatch = obterIefRodaLivre(alpha, cos_phi);
+          rlIgMatch = obterIgEfpRodaLivre(alpha, cos_phi);
+          I_o_ef = (V_p / Z) * rlMatch.ief;
+          I_T_ef = (V_p / Z) * rlIgMatch.igEfp;
+          P_R = R * Math.pow(I_o_ef, 2);
+          S = V_rms * I_T_ef;
+          FP = S > 0 ? (P_R / S) : 0;
+        }
+
+        const modoDescricao = isMCC ? "Modo de Condução Contínuo (MCC)" : "Modo de Condução Descontínuo (MCD)";
+        const modoCor = isMCC ? "#388bfd" : "#e3b341";
 
         summaryHTML = `
+          <div class="stat-box"><div class="stat-label">Modo de Operação</div><div class="stat-value" style="color: ${modoCor}; font-size: 0.88rem;">${isMCC ? "MCC (Contínuo)" : "MCD (Descontínuo)"}</div></div>
           <div class="stat-box"><div class="stat-label">Ângulo Disparo α</div><div class="stat-value">${alpha}°</div></div>
           <div class="stat-box"><div class="stat-label">Vo,méd (Saída)</div><div class="stat-value">${V_o_med.toFixed(2)} V</div></div>
           <div class="stat-box"><div class="stat-label">Io,méd (Carga)</div><div class="stat-value">${I_o_med.toFixed(3)} A</div></div>
           <div class="stat-box"><div class="stat-label">Io,ef (RMS Carga)</div><div class="stat-value">${I_o_ef.toFixed(3)} A</div></div>
-          <div class="stat-box"><div class="stat-label">IT,ef (Tiristor)</div><div class="stat-value">${I_T_ef.toFixed(3)} A</div></div>
+          <div class="stat-box"><div class="stat-label">Ig,ef (Fonte CA / Tiristor)</div><div class="stat-value">${I_T_ef.toFixed(3)} A</div></div>
           <div class="stat-box"><div class="stat-label">Potência Ativa Po</div><div class="stat-value">${P_R.toFixed(2)} W</div></div>
           <div class="stat-box"><div class="stat-label">Fator de Potência</div><div class="stat-value">${FP.toFixed(3)}</div></div>
         `;
 
         stepsHTML = `
           <div class="step-box">
-            <div class="step-title">Etapa 1: Ação Grampeadora do Diodo de Roda Livre</div>
-            <div class="step-desc">Em \\(\\omega t = \\pi\\), a tensão da rede inverte polaridade, polarizando diretamente o diodo de roda livre e grampeando a saída em zero:</div>
-            <div class="math-block">\\[ v_o(\\omega t) = \\begin{cases} V_p \\operatorname{sen}(\\omega t), & \\alpha \\le \\omega t \\le \\pi \\\\ 0, & \\pi < \\omega t < 2\\pi + \\alpha \\end{cases} \\]</div>
+            <div class="step-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+              <span>Etapa 1: Verificação do Modo de Operação (Slide 41 / Slide 44)</span>
+              <span style="background: rgba(56, 139, 253, 0.15); border: 1px solid ${modoCor}; color: ${modoCor}; padding: 2px 8px; border-radius: 4px; font-size: 0.78rem; font-weight: bold;">
+                ${modoDescricao}
+              </span>
+            </div>
+            <div class="step-desc">Constante de tempo de descarga da carga \\(\\tau\\) e tempo de condução livre (\\(5\\tau\\)):</div>
+            <div class="math-block">\\[ \\tau = \\frac{L}{R} = \\frac{${(L*1000).toFixed(1)}\\text{ mH}}{${R}\\,\\Omega} = ${tau_ms.toFixed(2)}\\text{ ms} \\qquad 5\\tau = ${(t_5tau_ms).toFixed(2)}\\text{ ms} \\]</div>
+            <div class="step-desc">Tempo limite angular de bloqueio até o próximo ciclo:</div>
+            <div class="math-block">\\[ t_{lim} = \\frac{\\pi + \\alpha}{\\omega} = \\frac{\\pi + ${alpha}^\\circ}{${omega.toFixed(1)}} = ${t_lim_ms.toFixed(2)}\\text{ ms} \\]</div>
+            <div class="step-desc">
+              ${isMCC ? 
+                `Como \\(5\\tau = ${t_5tau_ms.toFixed(2)}\\text{ ms} > ${t_lim_ms.toFixed(2)}\\text{ ms}\\), a corrente no indutor <strong>não se extingue</strong> antes do próximo pulso de disparo. O circuito opera em <strong>Modo de Condução Contínuo (MCC)</strong>!` : 
+                `Como \\(5\\tau = ${t_5tau_ms.toFixed(2)}\\text{ ms} < ${t_lim_ms.toFixed(2)}\\text{ ms}\\), a corrente se extingue antes do próximo ciclo. O circuito opera em <strong>Modo de Condução Descontínuo (MCD)</strong>!`}
+            </div>
           </div>
 
           <div class="step-box">
             <div class="step-title">Etapa 2: Tensão Média e Corrente Média na Carga</div>
-            <div class="step-desc">Como a excursão negativa de tensão é bloqueada pelo diodo de roda livre:</div>
-            <div class="math-block">\\[ V_{o,med} = \\frac{1}{2\\pi} \\int_{\\alpha}^{\\pi} V_p \\operatorname{sen}(\\omega t)\\,d(\\omega t) = \\frac{V_p}{2\\pi}(1 + \\cos\\alpha) \\approx 0{,}225 V_{ef}(1 + \\cos\\alpha) \\]</div>
-            <div class="math-block">\\[ V_{o,med} = \\frac{${V_p.toFixed(2)}}{2\\pi}(1 + \\cos(${alpha}^\\circ)) = ${V_o_med.toFixed(2)}\\text{ V} \\]</div>
+            <div class="step-desc">O diodo de roda livre conduz quando a tensão da rede se torna negativa (\\(\\omega t > \\pi\\)), grampeando a tensão na saída em zero:</div>
+            <div class="math-block">\\[ V_{o,med} = \\frac{\\sqrt{2}}{2\\pi} V_{ef} (1 + \\cos\\alpha) = \\frac{\\sqrt{2}}{2\\pi} \\cdot ${V_rms.toFixed(1)} \\cdot (1 + \\cos(${alpha}^\\circ)) = ${V_o_med.toFixed(2)}\\text{ V} \\]</div>
+            <div class="step-desc">Como a tensão média no indutor em regime permanente é nula (\\(\\bar{v}_L = 0\\)):</div>
             <div class="math-block">\\[ I_{o,med} = \\frac{V_{o,med}}{R} = \\frac{${V_o_med.toFixed(2)}}{${R}} = ${I_o_med.toFixed(3)}\\text{ A} \\]</div>
           </div>
 
           <div class="step-box">
-            <div class="step-title">Etapa 3: Corrente Eficaz na Carga e nos Semicondutores</div>
-            <div class="math-block">\\[ I_{o,ef} = ${I_o_ef.toFixed(3)}\\text{ A} \\qquad I_{T,ef} = ${I_T_ef.toFixed(3)}\\text{ A} \\]</div>
-            <div class="math-block">\\[ P = R \\cdot (I_{o,ef})^2 = ${P_R.toFixed(2)}\\text{ W} \\qquad S = V_{ef} \\cdot I_{T,ef} = ${S.toFixed(2)}\\text{ VA} \\qquad FP = ${FP.toFixed(3)} \\]</div>
+            <div class="step-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+              <span>Etapa 3: Corrente Eficaz na Carga</span>
+              ${!isMCC ? `
+                <button type="button" class="btn-table-tag" onclick="toggleTabelaRodaLivre(); setTimeout(() => mostrarRodaLivreAba('carga'), 50);" title="Visualizar Tabela de Roda Livre (Slide 35)">
+                  📊 Tabela Ief Carga (Slide 35)
+                </button>
+              ` : ''}
+            </div>
+            ${isMCC ? `
+              <div class="step-desc">No <strong>MCC</strong>, conforme modelo ensinado em aula (Slide 44 da UTFPR), assume-se que o indutor é suficientemente grande para que a ondulação (ripple) seja desprezível:</div>
+              <div class="math-block">\\[ I_{R,med} \\approx I_{R,ef} = I_{o,med} = ${I_o_med.toFixed(3)}\\text{ A} \\]</div>
+              <div class="math-block">\\[ P_o = V_{o,med} \\cdot I_{o,med} = ${V_o_med.toFixed(2)} \\cdot ${I_o_med.toFixed(3)} = ${P_R.toFixed(2)}\\text{ W} \\]</div>
+            ` : `
+              <div class="step-desc">No <strong>MCD</strong>, a corrente eficaz na carga é obtida via <strong>Tabela Parametrizada de Roda Livre</strong> (Slide 35 da UTFPR):</div>
+              <div class="step-desc">Para \\(\\alpha = ${alpha}^\\circ\\) e \\(\\cos\\phi = \\frac{R}{Z} = \\frac{${R}}{${Z.toFixed(2)}} \\approx ${rlMatch.cosMatch.toFixed(1)}\\):</div>
+              <div class="math-block">\\[ I_{ef} = ${rlMatch.ief.toFixed(4)} \\]</div>
+              <div class="math-block">\\[ I_{R,ef} = \\frac{\\sqrt{2} \\cdot V_{ef}}{\\sqrt{R^2 + X_L^2}} \\cdot I_{ef} = \\frac{\\sqrt{2} \\cdot ${V_rms.toFixed(1)}}{${Z.toFixed(3)}} \\cdot ${rlMatch.ief.toFixed(4)} = ${I_o_ef.toFixed(3)}\\text{ A} \\]</div>
+              <div class="math-block">\\[ P = R \\cdot (I_{R,ef})^2 = ${R}\\,\\Omega \\cdot (${I_o_ef.toFixed(3)}\\text{ A})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
+
+              <!-- Painel Expansível da Tabela de Roda Livre -->
+              <div id="tabela-roda-livre-container" style="display: none; margin-top: 12px; background: #0d1117; border: 1px solid var(--card-border); border-radius: 6px; padding: 12px;">
+                ${gerarTabelaRodaLivreHTML(alpha, cos_phi)}
+              </div>
+            `}
+          </div>
+
+          <div class="step-box">
+            <div class="step-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+              <span>Etapa 4: Corrente na Rede CA, Potência Aparente e Fator de Potência</span>
+              ${!isMCC ? `
+                <button type="button" class="btn-table-tag" onclick="toggleTabelaRodaLivre(); setTimeout(() => mostrarRodaLivreAba('fonte'), 50);" title="Visualizar Tabela de Ig,efp (Slide 36)">
+                  🔌 Tabela Fonte CA (Slide 36)
+                </button>
+              ` : ''}
+            </div>
+            <div class="step-desc">
+              ${isMCC ? 
+                `No <strong>MCC</strong>, a fonte CA e o tiristor conduzem apenas durante o intervalo \\([\\alpha, \\pi]\\) (Slide 45 da UTFPR):` : 
+                `No <strong>MCD</strong>, a corrente eficaz na rede CA \\(I_{g,ef}\\) é obtida via <strong>Tabela Parametrizada da Fonte CA</strong> (Slide 36 da UTFPR):`}
+            </div>
+            ${isMCC ? `
+              <div class="math-block">\\[ I_{g,ef} = I_{T,ef} = I_o \\cdot \\sqrt{\\frac{\\pi - \\alpha}{2\\pi}} = ${I_o_med.toFixed(3)} \\cdot \\sqrt{\\frac{\\pi - ${a_rad.toFixed(3)}}{2\\pi}} = ${I_T_ef.toFixed(3)}\\text{ A} \\]
+            ` : `
+              <div class="step-desc">Para \\(\\alpha = ${alpha}^\\circ\\) e \\(\\cos\\phi \\approx ${rlIgMatch.cosMatch.toFixed(1)}\\):</div>
+              <div class="math-block">\\[ I_{g,efp} = ${rlIgMatch.igEfp.toFixed(4)} \\]</div>
+              <div class="math-block">\\[ I_{g,ef} = \\frac{\\sqrt{2} \\cdot V_{ef}}{\\sqrt{R^2 + X_L^2}} \\cdot I_{g,efp} = \\frac{\\sqrt{2} \\cdot ${V_rms.toFixed(1)}}{${Z.toFixed(3)}} \\cdot ${rlIgMatch.igEfp.toFixed(4)} = ${I_T_ef.toFixed(3)}\\text{ A} \\]</div>
+            `}
+            <div class="step-desc">Potência aparente fornecida pela rede CA:</div>
+            <div class="math-block">\\[ S = V_{ef} \\cdot I_{g,ef} = ${V_rms.toFixed(1)}\\text{ V} \\cdot ${I_T_ef.toFixed(3)}\\text{ A} = ${S.toFixed(2)}\\text{ VA} \\]</div>
+            <div class="step-desc">Fator de potência do retificador:</div>
+            <div class="math-block">\\[ F_P = \\frac{P}{S} = \\frac{${P_R.toFixed(2)}}{${S.toFixed(2)}} = ${FP.toFixed(3)} \\]</div>
           </div>
         `;
       } else if (topologia === "mono_meia_onda_controlado_rle") {
@@ -1353,8 +1700,11 @@ import { atualizarGrafico } from './graficos.js';
         const XL = omega * L;
         const Z = Math.sqrt(R * R + XL * XL);
         const phi_rad = Math.atan(XL / R);
+        const phi_deg = (phi_rad * 180) / Math.PI;
+        const cos_phi = R / Z;
         const tan_phi = XL / R;
-        const theta1_rad = Math.asin(Math.min(1, E / V_p));
+        const fator_a = E / V_p;
+        const theta1_rad = Math.asin(Math.min(1, Math.max(0, fator_a)));
         const theta1_deg = (theta1_rad * 180) / Math.PI;
 
         function i_rle(th) {
@@ -1363,20 +1713,21 @@ import { atualizarGrafico } from './graficos.js';
           return t1 - t2;
         }
 
-        let bMin = a_rad + 0.001;
+        let bMin = a_rad + 0.0001;
         let bMax = 2 * Math.PI;
-        for (let iter = 0; iter < 50; iter++) {
+        for (let iter = 0; iter < 100; iter++) {
           const bMid = (bMin + bMax) / 2;
           if (i_rle(bMid) > 0) bMin = bMid; else bMax = bMid;
         }
         const beta_rad = (bMin + bMax) / 2;
         const beta_deg = (beta_rad * 180) / Math.PI;
 
-        const V_o_med = (1 / (2 * Math.PI)) * (V_p * (Math.cos(a_rad) - Math.cos(beta_rad)) + E * (2 * Math.PI - (beta_rad - a_rad)));
+        // Slide 28 UTFPR: Vo,med = [sqrt(2)*Vef*(cos(alpha) - cos(beta)) + E*(2*pi + alpha - beta)] / (2*pi)
+        const V_o_med = (1 / (2 * Math.PI)) * (V_p * (Math.cos(a_rad) - Math.cos(beta_rad)) + E * (2 * Math.PI + a_rad - beta_rad));
         const I_o_med = Math.max(0, (V_o_med - E) / R);
 
         let soma_i2 = 0;
-        const nSteps = 200;
+        const nSteps = 5000;
         const dTh = (beta_rad - a_rad) / nSteps;
         for (let p = 0; p < nSteps; p++) {
           const th = a_rad + (p + 0.5) * dTh;
@@ -1394,37 +1745,84 @@ import { atualizarGrafico } from './graficos.js';
         summaryHTML = `
           <div class="stat-box"><div class="stat-label">Ângulo Disparo α</div><div class="stat-value">${alpha}°</div></div>
           <div class="stat-box"><div class="stat-label">Ângulo Extinção β</div><div class="stat-value">${beta_deg.toFixed(1)}°</div></div>
+          <div class="stat-box"><div class="stat-label">Fator de Carga a</div><div class="stat-value">${fator_a.toFixed(2)}</div></div>
           <div class="stat-box"><div class="stat-label">Vo,méd (Saída)</div><div class="stat-value">${V_o_med.toFixed(2)} V</div></div>
           <div class="stat-box"><div class="stat-label">Io,méd (Carga)</div><div class="stat-value">${I_o_med.toFixed(3)} A</div></div>
           <div class="stat-box"><div class="stat-label">Io,ef (RMS Carga)</div><div class="stat-value">${I_o_ef.toFixed(3)} A</div></div>
+          <div class="stat-box"><div class="stat-label">Potência Resistor PR</div><div class="stat-value">${P_R.toFixed(2)} W</div></div>
+          <div class="stat-box"><div class="stat-label">Potência Bateria PE</div><div class="stat-value">${P_E.toFixed(2)} W</div></div>
           <div class="stat-box"><div class="stat-label">Potência Total PM</div><div class="stat-value">${P_M.toFixed(2)} W</div></div>
           <div class="stat-box"><div class="stat-label">Fator de Potência</div><div class="stat-value">${FP.toFixed(3)}</div></div>
         `;
 
         stepsHTML = `
           <div class="step-box">
-            <div class="step-title">Etapa 1: Condição de Disparo do Tiristor com Bateria</div>
-            <div class="step-desc">O disparo só é eficaz quando a tensão alternada é superior ao potencial da bateria:</div>
-            <div class="math-block">\\[ \\theta_1 = \\operatorname{arcsen}\\left(\\frac{E}{V_p}\\right) = ${theta1_deg.toFixed(2)}^\\circ \\]</div>
-            <div class="step-desc">Ângulo de disparo selecionado: \\(\\alpha = ${alpha}^\\circ \\ge ${theta1_deg.toFixed(2)}^\\circ\\).</div>
+            <div class="step-title">Etapa 1: Parâmetros do Circuito e Condição de Disparo (Slide 20 / Slide 28)</div>
+            <div class="step-desc">Relação entre as fontes (fator de contracarga \\(a\\)) e parâmetros de impedância:</div>
+            <div class="math-block">\\[ a = \\frac{E}{\\sqrt{2}V_{ef}} = \\frac{${E}}{${V_p.toFixed(2)}} = ${fator_a.toFixed(2)} \\qquad X_L = \\omega L = ${XL.toFixed(2)}\\,\\Omega \\]</div>
+            <div class="math-block">\\[ Z = \\sqrt{R^2 + X_L^2} = \\sqrt{${R}^2 + (${XL.toFixed(2)})^2} = ${Z.toFixed(2)}\\,\\Omega \\qquad \\cos(\\phi) = \\frac{R}{Z} = \\frac{${R}}{${Z.toFixed(2)}} = ${cos_phi.toFixed(2)} \\]</div>
+            <div class="step-desc">Ângulo natural mínimo para polarização direta do tiristor:</div>
+            <div class="math-block">\\[ \\theta_1 = \\operatorname{arcsen}\\left(\\frac{E}{V_p}\\right) = \\operatorname{arcsen}(${fator_a.toFixed(3)}) = ${theta1_deg.toFixed(2)}^\\circ \\]</div>
+            <div class="step-desc">Como \\(\\alpha = ${alpha}^\\circ \\ge ${theta1_deg.toFixed(2)}^\\circ\\), o pulso de gate dispara o SCR com sucesso.</div>
           </div>
 
           <div class="step-box">
-            <div class="step-title">Etapa 2: Ângulo de Extinção da Corrente (\\(\\beta\\))</div>
-            <div class="step-desc">Raiz numérica calculada pela equação diferencial completa da carga RLE:</div>
-            <div class="math-block">\\[ \\beta = ${beta_deg.toFixed(1)}^\\circ \\quad (${beta_rad.toFixed(3)}\\text{ rad}) \\]</div>
+            <div class="step-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+              <span>Etapa 2: Obtenção do Ângulo de Extinção (\\(\\beta\\)) via Ábaco de Puchlowski</span>
+              <button type="button" class="btn-table-tag" onclick="toggleAbacoRLE()" title="Visualizar Ábaco de Puchlowski com Bateria">
+                📊 Ábaco de Puchlowski (a = ${fator_a.toFixed(1)})
+              </button>
+            </div>
+            <div class="step-desc">
+              Pelo <strong>Ábaco de Puchlowski</strong> para \\(a = ${fator_a.toFixed(2)}\\) com \\(\\alpha = ${alpha}^\\circ\\) e \\(\\cos\\phi = ${cos_phi.toFixed(2)}\\) (Slide 28 da UTFPR):
+              <button type="button" class="btn-table-tag" style="margin-left: 6px; padding: 2px 7px; font-size: 0.74rem;" onclick="toggleAbacoRLE()">📊 Ver Ábaco Traçado</button>
+            </div>
+            <div class="math-block">\\[ \\beta \\approx ${Math.round(beta_deg)}^\\circ \\quad (${beta_rad.toFixed(3)}\\text{ rad}) \\]</div>
+            <div class="step-desc">
+              Raiz da equação diferencial: \\(i(\\beta) = \\frac{V_p}{Z}\\left[\\operatorname{sen}(\\beta - \\phi) - \\operatorname{sen}(\\alpha - \\phi)e^{-\\frac{\\beta - \\alpha}{\\tan\\phi}}\\right] - \\frac{E}{R}\\left[1 - e^{-\\frac{\\beta - \\alpha}{\\tan\\phi}}\\right] = 0\\).
+            </div>
+
+            <!-- Painel Expansível do Ábaco RLE -->
+            <div id="abaco-rle-container" style="display: none; margin-top: 12px; background: #0d1117; border: 1px solid var(--card-border); border-radius: 6px; padding: 12px; text-align: center;">
+              <div style="font-size: 0.85rem; color: #c9d1d9; margin-bottom: 8px;">
+                <strong>Ábaco de Puchlowski para Carga RLE (a = ${fator_a.toFixed(1)}):</strong>
+                <br><span style="color: #8b949e; font-size: 0.78rem;">1º Subir em α = ${alpha}° ➔ 2º Cruzar com curva cos(φ) ≈ ${cos_phi.toFixed(1)} ➔ 3º Rebater à esquerda e ler β ≈ ${Math.round(beta_deg)}°</span>
+              </div>
+              <div style="display: flex; justify-content: center; margin: 8px 0;">
+                <a href="${Math.abs(fator_a - 0.2) < 0.1 ? 'img/abaco_puchlowski_a02_tracado.png' : 'img/abaco_puchlowski_completo_tracado.png'}" target="_blank" title="Clique para ampliar em alta resolução">
+                  <img src="${Math.abs(fator_a - 0.2) < 0.1 ? 'img/abaco_puchlowski_a02_tracado.png' : 'img/abaco_puchlowski_completo_tracado.png'}" alt="Ábaco RLE Traçado" style="max-width: 100%; max-height: 380px; border-radius: 6px; border: 1px solid #30363d; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                </a>
+              </div>
+              <div style="margin-top: 8px; font-size: 0.78rem;">
+                <a href="img/abaco_puchlowski_completo_tracado.png" target="_blank" style="color: #58a6ff; text-decoration: underline;">
+                  📄 Ver Folha Completa da Aula (com os 4 Ábacos de a = 0 até a = 0,6 e Fórmulas)
+                </a>
+              </div>
+            </div>
           </div>
 
           <div class="step-box">
-            <div class="step-title">Etapa 3: Tensão Média e Corrente Média</div>
-            <div class="math-block">\\[ V_{o,med} = \\frac{1}{2\\pi} \\left[ V_p(\\cos\\alpha - \\cos\\beta) + E(2\\pi - (\\beta - \\alpha)) \\right] = ${V_o_med.toFixed(2)}\\text{ V} \\]</div>
+            <div class="step-title">Etapa 3: Tensão Média e Corrente Média na Carga (Slide 28 / Slide 30)</div>
+            <div class="step-desc">A tensão média inclui a condução do tiristor \\([\\alpha, \\beta]\\) e a tensão da bateria \\(E\\) durante o bloqueio \\([\\beta, 2\\pi + \\alpha]\\):</div>
+            <div class="math-block">\\[ V_{o,med} = \\frac{\\sqrt{2}V_{ef}[\\cos\\alpha - \\cos\\beta] + E(2\\pi + \\alpha - \\beta)}{2\\pi} \\]</div>
+            <div class="math-block">\\[ V_{o,med} = \\frac{\\sqrt{2} \\cdot ${V_rms.toFixed(1)}[\\cos(${alpha}^\\circ) - \\cos(${Math.round(beta_deg)}^\\circ)] + ${E}(2\\pi + ${a_rad.toFixed(3)} - ${beta_rad.toFixed(3)})}{2\\pi} = ${V_o_med.toFixed(2)}\\text{ V} \\]</div>
+            <div class="step-desc">Como o indutor em regime tem tensão média nula, a corrente média na carga é:</div>
             <div class="math-block">\\[ I_{o,med} = \\frac{V_{o,med} - E}{R} = \\frac{${V_o_med.toFixed(2)} - ${E}}{${R}} = ${I_o_med.toFixed(3)}\\text{ A} \\]</div>
           </div>
 
           <div class="step-box">
-            <div class="step-title">Etapa 4: Potência Total Fornecida e Fator de Potência</div>
-            <div class="math-block">\\[ P_R = R \\cdot (I_{o,ef})^2 = ${P_R.toFixed(2)}\\text{ W} \\qquad P_E = E \\cdot I_{o,med} = ${P_E.toFixed(2)}\\text{ W} \\]</div>
-            <div class="math-block">\\[ P_M = P_R + P_E = ${P_M.toFixed(2)}\\text{ W} \\qquad S = ${S.toFixed(2)}\\text{ VA} \\qquad FP = ${FP.toFixed(3)} \\]</div>
+            <div class="step-title">Etapa 4: Corrente Eficaz, Potências e Fator de Potência (Slides 29 a 31)</div>
+            <div class="step-desc">Corrente eficaz na carga obtida via integral da forma de onda / ábaco de \\(I_{efp}\\) (Slide 29):</div>
+            <div class="math-block">\\[ I_{o,ef} = ${I_o_ef.toFixed(3)}\\text{ A} \\]</div>
+            <div class="step-desc">Potência dissipada no resistor \\(R\\) (Slide 30):</div>
+            <div class="math-block">\\[ P_R = R \\cdot (I_{o,ef})^2 = ${R}\\,\\Omega \\cdot (${I_o_ef.toFixed(3)}\\text{ A})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
+            <div class="step-desc">Potência entregue à fonte de tensão contínua \\(E\\) (bateria):</div>
+            <div class="math-block">\\[ P_E = E \\cdot I_{o,med} = ${E}\\text{ V} \\cdot ${I_o_med.toFixed(3)}\\text{ A} = ${P_E.toFixed(2)}\\text{ W} \\]</div>
+            <div class="step-desc">Potência ativa total fornecida pelo retificador (Slide 31):</div>
+            <div class="math-block">\\[ P_M = P_R + P_E = ${P_R.toFixed(2)}\\text{ W} + ${P_E.toFixed(2)}\\text{ W} = ${P_M.toFixed(2)}\\text{ W} \\]</div>
+            <div class="step-desc">Potência aparente e Fator de Potência na rede CA:</div>
+            <div class="math-block">\\[ S = V_{ef} \\cdot I_{o,ef} = ${V_rms.toFixed(1)}\\text{ V} \\cdot ${I_o_ef.toFixed(3)}\\text{ A} = ${S.toFixed(2)}\\text{ VA} \\]</div>
+            <div class="math-block">\\[ F_P = \\frac{P_M}{S} = \\frac{${P_M.toFixed(2)}}{${S.toFixed(2)}} = ${FP.toFixed(3)} \\]</div>
           </div>
         `;
       } else if (topologia === "mono_onda_completa_controlado_r") {
@@ -2485,6 +2883,8 @@ export {
   TABELA_IEFP_RODA_LIVRE,
   TABELA_PUCHLOWSKI_IEFP,
   TABELA_PUCHLOWSKI_BETA,
+  TABELA_RODA_LIVRE_IEF,
+  TABELA_RODA_LIVRE_IG_EFP,
   interpolarBeta,
   interpolarIefp,
   interpolarIefpRodaLivre,
@@ -2494,5 +2894,11 @@ export {
   gerarTabelaPuchlowskiHTML,
   toggleTabelaPuchlowski,
   mostrarPuchlowskiAba,
+  obterIefRodaLivre,
+  obterIgEfpRodaLivre,
+  gerarTabelaRodaLivreHTML,
+  toggleTabelaRodaLivre,
+  mostrarRodaLivreAba,
+  toggleAbacoRLE,
   executarCalculo
 };
