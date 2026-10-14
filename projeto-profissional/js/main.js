@@ -372,7 +372,7 @@ import {
           <line x1="160" y1="25" x2="410" y2="25" stroke="#58a6ff" stroke-width="2.5" />
           <line x1="160" y1="205" x2="410" y2="205" stroke="#58a6ff" stroke-width="2.5" />
 
-          <!-- Braco 1 (X=160, Fase a): D1 (topo) e D4 (base) -->
+          <!-- Braco 1 (X=160, Fase a): D1 (topo) e D2 (base) -->
           <line x1="160" y1="25" x2="160" y2="45" stroke="#58a6ff" stroke-width="2" />
           <polygon points="150,70 170,70 160,45" fill="#238636" stroke="#238636" stroke-width="2" />
           <line x1="150" y1="45" x2="170" y2="45" stroke="#238636" stroke-width="2.5" />
@@ -380,10 +380,10 @@ import {
           <line x1="160" y1="70" x2="160" y2="160" stroke="#58a6ff" stroke-width="2" />
           <polygon points="150,185 170,185 160,160" fill="#238636" stroke="#238636" stroke-width="2" />
           <line x1="150" y1="160" x2="170" y2="160" stroke="#238636" stroke-width="2.5" />
-          <text x="138" y="175" fill="#f0f6fc" font-size="11" font-weight="bold">D4</text>
+          <text x="138" y="175" fill="#f0f6fc" font-size="11" font-weight="bold">D2</text>
           <line x1="160" y1="185" x2="160" y2="205" stroke="#58a6ff" stroke-width="2" />
 
-          <!-- Braco 2 (X=230, Fase b): D3 (topo) e D6 (base) -->
+          <!-- Braco 2 (X=230, Fase b): D3 (topo) e D4 (base) -->
           <line x1="230" y1="25" x2="230" y2="45" stroke="#58a6ff" stroke-width="2" />
           <polygon points="220,70 240,70 230,45" fill="#238636" stroke="#238636" stroke-width="2" />
           <line x1="220" y1="45" x2="240" y2="45" stroke="#238636" stroke-width="2.5" />
@@ -391,10 +391,10 @@ import {
           <line x1="230" y1="70" x2="230" y2="160" stroke="#58a6ff" stroke-width="2" />
           <polygon points="220,185 240,185 230,160" fill="#238636" stroke="#238636" stroke-width="2" />
           <line x1="220" y1="160" x2="240" y2="160" stroke="#238636" stroke-width="2.5" />
-          <text x="208" y="175" fill="#f0f6fc" font-size="11" font-weight="bold">D6</text>
+          <text x="208" y="175" fill="#f0f6fc" font-size="11" font-weight="bold">D4</text>
           <line x1="230" y1="185" x2="230" y2="205" stroke="#58a6ff" stroke-width="2" />
 
-          <!-- Braco 3 (X=300, Fase c): D5 (topo) e D2 (base) -->
+          <!-- Braco 3 (X=300, Fase c): D5 (topo) e D6 (base) -->
           <line x1="300" y1="25" x2="300" y2="45" stroke="#58a6ff" stroke-width="2" />
           <polygon points="290,70 310,70 300,45" fill="#238636" stroke="#238636" stroke-width="2" />
           <line x1="290" y1="45" x2="310" y2="45" stroke="#238636" stroke-width="2.5" />
@@ -402,7 +402,7 @@ import {
           <line x1="300" y1="70" x2="300" y2="160" stroke="#58a6ff" stroke-width="2" />
           <polygon points="290,185 310,185 300,160" fill="#238636" stroke="#238636" stroke-width="2" />
           <line x1="290" y1="160" x2="310" y2="160" stroke="#238636" stroke-width="2.5" />
-          <text x="278" y="175" fill="#f0f6fc" font-size="11" font-weight="bold">D2</text>
+          <text x="278" y="175" fill="#f0f6fc" font-size="11" font-weight="bold">D6</text>
           <line x1="300" y1="185" x2="300" y2="205" stroke="#58a6ff" stroke-width="2" />
 
           <!-- Conexoes das Linhas a, b, c -->
@@ -1177,7 +1177,7 @@ import {
           <line x1="160" y1="25" x2="410" y2="25" stroke="#58a6ff" stroke-width="2.5" />
           <line x1="160" y1="205" x2="410" y2="205" stroke="#58a6ff" stroke-width="2.5" />
 
-          <!-- Braco 1 (X=160, Fase a): T1 (topo) e T4 (base) -->
+          <!-- Braco 1 (X=160, Fase a): T1 (topo) e T2 (base) -->
           <line x1="160" y1="25" x2="160" y2="45" stroke="#58a6ff" stroke-width="2" />
           <polygon points="150,70 170,70 160,45" fill="#238636" stroke="#238636" stroke-width="2" />
           <line x1="150" y1="45" x2="170" y2="45" stroke="#238636" stroke-width="2.5" />
@@ -1187,10 +1187,10 @@ import {
           <polygon points="150,185 170,185 160,160" fill="#238636" stroke="#238636" stroke-width="2" />
           <line x1="150" y1="160" x2="170" y2="160" stroke="#238636" stroke-width="2.5" />
           <path d="M 153 168 L 145 173" stroke="#f0883e" stroke-width="1.8" />
-          <text x="136" y="170" fill="#f0f6fc" font-size="10" font-weight="bold">T4</text>
+          <text x="136" y="170" fill="#f0f6fc" font-size="10" font-weight="bold">T2</text>
           <line x1="160" y1="185" x2="160" y2="205" stroke="#58a6ff" stroke-width="2" />
 
-          <!-- Braco 2 (X=230, Fase b): T3 (topo) e T6 (base) -->
+          <!-- Braco 2 (X=230, Fase b): T3 (topo) e T4 (base) -->
           <line x1="230" y1="25" x2="230" y2="45" stroke="#58a6ff" stroke-width="2" />
           <polygon points="220,70 240,70 230,45" fill="#238636" stroke="#238636" stroke-width="2" />
           <line x1="220" y1="45" x2="240" y2="45" stroke="#238636" stroke-width="2.5" />
@@ -1200,10 +1200,10 @@ import {
           <polygon points="220,185 240,185 230,160" fill="#238636" stroke="#238636" stroke-width="2" />
           <line x1="220" y1="160" x2="240" y2="160" stroke="#238636" stroke-width="2.5" />
           <path d="M 223 168 L 215 173" stroke="#f0883e" stroke-width="1.8" />
-          <text x="206" y="170" fill="#f0f6fc" font-size="10" font-weight="bold">T6</text>
+          <text x="206" y="170" fill="#f0f6fc" font-size="10" font-weight="bold">T4</text>
           <line x1="230" y1="185" x2="230" y2="205" stroke="#58a6ff" stroke-width="2" />
 
-          <!-- Braco 3 (X=300, Fase c): T5 (topo) e T2 (base) -->
+          <!-- Braco 3 (X=300, Fase c): T5 (topo) e T6 (base) -->
           <line x1="300" y1="25" x2="300" y2="45" stroke="#58a6ff" stroke-width="2" />
           <polygon points="290,70 310,70 300,45" fill="#238636" stroke="#238636" stroke-width="2" />
           <line x1="290" y1="45" x2="310" y2="45" stroke="#238636" stroke-width="2.5" />
@@ -1213,7 +1213,7 @@ import {
           <polygon points="290,185 310,185 300,160" fill="#238636" stroke="#238636" stroke-width="2" />
           <line x1="290" y1="160" x2="310" y2="160" stroke="#238636" stroke-width="2.5" />
           <path d="M 293 168 L 285 173" stroke="#f0883e" stroke-width="1.8" />
-          <text x="276" y="170" fill="#f0f6fc" font-size="10" font-weight="bold">T2</text>
+          <text x="276" y="170" fill="#f0f6fc" font-size="10" font-weight="bold">T6</text>
           <line x1="300" y1="185" x2="300" y2="205" stroke="#58a6ff" stroke-width="2" />
 
           <!-- Conexoes das Linhas a, b, c -->
