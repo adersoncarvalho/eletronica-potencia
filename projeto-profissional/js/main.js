@@ -1471,7 +1471,7 @@ import {
       } else if (topologia === "mono_onda_completa_controlado_r") {
         def_vrms = 220; def_vp = 311.13; def_alpha = 60;
       } else if (topologia === "mono_onda_completa_controlado_rl") {
-        def_vrms = 220; def_vp = 311.13; def_alpha = 60;
+        def_vrms = 220; def_vp = 311.13; def_alpha = 40;
       } else if (topologia === "mono_onda_completa_controlado_rle") {
         def_vrms = 220; def_vp = 311.13; def_alpha = 60;
       } else if (topologia === "tri_meia_onda_r") {
@@ -1732,7 +1732,12 @@ import {
               <input type="number" id="input-r" step="any" value="10" required>
             </div>
             <div class="form-group">
-              <label for="input-l">Indutância L [H]</label>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <label for="input-l" style="margin-bottom: 0;">Indutância L [H]</label>
+                <button type="button" class="btn-table-tag" onclick="aplicarIndutorCritico()" style="font-size: 0.72rem; padding: 2px 7px; background: rgba(56, 139, 253, 0.15); border: 1px solid #388bfd; color: #58a6ff; font-weight: 600; cursor: pointer; border-radius: 4px;" title="Calcular o indutor crítico (Lcrit) e resolver o memorial no modo de condução crítico">
+                  🎯 Calcular Lcrit e Resolver
+                </button>
+              </div>
               <input type="number" id="input-l" step="any" value="0.06" required>
             </div>
           </div>
@@ -1931,7 +1936,35 @@ window.toggleAbacoIefp = toggleAbacoIefp;
 window.gerarAbacoIefpSVG = gerarAbacoIefpSVG;
 window.calcularIefpParametrizado = calcularIefpParametrizado;
 window.gerarAbacoPuchlowskiSVG = gerarAbacoPuchlowskiSVG;
-window.gerarAbacoPuchlowskiA02SVG = gerarAbacoPuchlowskiA02SVG;
+function aplicarIndutorCritico() {
+  const rInput = document.getElementById("input-r");
+  const aInput = document.getElementById("input-alpha");
+  const fInput = document.getElementById("input-f");
+  const lInput = document.getElementById("input-l");
+  if (!rInput || !aInput || !lInput) return;
+
+  const R = parseFloat(rInput.value) || 10;
+  const alpha = parseFloat(aInput.value) || 40;
+  const f = fInput ? (parseFloat(fInput.value) || 60) : 60;
+  const omega = 2 * Math.PI * f;
+  const a_rad = (alpha * Math.PI) / 180;
+
+  // Condição de condução crítica para onda completa RL: phi = alpha -> Lcrit = (R * tan(alpha)) / omega
+  const L_crit = (R * Math.tan(a_rad)) / omega;
+  lInput.value = L_crit.toFixed(5);
+
+  // Executa o cálculo e gera o memorial completo
+  executarCalculo();
+
+  // Scroll suave até o memorial de cálculo
+  setTimeout(() => {
+    const mem = document.getElementById("box-memorial");
+    if (mem) {
+      mem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, 60);
+}
+window.aplicarIndutorCritico = aplicarIndutorCritico;
 
 // Disparo inicial garantido
 atualizarSubmodelos();

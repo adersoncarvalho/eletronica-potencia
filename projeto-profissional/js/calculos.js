@@ -2335,18 +2335,22 @@ import { atualizarGrafico } from './graficos.js';
         const L_crit = (R * Math.tan(a_rad)) / omega;
         const L_crit_mH = L_crit * 1000;
 
-        const isMCC = (L >= L_crit);
-        const isCritico = Math.abs(L - L_crit) < 0.001;
+        const isCritico = Math.abs(L - L_crit) <= 0.001 || (L_crit > 0 && Math.abs((L - L_crit) / L_crit) < 0.015);
+        const isMCC = (L >= L_crit) || isCritico;
 
         let modoTexto = "MCC (Condução Contínua)";
-        if (isCritico) modoTexto = "Condução Crítica (L = Lcrit)";
+        if (isCritico) modoTexto = "Modo de Condução Crítico (L = Lcrit)";
         else if (!isMCC) modoTexto = "MCD (Condução Descontínua)";
 
         let V_o_med = 0;
         let I_o_med = 0;
         let FP = 0;
 
-        if (isMCC) {
+        if (isCritico) {
+          V_o_med = ((2 * Math.SQRT2 * V_rms) / Math.PI) * Math.cos(a_rad);
+          I_o_med = V_o_med / R;
+          FP = Math.cos(a_rad);
+        } else if (isMCC) {
           V_o_med = ((2 * Math.SQRT2 * V_rms) / Math.PI) * Math.cos(a_rad);
           I_o_med = V_o_med / R;
           FP = (2 * Math.SQRT2 / Math.PI) * Math.cos(a_rad);
@@ -2366,42 +2370,55 @@ import { atualizarGrafico } from './graficos.js';
           FP = 0.90 * Math.cos(a_rad) * ((beta_rad - a_rad) / Math.PI);
         }
 
-        const I_o_ef = I_o_med;
+        const I_o_ef = isCritico ? (V_rms / Math.sqrt(R * R + XL * XL)) : I_o_med;
         const P_R = R * Math.pow(I_o_ef, 2);
 
         summaryHTML = `
           <div class="stat-box"><div class="stat-label">Modo Operação</div><div class="stat-value" style="color: #58a6ff;">${modoTexto}</div></div>
           <div class="stat-box"><div class="stat-label">Indutância Crítica Lcrit</div><div class="stat-value">${L_crit_mH.toFixed(2)} mH</div></div>
-          <div class="stat-box"><div class="stat-label">Vo,méd (Saída)</div><div class="stat-value">${V_o_med.toFixed(2)} V</div></div>
-          <div class="stat-box"><div class="stat-label">Io,méd (Carga)</div><div class="stat-value">${I_o_med.toFixed(3)} A</div></div>
+          <div class="stat-box"><div class="stat-label">Vo,méd (Saída)</div><div class="stat-value">${V_o_med.toFixed(1)} V</div></div>
+          <div class="stat-box"><div class="stat-label">Io,méd (Carga)</div><div class="stat-value">${I_o_med.toFixed(2)} A</div></div>
           <div class="stat-box"><div class="stat-label">Potência Ativa Po</div><div class="stat-value">${P_R.toFixed(2)} W</div></div>
-          <div class="stat-box"><div class="stat-label">Fator de Potência</div><div class="stat-value">${FP.toFixed(3)}</div></div>
+          <div class="stat-box"><div class="stat-label">Fator de Potência</div><div class="stat-value">${FP.toFixed(2)}</div></div>
         `;
 
         stepsHTML = `
           <div class="step-box">
-            <div class="step-title">Etapa 1: Indutância Crítica para Modo Contínuo (Lcrit)</div>
-            <div class="step-desc">O limite entre condução contínua e descontínua ocorre quando \\(\\phi = \\alpha\\):</div>
-            <div class="math-block">\\[ \\operatorname{tg}\\phi = \\operatorname{tg}\\alpha = \\frac{\\omega L_{crit}}{R} \\implies L_{crit} = \\frac{R \\operatorname{tg}\\alpha}{\\omega} \\]</div>
+            <div class="step-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+              <span>Etapa 1: Indutância Crítica para Condução Contínua (Lcrit)</span>
+              <button type="button" class="btn-table-tag" onclick="aplicarIndutorCritico()" style="font-size: 0.74rem; padding: 2px 8px;" title="Aplicar valor de Lcrit ao circuito">
+                🎯 Aplicar L = ${L_crit_mH.toFixed(2)} mH
+              </button>
+            </div>
+            <div class="step-desc">O limite crítico entre condução contínua (MCC) e descontínua (MCD) ocorre quando a corrente dura exatamente \\(180^\\circ\\) (\\(\\beta = \\alpha + \\pi\\)), o que exige \\(\\phi = \\alpha\\):</div>
+            <div class="math-block">\\[ \\operatorname{tg}\\phi = \\operatorname{tg}\\alpha = \\frac{\\omega L_{crit}}{R} \\implies L_{crit} = \\frac{R \\cdot \\operatorname{tg}\\alpha}{\\omega} \\]</div>
             <div class="math-block">\\[ L_{crit} = \\frac{${R} \\cdot \\operatorname{tg}(${alpha}^\\circ)}{${omega.toFixed(2)}} = \\frac{${(R * Math.tan(a_rad)).toFixed(3)}}{${omega.toFixed(2)}} = ${L_crit.toFixed(5)}\\text{ H} = ${L_crit_mH.toFixed(2)}\\text{ mH} \\]</div>
             <div class="step-desc">
-              ${L >= L_crit
-                ? `Como \\(L = ${(L*1000).toFixed(1)}\\text{ mH} \\ge L_{crit} = ${L_crit_mH.toFixed(2)}\\text{ mH}\\), a corrente é ininterrupta (<strong>Modo Contínuo / Crítico</strong>).`
-                : `Como \\(L = ${(L*1000).toFixed(1)}\\text{ mH} < L_{crit} = ${L_crit_mH.toFixed(2)}\\text{ mH}\\), o indutor descarrega completamente (<strong>Modo Descontínuo</strong>).`}
+              ${isCritico
+                ? `Como \\(L = ${(L*1000).toFixed(2)}\\text{ mH} \\approx L_{crit} = ${L_crit_mH.toFixed(2)}\\text{ mH}\\), o circuito opera no <strong>Modo de Condução Crítico</strong> (a corrente toca exatamente o zero a cada \\(\\pi\\) radianos sem descontinuidade).`
+                : (L > L_crit
+                  ? `Como \\(L = ${(L*1000).toFixed(1)}\\text{ mH} > L_{crit} = ${L_crit_mH.toFixed(2)}\\text{ mH}\\), a corrente é ininterrupta (<strong>Modo Contínuo - MCC</strong>).`
+                  : `Como \\(L = ${(L*1000).toFixed(1)}\\text{ mH} < L_{crit} = ${L_crit_mH.toFixed(2)}\\text{ mH}\\), a corrente se extingue antes do próximo ciclo (<strong>Modo Descontínuo - MCD</strong>).`)}
             </div>
           </div>
 
           <div class="step-box">
             <div class="step-title">Etapa 2: Tensão Média e Corrente Média na Carga</div>
-            <div class="step-desc">Em condução contínua (MCC), a tensão média depende estritamente do cosseno do ângulo de disparo:</div>
-            <div class="math-block">\\[ V_{o,med} = \\frac{2\\sqrt{2}V_{ef}}{\\pi}\\cos\\alpha = \\frac{2\\sqrt{2} \\cdot ${V_rms.toFixed(2)}}{\\pi}\\cos(${alpha}^\\circ) = ${V_o_med.toFixed(2)}\\text{ V} \\]</div>
-            <div class="math-block">\\[ I_{o,med} = \\frac{V_{o,med}}{R} = \\frac{${V_o_med.toFixed(2)}}{${R}} = ${I_o_med.toFixed(3)}\\text{ A} \\]</div>
+            <div class="step-desc">Em condução contínua / crítica (\\(\\beta = \\alpha + \\pi\\)), a tensão média na carga é obtida pela integração da senoide em \\([\\alpha, \\alpha + \\pi]\\):</div>
+            <div class="math-block">\\[ V_{o,med} = \\frac{2\\sqrt{2}V_{ef}}{\\pi}\\cos\\alpha = \\frac{2\\sqrt{2} \\cdot ${V_rms.toFixed(1)}}{\\pi}\\cos(${alpha}^\\circ) = ${V_o_med.toFixed(2)}\\text{ V} \\approx ${V_o_med.toFixed(1)}\\text{ V} \\]</div>
+            <div class="step-desc">Como a tensão média no indutor em regime permanente é nula (\\(\\bar{v}_L = 0\\)), toda a tensão média recai sobre \\(R\\):</div>
+            <div class="math-block">\\[ I_{o,med} = \\frac{V_{o,med}}{R} = \\frac{${V_o_med.toFixed(2)}}{${R}} = ${I_o_med.toFixed(3)}\\text{ A} \\approx ${I_o_med.toFixed(2)}\\text{ A} \\]</div>
           </div>
 
           <div class="step-box">
             <div class="step-title">Etapa 3: Fator de Potência na Rede CA</div>
-            <div class="step-desc">Para regime contínuo:</div>
-            <div class="math-block">\\[ FP = \\frac{2\\sqrt{2}}{\\pi}\\cos\\alpha \\approx 0{,}90 \\cdot \\cos(${alpha}^\\circ) = ${FP.toFixed(3)} \\]</div>
+            ${isCritico ? `
+              <div class="step-desc">No <strong>Modo Crítico</strong> (\\(\\phi = \\alpha\\)), a componente transitória exponencial é nula (\\(\\operatorname{sen}(\\alpha - \\phi) = 0\\)). A corrente da rede é puramente senoidal defasada de \\(\\alpha\\), sem distorção harmônica (fator de distorção \\(g = 1\\)):</div>
+              <div class="math-block">\\[ FP = \\frac{P}{S} = g \\cdot \\cos\\alpha = 1 \\cdot \\cos(${alpha}^\\circ) = \\cos(${alpha}^\\circ) = ${FP.toFixed(2)} \\]</div>
+            ` : `
+              <div class="step-desc">Para regime contínuo com indutor de alta indutância (corrente em bloco retangular na rede CA):</div>
+              <div class="math-block">\\[ FP = \\frac{2\\sqrt{2}}{\\pi}\\cos\\alpha \\approx 0{,}90 \\cdot \\cos(${alpha}^\\circ) = ${FP.toFixed(3)} \\]</div>
+            `}
           </div>
         `;
       } else if (topologia === "mono_onda_completa_controlado_rle") {
