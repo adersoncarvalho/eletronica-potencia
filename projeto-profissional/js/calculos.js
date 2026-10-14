@@ -2191,7 +2191,11 @@ import { atualizarGrafico } from './graficos.js';
 
         if (!isTrifasico) {
           if (isControlado) {
-            v_d_val = (v_in_val >= 0) ? (v_in_val - v_out_val) : -v_out_val;
+            if (isOndaCompleta) {
+              v_d_val = (v_in_val >= 0) ? (v_in_val - v_out_val) : -v_out_val;
+            } else {
+              v_d_val = v_in_val - v_out_val;
+            }
             const a_deg = parseFloat(document.getElementById("input-alpha").value);
             const a_rad = (a_deg * Math.PI) / 180;
             if (isOndaCompleta) {
