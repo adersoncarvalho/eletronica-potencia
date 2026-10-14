@@ -64,7 +64,7 @@ import { atualizarGrafico } from './graficos.js';
       return TABELA_IEFP_RODA_LIVRE[phiInt] || 0.5000;
     }
 
-    // Tabela 2D de Corrente Eficaz na Carga Ief(alpha, cos_phi) para Diodo de Roda Livre em MCD (Slide 35 - Prof. Francisco Viglus)
+    // Tabela 2D de Corrente Eficaz na Carga Ief(alpha, cos_phi) para Diodo de Roda Livre em MCD (Prof. Francisco Viglus)
     const ALPHAS_RODA_LIVRE = [1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180];
     const COS_PHIS_RODA_LIVRE = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0];
 
@@ -90,7 +90,7 @@ import { atualizarGrafico } from './graficos.js';
       180: [0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000]
     };
 
-    // Tabela 2D de Corrente Eficaz na Fonte CA Ig,efp(alpha, cos_phi) para Diodo de Roda Livre em MCD (Slide 36 - Prof. Francisco Viglus)
+    // Tabela 2D de Corrente Eficaz na Fonte CA Ig,efp(alpha, cos_phi) para Diodo de Roda Livre em MCD (Prof. Francisco Viglus)
     const TABELA_RODA_LIVRE_IG_EFP = {
       1:   [0.8659, 0.7854, 0.7214, 0.6695, 0.6271, 0.5921, 0.5633, 0.5397, 0.5210, 0.5073, 0.5000],
       10:  [0.8573, 0.7783, 0.7154, 0.6645, 0.6228, 0.5885, 0.5602, 0.5372, 0.5190, 0.5058, 0.4997],
@@ -210,7 +210,7 @@ import { atualizarGrafico } from './graficos.js';
         headerCols += `<th class="${isColMatch ? 'col-destaque' : ''}">cosφ=${c.toFixed(1)}</th>`;
       }
 
-      // Linhas da Tabela de Carga (Slide 35)
+      // Linhas da Tabela de Carga
       let bodyRowsCarga = '';
       for (let a of ALPHAS_RODA_LIVRE) {
         const isRowMatch = (a === matchCarga.alphaMatch);
@@ -229,7 +229,7 @@ import { atualizarGrafico } from './graficos.js';
         bodyRowsCarga += `<tr class="${isRowMatch ? 'row-destaque' : ''}">${rowCells}</tr>`;
       }
 
-      // Linhas da Tabela da Fonte CA (Slide 36)
+      // Linhas da Tabela da Fonte CA
       let bodyRowsFonte = '';
       for (let a of ALPHAS_RODA_LIVRE) {
         const isRowMatch = (a === matchFonte.alphaMatch);
@@ -252,7 +252,7 @@ import { atualizarGrafico } from './graficos.js';
         <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
           <div>
             <span style="font-size: 0.88rem; font-weight: 700; color: #58a6ff;">Tabelas Numéricas Parametrizadas - Meia Onda com Roda Livre em MCD</span>
-            <div style="font-size: 0.76rem; color: #8b949e;">Fonte: UTFPR (Prof. Francisco José Viglus) - Slides 35 e 36</div>
+            <div style="font-size: 0.76rem; color: #8b949e;">Fonte: UTFPR (Prof. Francisco José Viglus)</div>
           </div>
           <div style="font-size: 0.8rem; background: rgba(227, 179, 65, 0.15); border: 1px solid #e3b341; padding: 4px 10px; border-radius: 4px; color: #f0e6c5;">
             Cruzamento: <strong>α = ${matchCarga.alphaMatch}°</strong> e <strong>cos(φ) = ${matchCarga.cosMatch.toFixed(1)}</strong> ➔ 
@@ -263,14 +263,14 @@ import { atualizarGrafico } from './graficos.js';
 
         <div style="display: flex; gap: 8px; margin-bottom: 10px;">
           <button type="button" id="btn-rl-carga" class="btn-table-tag ${!isTabFonte ? 'active' : ''}" onclick="mostrarRodaLivreAba('carga')">
-            📊 Corrente na Carga: Ief (Slide 35)
+            📊 Corrente na Carga: Ief
           </button>
           <button type="button" id="btn-rl-fonte" class="btn-table-tag ${isTabFonte ? 'active' : ''}" onclick="mostrarRodaLivreAba('fonte')">
-            🔌 Corrente na Fonte CA: Ig,efp (Slide 36)
+            🔌 Corrente na Fonte CA: Ig,efp
           </button>
         </div>
 
-        <!-- Painel 1: Tabela de Corrente na Carga (Slide 35) -->
+        <!-- Painel 1: Tabela de Corrente na Carga -->
         <div id="rl-painel-carga" style="display: ${!isTabFonte ? 'block' : 'none'}; max-height: 270px; overflow-x: auto; overflow-y: auto; border: 1px solid #30363d; border-radius: 6px;">
           <table class="tabela-conferencia tabela-puchlowski">
             <thead>
@@ -281,13 +281,13 @@ import { atualizarGrafico } from './graficos.js';
             </tbody>
           </table>
           <div style="margin-top: 8px; text-align: center; font-size: 0.78rem;">
-            <a href="img/tabela_roda_livre_slide35.png" target="_blank" style="color: #58a6ff; text-decoration: underline;">
-              📄 Ver Imagem Original da Tabela de Carga (Slide 35 da Aula)
+            <a href="img/tabela_roda_livre_carga.png" target="_blank" style="color: #58a6ff; text-decoration: underline;">
+              📄 Ver Imagem Original da Tabela de Carga
             </a>
           </div>
         </div>
 
-        <!-- Painel 2: Tabela de Corrente na Fonte CA (Slide 36) -->
+        <!-- Painel 2: Tabela de Corrente na Fonte CA -->
         <div id="rl-painel-fonte" style="display: ${isTabFonte ? 'block' : 'none'}; max-height: 270px; overflow-x: auto; overflow-y: auto; border: 1px solid #30363d; border-radius: 6px;">
           <table class="tabela-conferencia tabela-puchlowski">
             <thead>
@@ -298,8 +298,8 @@ import { atualizarGrafico } from './graficos.js';
             </tbody>
           </table>
           <div style="margin-top: 8px; text-align: center; font-size: 0.78rem;">
-            <a href="img/tabela_roda_livre_ig_slide36.png" target="_blank" style="color: #58a6ff; text-decoration: underline;">
-              📄 Ver Imagem Original da Tabela da Fonte CA (Slide 36 da Aula)
+            <a href="img/tabela_roda_livre_fonte.png" target="_blank" style="color: #58a6ff; text-decoration: underline;">
+              📄 Ver Imagem Original da Tabela da Fonte CA
             </a>
           </div>
         </div>
@@ -1700,7 +1700,7 @@ import { atualizarGrafico } from './graficos.js';
               </button>
             </div>
             <div class="step-desc">
-              Consultando a <strong>Tabela de Corrente Eficaz Parametrizada</strong> (Slide 13 da UTFPR) para \\(\\alpha = ${alpha}^\\circ\\) e \\(\\cos\\phi \\approx ${pMatch.cosMatch.toFixed(1)}\\):
+              Consultando a <strong>Tabela de Corrente Eficaz Parametrizada</strong> para \\(\\alpha = ${alpha}^\\circ\\) e \\(\\cos\\phi \\approx ${pMatch.cosMatch.toFixed(1)}\\):
             </div>
             <div class="math-block">\\[ I_{efp} = ${I_efp_tab.toFixed(4)} \\]</div>
             <div class="step-desc">Calculando a corrente eficaz na carga:</div>
@@ -1728,7 +1728,7 @@ import { atualizarGrafico } from './graficos.js';
         const Z = Math.sqrt(R * R + XL * XL);
         const cos_phi = R / Z;
 
-        // Verificação do modo de operação (Slide 41 / Slide 44):
+        // Verificação do modo de operação:
         const tau = L / R;
         const tau_ms = tau * 1000;
         const t_5tau_ms = 5 * tau_ms;
@@ -1747,7 +1747,7 @@ import { atualizarGrafico } from './graficos.js';
         let rlIgMatch = null;
 
         if (isMCC) {
-          // Modo de Condução Contínuo (MCC - Slides 43-46)
+          // Modo de Condução Contínuo (MCC)
           // "Assumir que o indutor é grande tal que: IR,med ≈ IR,ef = Io"
           I_o_ef = I_o_med;
           P_R = V_o_med * I_o_med;
@@ -1755,7 +1755,7 @@ import { atualizarGrafico } from './graficos.js';
           S = V_rms * I_T_ef;
           FP = S > 0 ? (P_R / S) : 0;
         } else {
-          // Modo de Condução Descontínuo (MCD - Slides 35, 36, 40-42)
+          // Modo de Condução Descontínuo (MCD)
           rlMatch = obterIefRodaLivre(alpha, cos_phi);
           rlIgMatch = obterIgEfpRodaLivre(alpha, cos_phi);
           I_o_ef = (V_p / Z) * rlMatch.ief;
@@ -1782,7 +1782,7 @@ import { atualizarGrafico } from './graficos.js';
         stepsHTML = `
           <div class="step-box">
             <div class="step-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
-              <span>Etapa 1: Verificação do Modo de Operação (Slide 41 / Slide 44)</span>
+              <span>Etapa 1: Verificação do Modo de Operação</span>
               <span style="background: rgba(56, 139, 253, 0.15); border: 1px solid ${modoCor}; color: ${modoCor}; padding: 2px 8px; border-radius: 4px; font-size: 0.78rem; font-weight: bold;">
                 ${modoDescricao}
               </span>
@@ -1810,17 +1810,17 @@ import { atualizarGrafico } from './graficos.js';
             <div class="step-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
               <span>Etapa 3: Corrente Eficaz na Carga</span>
               ${!isMCC ? `
-                <button type="button" class="btn-table-tag" onclick="toggleTabelaRodaLivre(); setTimeout(() => mostrarRodaLivreAba('carga'), 50);" title="Visualizar Tabela de Roda Livre (Slide 35)">
-                  📊 Tabela Ief Carga (Slide 35)
+                <button type="button" class="btn-table-tag" onclick="toggleTabelaRodaLivre(); setTimeout(() => mostrarRodaLivreAba('carga'), 50);" title="Visualizar Tabela de Corrente Eficaz na Carga">
+                  📊 Tabela Ief Carga
                 </button>
               ` : ''}
             </div>
             ${isMCC ? `
-              <div class="step-desc">No <strong>MCC</strong>, conforme modelo ensinado em aula (Slide 44 da UTFPR), assume-se que o indutor é suficientemente grande para que a ondulação (ripple) seja desprezível:</div>
+              <div class="step-desc">No <strong>MCC</strong>, assume-se que o indutor é suficientemente grande para que a ondulação (ripple) seja desprezível:</div>
               <div class="math-block">\\[ I_{R,med} \\approx I_{R,ef} = I_{o,med} = ${I_o_med.toFixed(3)}\\text{ A} \\]</div>
               <div class="math-block">\\[ P_o = V_{o,med} \\cdot I_{o,med} = ${V_o_med.toFixed(2)} \\cdot ${I_o_med.toFixed(3)} = ${P_R.toFixed(2)}\\text{ W} \\]</div>
             ` : `
-              <div class="step-desc">No <strong>MCD</strong>, a corrente eficaz na carga é obtida via <strong>Tabela Parametrizada de Roda Livre</strong> (Slide 35 da UTFPR):</div>
+              <div class="step-desc">No <strong>MCD</strong>, a corrente eficaz na carga é obtida via <strong>Tabela Parametrizada de Roda Livre</strong>:</div>
               <div class="step-desc">Para \\(\\alpha = ${alpha}^\\circ\\) e \\(\\cos\\phi = \\frac{R}{Z} = \\frac{${R}}{${Z.toFixed(2)}} \\approx ${rlMatch.cosMatch.toFixed(1)}\\):</div>
               <div class="math-block">\\[ I_{ef} = ${rlMatch.ief.toFixed(4)} \\]</div>
               <div class="math-block">\\[ I_{R,ef} = \\frac{\\sqrt{2} \\cdot V_{ef}}{\\sqrt{R^2 + X_L^2}} \\cdot I_{ef} = \\frac{\\sqrt{2} \\cdot ${V_rms.toFixed(1)}}{${Z.toFixed(3)}} \\cdot ${rlMatch.ief.toFixed(4)} = ${I_o_ef.toFixed(3)}\\text{ A} \\]</div>
@@ -1837,15 +1837,15 @@ import { atualizarGrafico } from './graficos.js';
             <div class="step-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
               <span>Etapa 4: Corrente na Rede CA, Potência Aparente e Fator de Potência</span>
               ${!isMCC ? `
-                <button type="button" class="btn-table-tag" onclick="toggleTabelaRodaLivre(); setTimeout(() => mostrarRodaLivreAba('fonte'), 50);" title="Visualizar Tabela de Ig,efp (Slide 36)">
-                  🔌 Tabela Fonte CA (Slide 36)
+                <button type="button" class="btn-table-tag" onclick="toggleTabelaRodaLivre(); setTimeout(() => mostrarRodaLivreAba('fonte'), 50);" title="Visualizar Tabela de Corrente Eficaz na Rede CA">
+                  🔌 Tabela Fonte CA
                 </button>
               ` : ''}
             </div>
             <div class="step-desc">
               ${isMCC ? 
-                `No <strong>MCC</strong>, a fonte CA e o tiristor conduzem apenas durante o intervalo \\([\\alpha, \\pi]\\) (Slide 45 da UTFPR):` : 
-                `No <strong>MCD</strong>, a corrente eficaz na rede CA \\(I_{g,ef}\\) é obtida via <strong>Tabela Parametrizada da Fonte CA</strong> (Slide 36 da UTFPR):`}
+                `No <strong>MCC</strong>, a fonte CA e o tiristor conduzem apenas durante o intervalo \\([\\alpha, \\pi]\\):` : 
+                `No <strong>MCD</strong>, a corrente eficaz na rede CA \\(I_{g,ef}\\) é obtida via <strong>Tabela Parametrizada da Fonte CA</strong>:`}
             </div>
             ${isMCC ? `
               <div class="math-block">\\[ I_{g,ef} = I_{T,ef} = I_o \\cdot \\sqrt{\\frac{\\pi - \\alpha}{2\\pi}} = ${I_o_med.toFixed(3)} \\cdot \\sqrt{\\frac{\\pi - ${a_rad.toFixed(3)}}{2\\pi}} = ${I_T_ef.toFixed(3)}\\text{ A} \\]
@@ -1893,7 +1893,7 @@ import { atualizarGrafico } from './graficos.js';
         const beta_rad = (bMin + bMax) / 2;
         const beta_deg = (beta_rad * 180) / Math.PI;
 
-        // Slide 28 UTFPR: Vo,med = [sqrt(2)*Vef*(cos(alpha) - cos(beta)) + E*(2*pi + alpha - beta)] / (2*pi)
+        // Vo,med = [sqrt(2)*Vef*(cos(alpha) - cos(beta)) + E*(2*pi + alpha - beta)] / (2*pi)
         const V_o_med = (1 / (2 * Math.PI)) * (V_p * (Math.cos(a_rad) - Math.cos(beta_rad)) + E * (2 * Math.PI + a_rad - beta_rad));
         const I_o_med = Math.max(0, (V_o_med - E) / R);
 
@@ -1928,7 +1928,7 @@ import { atualizarGrafico } from './graficos.js';
 
         stepsHTML = `
           <div class="step-box">
-            <div class="step-title">Etapa 1: Parâmetros do Circuito e Condição de Disparo (Slide 20 / Slide 28)</div>
+            <div class="step-title">Etapa 1: Parâmetros do Circuito e Condição de Disparo</div>
             <div class="step-desc">Relação entre as fontes (fator de contracarga \\(a\\)) e parâmetros de impedância:</div>
             <div class="math-block">\\[ a = \\frac{E}{\\sqrt{2}V_{ef}} = \\frac{${E}}{${V_p.toFixed(2)}} = ${fator_a.toFixed(2)} \\qquad X_L = \\omega L = ${XL.toFixed(2)}\\,\\Omega \\]</div>
             <div class="math-block">\\[ Z = \\sqrt{R^2 + X_L^2} = \\sqrt{${R}^2 + (${XL.toFixed(2)})^2} = ${Z.toFixed(2)}\\,\\Omega \\qquad \\cos(\\phi) = \\frac{R}{Z} = \\frac{${R}}{${Z.toFixed(2)}} = ${cos_phi.toFixed(2)} \\]</div>
@@ -1945,7 +1945,7 @@ import { atualizarGrafico } from './graficos.js';
               </button>
             </div>
             <div class="step-desc">
-              Pelo <strong>Ábaco de Puchlowski</strong> para \\(a = ${fator_a.toFixed(2)}\\) com \\(\\alpha = ${alpha}^\\circ\\) e \\(\\cos\\phi = ${cos_phi.toFixed(2)}\\) (Slide 28 da UTFPR):
+              Pelo <strong>Ábaco de Puchlowski</strong> para \\(a = ${fator_a.toFixed(2)}\\) com \\(\\alpha = ${alpha}^\\circ\\) e \\(\\cos\\phi = ${cos_phi.toFixed(2)}\\):
               <button type="button" class="btn-table-tag" style="margin-left: 6px; padding: 2px 7px; font-size: 0.74rem;" onclick="toggleAbacoRLE()">📊 Ver Ábaco Traçado</button>
             </div>
             <div class="math-block">\\[ \\beta \\approx ${Math.round(beta_deg)}^\\circ \\quad (${beta_rad.toFixed(3)}\\text{ rad}) \\]</div>
@@ -1968,14 +1968,14 @@ import { atualizarGrafico } from './graficos.js';
               </div>
               <div style="margin-top: 8px; font-size: 0.78rem;">
                 <a href="img/abaco_puchlowski_completo_tracado.png" target="_blank" style="color: #58a6ff; text-decoration: underline;">
-                  📄 Ver Folha Completa da Aula (com os 4 Ábacos de a = 0 até a = 0,6 e Fórmulas)
+                  📄 Ver Folha Completa de Ábacos de Puchlowski (a = 0 até a = 0,6)
                 </a>
               </div>
             </div>
           </div>
 
           <div class="step-box">
-            <div class="step-title">Etapa 3: Tensão Média e Corrente Média na Carga (Slide 28 / Slide 30)</div>
+            <div class="step-title">Etapa 3: Tensão Média e Corrente Média na Carga</div>
             <div class="step-desc">A tensão média inclui a condução do tiristor \\([\\alpha, \\beta]\\) e a tensão da bateria \\(E\\) durante o bloqueio \\([\\beta, 2\\pi + \\alpha]\\):</div>
             <div class="math-block">\\[ V_{o,med} = \\frac{\\sqrt{2}V_{ef}[\\cos\\alpha - \\cos\\beta] + E(2\\pi + \\alpha - \\beta)}{2\\pi} \\]</div>
             <div class="math-block">\\[ V_{o,med} = \\frac{\\sqrt{2} \\cdot ${V_rms.toFixed(1)}[\\cos(${alpha}^\\circ) - \\cos(${Math.round(beta_deg)}^\\circ)] + ${E}(2\\pi + ${a_rad.toFixed(3)} - ${beta_rad.toFixed(3)})}{2\\pi} = ${V_o_med.toFixed(2)}\\text{ V} \\]</div>
@@ -1984,14 +1984,14 @@ import { atualizarGrafico } from './graficos.js';
           </div>
 
           <div class="step-box">
-            <div class="step-title">Etapa 4: Corrente Eficaz, Potências e Fator de Potência (Slides 29 a 31)</div>
-            <div class="step-desc">Corrente eficaz na carga obtida via integral da forma de onda / ábaco de \\(I_{efp}\\) (Slide 29):</div>
+            <div class="step-title">Etapa 4: Corrente Eficaz, Potências e Fator de Potência</div>
+            <div class="step-desc">Corrente eficaz na carga obtida via integral numérica da forma de onda:</div>
             <div class="math-block">\\[ I_{o,ef} = ${I_o_ef.toFixed(3)}\\text{ A} \\]</div>
-            <div class="step-desc">Potência dissipada no resistor \\(R\\) (Slide 30):</div>
+            <div class="step-desc">Potência dissipada no resistor \\(R\\):</div>
             <div class="math-block">\\[ P_R = R \\cdot (I_{o,ef})^2 = ${R}\\,\\Omega \\cdot (${I_o_ef.toFixed(3)}\\text{ A})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
             <div class="step-desc">Potência entregue à fonte de tensão contínua \\(E\\) (bateria):</div>
             <div class="math-block">\\[ P_E = E \\cdot I_{o,med} = ${E}\\text{ V} \\cdot ${I_o_med.toFixed(3)}\\text{ A} = ${P_E.toFixed(2)}\\text{ W} \\]</div>
-            <div class="step-desc">Potência ativa total fornecida pelo retificador (Slide 31):</div>
+            <div class="step-desc">Potência ativa total fornecida pelo retificador:</div>
             <div class="math-block">\\[ P_M = P_R + P_E = ${P_R.toFixed(2)}\\text{ W} + ${P_E.toFixed(2)}\\text{ W} = ${P_M.toFixed(2)}\\text{ W} \\]</div>
             <div class="step-desc">Potência aparente e Fator de Potência na rede CA:</div>
             <div class="math-block">\\[ S = V_{ef} \\cdot I_{o,ef} = ${V_rms.toFixed(1)}\\text{ V} \\cdot ${I_o_ef.toFixed(3)}\\text{ A} = ${S.toFixed(2)}\\text{ VA} \\]</div>

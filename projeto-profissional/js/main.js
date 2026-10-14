@@ -334,7 +334,7 @@ import {
           <!-- Retorno ao Neutro pela Linha Inferior -->
           <line x1="285" y1="215" x2="55" y2="215" stroke="#58a6ff" stroke-width="2.5" />
 
-          <!-- Caixa Didatica com as Equacoes de Fase do Slide -->
+          <!-- Caixa Didatica com as Equacoes de Fase -->
           <rect x="345" y="35" width="160" height="110" fill="#161b22" stroke="#30363d" stroke-width="1.5" rx="6" />
           <text x="355" y="58" fill="#8b949e" font-size="11" font-weight="bold">Tensões do Sistema:</text>
           <text x="355" y="82" fill="#79c0ff" font-size="11" font-weight="bold">va(t) = Vp·sen(ωt)</text>
@@ -1139,7 +1139,7 @@ import {
           <!-- Retorno ao Neutro pela Linha Inferior -->
           <line x1="285" y1="215" x2="55" y2="215" stroke="#58a6ff" stroke-width="2.5" />
 
-          <!-- Caixa Didatica com as Equacoes de Fase do Slide -->
+          <!-- Caixa Didatica com as Equacoes de Fase -->
           <rect x="345" y="35" width="160" height="110" fill="#161b22" stroke="#30363d" stroke-width="1.5" rx="6" />
           <text x="355" y="58" fill="#8b949e" font-size="11" font-weight="bold">Tensões do Sistema:</text>
           <text x="355" y="82" fill="#79c0ff" font-size="11" font-weight="bold">va(t) = Vp·sen(ωt)</text>
