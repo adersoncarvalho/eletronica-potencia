@@ -1563,8 +1563,13 @@ import { atualizarGrafico } from './graficos.js';
         const FP = S > 0 ? (P_R / S) : 0;
         const V_RRM = V_p;
 
+        const beta_deg = 180;
+        const gamma_deg = 180 - alpha;
+
         summaryHTML = `
           <div class="stat-box"><div class="stat-label">Ângulo Disparo α</div><div class="stat-value">${alpha}°</div></div>
+          <div class="stat-box"><div class="stat-label">Ângulo Extinção β</div><div class="stat-value">180° (π rad)</div></div>
+          <div class="stat-box"><div class="stat-label">Ângulo Condução γ</div><div class="stat-value">${gamma_deg}°</div></div>
           <div class="stat-box"><div class="stat-label">Vo,méd (Saída)</div><div class="stat-value">${V_o_med.toFixed(2)} V</div></div>
           <div class="stat-box"><div class="stat-label">Io,méd (Carga)</div><div class="stat-value">${I_o_med.toFixed(3)} A</div></div>
           <div class="stat-box"><div class="stat-label">Vo,ef (RMS)</div><div class="stat-value">${V_o_ef.toFixed(2)} V</div></div>
@@ -1581,11 +1586,18 @@ import { atualizarGrafico } from './graficos.js';
           </div>
 
           <div class="step-box">
-            <div class="step-title">Etapa 2: Tensão Média e Corrente Média na Carga</div>
-            <div class="step-desc">O tiristor é disparado no ângulo \\(\\alpha = ${alpha}^\\circ\\) e conduz até a passagem por zero da tensão em \\(\\pi\\) radianos:</div>
+            <div class="step-title">Etapa 2: Ângulo de Extinção (\\(\\beta\\)), Tensão Média e Corrente Média</div>
+            <div class="step-desc">
+              O tiristor é disparado no ângulo \\(\\alpha = ${alpha}^\\circ\\). Como a carga é <strong>puramente resistiva (\\(R\\))</strong> sem indutância (\\(L = 0\\)), a corrente acompanha em fase a tensão (\\(i(t) = v(t)/R\\)) e se anula no exato instante em que a senoide cruza por zero:
+            </div>
+            <div class="math-block">\\[ \\beta = 180^\\circ \\quad (\\pi\\text{ rad}) \\qquad \\gamma = \\beta - \\alpha = 180^\\circ - ${alpha}^\\circ = ${gamma_deg}^\\circ \\quad (${(gamma_deg * Math.PI / 180).toFixed(3)}\\text{ rad}) \\]</div>
+            <div class="step-desc">A condução ocorre estritamente no intervalo \\([\\alpha, \\beta] = [${alpha}^\\circ, 180^\\circ]\\):</div>
             <div class="math-block">\\[ V_{R,med} = \\frac{1}{2\\pi} \\int_{\\alpha}^{\\pi} V_p \\operatorname{sen}(\\omega t)\\,d(\\omega t) = \\frac{V_p}{2\\pi}(1 + \\cos\\alpha) \\approx 0{,}225 V_{ef}(1 + \\cos\\alpha) \\]</div>
             <div class="math-block">\\[ V_{R,med} = \\frac{${V_p.toFixed(2)}}{2\\pi}(1 + \\cos(${alpha}^\\circ)) = ${V_o_med.toFixed(2)}\\text{ V} \\]</div>
             <div class="math-block">\\[ I_{R,med} = \\frac{V_{R,med}}{R} = \\frac{${V_o_med.toFixed(2)}}{${R}} = ${I_o_med.toFixed(3)}\\text{ A} \\]</div>
+            <div class="step-desc" style="margin-top: 6px; font-size: 0.8rem; color: #8b949e;">
+              💡 <em>Nota Didática:</em> Caso o circuito possua indutor (topologia <strong>Carga RL</strong>), a energia magnética induzida sustenta a circulação de corrente para além de \\(180^\\circ\\) (\\(\\beta > 180^\\circ\\)), valor este obtido via <strong>Ábaco de Puchlowski</strong>.
+            </div>
           </div>
 
           <div class="step-box">
@@ -2002,8 +2014,12 @@ import { atualizarGrafico } from './graficos.js';
         const S = V_rms * I_o_ef;
         const FP = S > 0 ? (P_R / S) : 0;
 
+        const gamma_deg = 180 - alpha;
+
         summaryHTML = `
           <div class="stat-box"><div class="stat-label">Ângulo Disparo α</div><div class="stat-value">${alpha}°</div></div>
+          <div class="stat-box"><div class="stat-label">Ângulo Extinção β</div><div class="stat-value">180° / 360°</div></div>
+          <div class="stat-box"><div class="stat-label">Ângulo Condução γ</div><div class="stat-value">${gamma_deg}°</div></div>
           <div class="stat-box"><div class="stat-label">Vo,méd (Saída)</div><div class="stat-value">${V_o_med.toFixed(2)} V</div></div>
           <div class="stat-box"><div class="stat-label">Io,méd (Carga)</div><div class="stat-value">${I_o_med.toFixed(3)} A</div></div>
           <div class="stat-box"><div class="stat-label">Vo,ef (RMS)</div><div class="stat-value">${V_o_ef.toFixed(2)} V</div></div>
