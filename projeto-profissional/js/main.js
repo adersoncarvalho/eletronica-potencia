@@ -25,6 +25,9 @@ import {
   toggleTabelaRodaLivre,
   mostrarRodaLivreAba,
   toggleAbacoRLE,
+  toggleAbacoIefp,
+  gerarAbacoIefpSVG,
+  calcularIefpParametrizado,
   gerarAbacoPuchlowskiSVG,
   gerarAbacoPuchlowskiA02SVG,
   executarCalculo
@@ -1924,6 +1927,9 @@ window.gerarTabelaRodaLivreHTML = gerarTabelaRodaLivreHTML;
 window.obterIefRodaLivre = obterIefRodaLivre;
 window.obterIgEfpRodaLivre = obterIgEfpRodaLivre;
 window.toggleAbacoRLE = toggleAbacoRLE;
+window.toggleAbacoIefp = toggleAbacoIefp;
+window.gerarAbacoIefpSVG = gerarAbacoIefpSVG;
+window.calcularIefpParametrizado = calcularIefpParametrizado;
 window.gerarAbacoPuchlowskiSVG = gerarAbacoPuchlowskiSVG;
 window.gerarAbacoPuchlowskiA02SVG = gerarAbacoPuchlowskiA02SVG;
 

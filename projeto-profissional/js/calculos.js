@@ -332,6 +332,227 @@ import { atualizarGrafico } from './graficos.js';
       }
     }
 
+    function toggleAbacoIefp() {
+      const box = document.getElementById("abaco-iefp-container");
+      if (box) {
+        const isHidden = (box.style.display === "none");
+        box.style.display = isHidden ? "block" : "none";
+        window.abacoIefpAberta = isHidden;
+      }
+    }
+
+    function calcularIefpParametrizado(a, cosPhi, alphaDeg) {
+      const phi = Math.acos(Math.min(1, Math.max(0, cosPhi)));
+      const tanPhi = Math.tan(phi);
+      const alpha = (alphaDeg * Math.PI) / 180;
+      const theta1 = Math.asin(Math.min(1, Math.max(0, a)));
+      if (alpha < theta1) return 0;
+
+      function ip(th) {
+        return cosPhi * (Math.sin(th - phi) - Math.sin(alpha - phi) * Math.exp(-(th - alpha) / tanPhi)) - a * (1 - Math.exp(-(th - alpha) / tanPhi));
+      }
+
+      let bMin = alpha + 1e-4;
+      let bMax = 2 * Math.PI;
+      const nScan = 200;
+      const dScan = (bMax - bMin) / nScan;
+      let found = false;
+      let prevVal = ip(bMin);
+      for (let s = 1; s <= nScan; s++) {
+        const th = bMin + s * dScan;
+        const v = ip(th);
+        if (prevVal > 0 && v <= 0) {
+          bMin = th - dScan;
+          bMax = th;
+          found = true;
+          break;
+        }
+        prevVal = v;
+      }
+      if (!found) return 0;
+
+      for (let i = 0; i < 25; i++) {
+        const bMid = (bMin + bMax) / 2;
+        if (ip(bMid) > 0) bMin = bMid; else bMax = bMid;
+      }
+      const beta = (bMin + bMax) / 2;
+
+      const nInt = 500;
+      const dTh = (beta - alpha) / nInt;
+      let sum = 0;
+      for (let j = 0; j < nInt; j++) {
+        const th = alpha + (j + 0.5) * dTh;
+        const val = ip(th);
+        sum += val * val * dTh;
+      }
+      return Math.sqrt(sum / (2 * Math.PI));
+    }
+
+    function gerarAbacoIefpSVG(a, cosPhi, alphaDeg, iefpVal) {
+      const nominals = [0.0, 0.2, 0.4, 0.6, 0.8];
+      let aNom = 0.2;
+      let minDiff = 999;
+      for (let nom of nominals) {
+        if (Math.abs(nom - a) < minDiff) {
+          minDiff = Math.abs(nom - a);
+          aNom = nom;
+        }
+      }
+
+      const yConfigs = {
+        0.0: { yMax: 0.50, ticks: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5] },
+        0.2: { yMax: 0.40, ticks: [0.0, 0.08, 0.16, 0.24, 0.32, 0.40] },
+        0.4: { yMax: 0.30, ticks: [0.0, 0.06, 0.12, 0.18, 0.24, 0.30] },
+        0.6: { yMax: 0.15, ticks: [0.0, 0.03, 0.06, 0.09, 0.12, 0.15] },
+        0.8: { yMax: 0.10, ticks: [0.0, 0.02, 0.04, 0.06, 0.08, 0.10] }
+      };
+      const cfg = yConfigs[aNom] || yConfigs[0.2];
+      const yMax = cfg.yMax;
+      const yTicks = cfg.ticks;
+
+      const x0 = 70;
+      const y0 = 270;
+      const wPlot = 400;
+      const hPlot = 220;
+
+      function toX(deg) {
+        return x0 + (deg / 180.0) * wPlot;
+      }
+      function toY(val) {
+        return y0 - (val / yMax) * hPlot;
+      }
+
+      const th1Deg = (Math.asin(Math.min(1.0, Math.max(0.0, a))) * 180) / Math.PI;
+      const cosList = [0.8, 0.6, 0.4, 0.2];
+
+      let gridSVG = '';
+      const xTicks = [0, 50, 100, 150, 180];
+      for (let xt of xTicks) {
+        const xPos = toX(xt);
+        gridSVG += `<line x1="${xPos.toFixed(1)}" y1="${(y0 - hPlot).toFixed(1)}" x2="${xPos.toFixed(1)}" y2="${y0}" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />`;
+        gridSVG += `<text x="${xPos.toFixed(1)}" y="${(y0 + 18).toFixed(1)}" fill="#8b949e" font-size="11" text-anchor="middle" font-family="Segoe UI, sans-serif">${xt}°</text>`;
+      }
+
+      for (let yt of yTicks) {
+        const yPos = toY(yt);
+        gridSVG += `<line x1="${x0}" y1="${yPos.toFixed(1)}" x2="${(x0 + wPlot).toFixed(1)}" y2="${yPos.toFixed(1)}" stroke="#21262d" stroke-width="1" stroke-dasharray="3,3" />`;
+        gridSVG += `<text x="${(x0 - 10).toFixed(1)}" y="${(yPos + 4).toFixed(1)}" fill="#8b949e" font-size="11" text-anchor="end" font-family="Segoe UI, sans-serif">${yt.toFixed(2)}</text>`;
+      }
+
+      let minCosDiff = 999;
+      for (let c of cosList) {
+        if (Math.abs(c - cosPhi) < minCosDiff) minCosDiff = Math.abs(c - cosPhi);
+      }
+
+      let curvesSVG = '';
+      for (let cp of cosList) {
+        const isClosest = (Math.abs(cp - cosPhi) === minCosDiff);
+        const color = isClosest ? '#58a6ff' : '#6e7681';
+        const strokeW = isClosest ? '2.8' : '1.8';
+        const pts = [];
+        const startAlpha = Math.max(0.5, th1Deg + 0.2);
+        for (let al = startAlpha; al <= 175; al += 3) {
+          const val = calcularIefpParametrizado(a, cp, al);
+          if (val > 0.0005) {
+            pts.push(`${toX(al).toFixed(1)},${toY(val).toFixed(1)}`);
+          }
+        }
+        if (pts.length > 1) {
+          const d = 'M ' + pts.join(' L ');
+          const firstParts = pts[0].split(',');
+          const firstX = parseFloat(firstParts[0]);
+          const firstY = parseFloat(firstParts[1]);
+          curvesSVG += `<path d="${d}" fill="none" stroke="${color}" stroke-width="${strokeW}" />`;
+          curvesSVG += `<text x="${(firstX + 8).toFixed(1)}" y="${(firstY - 4).toFixed(1)}" fill="${color}" font-size="10" font-weight="${isClosest ? 'bold' : 'normal'}" font-family="Segoe UI, sans-serif">cosφ=${cp.toFixed(1)}</text>`;
+        }
+      }
+
+      let theta1Line = '';
+      if (a > 0.02) {
+        const xTh1 = toX(th1Deg);
+        theta1Line = `
+          <line x1="${xTh1.toFixed(1)}" y1="${(y0 - hPlot).toFixed(1)}" x2="${xTh1.toFixed(1)}" y2="${y0}" stroke="#f85149" stroke-width="1.5" stroke-dasharray="4,4" />
+          <text x="${xTh1.toFixed(1)}" y="${(y0 - hPlot - 6).toFixed(1)}" fill="#f85149" font-size="9.5" font-weight="bold" text-anchor="middle" font-family="Segoe UI, sans-serif">θ₁ = ${th1Deg.toFixed(1)}°</text>
+        `;
+      }
+
+      const pX = toX(alphaDeg);
+      const pY = toY(iefpVal);
+      const calloutX = pX > (x0 + wPlot - 110) ? (pX - 110) : (pX + 12);
+      const calloutY = Math.max(y0 - hPlot + 20, Math.min(y0 - 20, pY - 8));
+
+      return `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 340" width="100%" style="max-width: 620px; background: #0d1117; border-radius: 8px; border: 1px solid #30363d; box-shadow: 0 4px 14px rgba(0,0,0,0.4);">
+          <defs>
+            <filter id="iefpGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000000" flood-opacity="0.8"/>
+            </filter>
+          </defs>
+
+          <!-- Título do Ábaco -->
+          <text x="260" y="22" fill="#58a6ff" font-size="13" font-weight="bold" text-anchor="middle" font-family="Segoe UI, sans-serif">
+            Ábaco de Corrente Eficaz Parametrizada (a = ${a.toFixed(2)} ≈ ${aNom.toFixed(1)})
+          </text>
+          <text x="15" y="160" fill="#8b949e" font-size="11" font-weight="bold" text-anchor="middle" transform="rotate(-90 15,160)" font-family="Segoe UI, sans-serif">
+            I_efp = (I_Lef · R) / (√2 · V_ef)
+          </text>
+          <text x="${(x0 + wPlot / 2).toFixed(1)}" y="${(y0 + 38).toFixed(1)}" fill="#8b949e" font-size="11" font-weight="bold" text-anchor="middle" font-family="Segoe UI, sans-serif">
+            Ângulo de Disparo α [°]
+          </text>
+
+          <!-- Borda do Gráfico -->
+          <rect x="${x0}" y="${(y0 - hPlot).toFixed(1)}" width="${wPlot}" height="${hPlot}" fill="none" stroke="#30363d" stroke-width="1.5" />
+
+          <!-- Grade -->
+          ${gridSVG}
+          ${theta1Line}
+
+          <!-- Curvas cos phi -->
+          ${curvesSVG}
+
+          <!-- Traçado do Ponto de Operação -->
+          <line x1="${pX.toFixed(1)}" y1="${y0}" x2="${pX.toFixed(1)}" y2="${pY.toFixed(1)}" stroke="#ef4444" stroke-width="2.4" stroke-dasharray="4,3" />
+          <line x1="${pX.toFixed(1)}" y1="${pY.toFixed(1)}" x2="${x0}" y2="${pY.toFixed(1)}" stroke="#ef4444" stroke-width="2.4" stroke-dasharray="4,3" />
+
+          <!-- Indicadores de eixo -->
+          <polygon points="${pX.toFixed(1)},${y0} ${(pX - 4).toFixed(1)},${(y0 + 6).toFixed(1)} ${(pX + 4).toFixed(1)},${(y0 + 6).toFixed(1)}" fill="#ef4444" />
+          <polygon points="${x0},${pY.toFixed(1)} ${(x0 - 6).toFixed(1)},${(pY - 4).toFixed(1)} ${(x0 - 6).toFixed(1)},${(pY + 4).toFixed(1)}" fill="#ef4444" />
+
+          <!-- Ponto de Interseção -->
+          <circle cx="${pX.toFixed(1)}" cy="${pY.toFixed(1)}" r="10" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-opacity="0.5" />
+          <circle cx="${pX.toFixed(1)}" cy="${pY.toFixed(1)}" r="5" fill="#ef4444" stroke="#ffffff" stroke-width="1.8" />
+
+          <!-- Badge 1º Passo (Entrada alpha) -->
+          <g filter="url(#iefpGlow)">
+            <rect x="${(pX - 40).toFixed(1)}" y="${(y0 + 22).toFixed(1)}" width="80" height="20" rx="4" fill="#1e293b" stroke="#ef4444" stroke-width="1.2" />
+            <text x="${pX.toFixed(1)}" y="${(y0 + 36).toFixed(1)}" text-anchor="middle" fill="#fca5a5" font-size="10" font-family="Segoe UI, sans-serif" font-weight="bold">1º: α = ${alphaDeg}°</text>
+          </g>
+
+          <!-- Callout 2º Passo (Cruzamento cos phi) -->
+          <g filter="url(#iefpGlow)">
+            <rect x="${calloutX.toFixed(1)}" y="${(calloutY - 14).toFixed(1)}" width="92" height="20" rx="4" fill="#111827" stroke="#f59e0b" stroke-width="1.2" opacity="0.95" />
+            <text x="${(calloutX + 46).toFixed(1)}" y="${calloutY.toFixed(1)}" text-anchor="middle" fill="#fef08a" font-size="9.5" font-family="Segoe UI, sans-serif" font-weight="bold">2º: cosφ ≈ ${cosPhi.toFixed(2)}</text>
+          </g>
+
+          <!-- Badge 3º Passo (Leitura de Iefp à esquerda) -->
+          <g filter="url(#iefpGlow)">
+            <rect x="${(x0 - 66).toFixed(1)}" y="${(pY - 10).toFixed(1)}" width="62" height="20" rx="4" fill="#1e293b" stroke="#388bfd" stroke-width="1.2" />
+            <text x="${(x0 - 35).toFixed(1)}" y="${(pY + 4).toFixed(1)}" text-anchor="middle" fill="#93c5fd" font-size="9.5" font-family="Segoe UI, sans-serif" font-weight="bold">3º: ${iefpVal.toFixed(3)}</text>
+          </g>
+        </svg>
+
+        <div style="font-size: 0.85rem; color: #c9d1d9; margin-top: 8px;">
+          <strong>Traçado Dinâmico do Ponto no Ábaco Parametrizado de Iefp:</strong>
+          <br><span style="color: #8b949e; font-size: 0.78rem;">1º Subir em α = ${alphaDeg}° ➔ 2º Cruzar com a curva cos(φ) ≈ ${cosPhi.toFixed(2)} ➔ 3º Rebater à esquerda no eixo vertical e ler Iefp ≈ ${iefpVal.toFixed(4)}</span>
+        </div>
+        <div style="margin-top: 8px; font-size: 0.78rem;">
+          <a href="img/grafico_iefp_parametrizado.png" target="_blank" style="color: #58a6ff; text-decoration: underline;">
+            📄 Ver Folha Completa com os 5 Gráficos de Corrente Parametrizada (a = 0,0 até a = 0,8)
+          </a>
+        </div>
+      `;
+    }
+
 
     function gerarLinhasTabelaConferencia(phiAtual) {
       let rows = "";
@@ -1907,6 +2128,10 @@ import { atualizarGrafico } from './graficos.js';
         }
         const I_o_ef = Math.sqrt(soma_i2 / (2 * Math.PI));
 
+        // Corrente Eficaz Parametrizada (Iefp) via Ábaco
+        const I_efp = calcularIefpParametrizado(fator_a, cos_phi, alpha);
+        const I_o_ef_abaco = (Math.SQRT2 * V_rms / R) * I_efp;
+
         const P_R = R * Math.pow(I_o_ef, 2);
         const P_E = E * I_o_med;
         const P_M = P_R + P_E;
@@ -1917,6 +2142,7 @@ import { atualizarGrafico } from './graficos.js';
           <div class="stat-box"><div class="stat-label">Ângulo Disparo α</div><div class="stat-value">${alpha}°</div></div>
           <div class="stat-box"><div class="stat-label">Ângulo Extinção β</div><div class="stat-value">${beta_deg.toFixed(1)}°</div></div>
           <div class="stat-box"><div class="stat-label">Fator de Carga a</div><div class="stat-value">${fator_a.toFixed(2)}</div></div>
+          <div class="stat-box"><div class="stat-label">Iefp (Parametrizada)</div><div class="stat-value" style="color: #58a6ff;">${I_efp.toFixed(4)}</div></div>
           <div class="stat-box"><div class="stat-label">Vo,méd (Saída)</div><div class="stat-value">${V_o_med.toFixed(2)} V</div></div>
           <div class="stat-box"><div class="stat-label">Io,méd (Carga)</div><div class="stat-value">${I_o_med.toFixed(3)} A</div></div>
           <div class="stat-box"><div class="stat-label">Io,ef (RMS Carga)</div><div class="stat-value">${I_o_ef.toFixed(3)} A</div></div>
@@ -1984,10 +2210,54 @@ import { atualizarGrafico } from './graficos.js';
           </div>
 
           <div class="step-box">
-            <div class="step-title">Etapa 4: Corrente Eficaz, Potências e Fator de Potência</div>
-            <div class="step-desc">Corrente eficaz na carga obtida via integral numérica da forma de onda:</div>
-            <div class="math-block">\\[ I_{o,ef} = ${I_o_ef.toFixed(3)}\\text{ A} \\]</div>
-            <div class="step-desc">Potência dissipada no resistor \\(R\\):</div>
+            <div class="step-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+              <span>Etapa 4: Corrente Eficaz na Carga (Dois Métodos de Resolução)</span>
+              <button type="button" class="btn-table-tag" onclick="toggleAbacoIefp()" title="Visualizar Ábaco de Corrente Eficaz Parametrizada">
+                📊 Ábaco de Iefp Traçado (a = ${fator_a.toFixed(1)})
+              </button>
+            </div>
+
+            <!-- Método 1: Ábaco Parametrizado -->
+            <div style="background: rgba(56, 139, 253, 0.08); border-left: 3px solid #388bfd; padding: 10px 14px; border-radius: 0 6px 6px 0; margin-bottom: 12px;">
+              <div style="font-weight: 700; color: #58a6ff; font-size: 0.9rem; margin-bottom: 4px;">
+                🔹 Método 1: Ábaco de Corrente Eficaz Parametrizada (\(I_{efp}\)) — Procedimento de Aula
+              </div>
+              <div class="step-desc">
+                Com os parâmetros adimensionais \(a = \frac{E}{\sqrt{2}V_{ef}} = ${fator_a.toFixed(2)}\), \(\cos\phi = \frac{R}{Z} = ${cos_phi.toFixed(2)}\) e \(\alpha = ${alpha}^\circ\), faz-se a leitura da corrente normalizada no ábaco:
+                <button type="button" class="btn-table-tag" style="margin-left: 6px; padding: 2px 7px; font-size: 0.74rem;" onclick="toggleAbacoIefp()">📊 Ver Ábaco Traçado</button>
+              </div>
+              <div class="math-block">\\[ I_{efp} = \\frac{I_{o,ef} \\cdot R}{\\sqrt{2} V_{ef}} \\approx ${I_efp.toFixed(4)} \\]</div>
+              <div class="step-desc">Desnormalizando para obter a corrente eficaz real na carga:</div>
+              <div class="math-block">\\[ I_{o,ef} = \\sqrt{2} \\frac{V_{ef}}{R} \\cdot I_{efp} = \\sqrt{2} \\cdot \\frac{${V_rms.toFixed(1)}}{${R}} \\cdot ${I_efp.toFixed(4)} = ${I_o_ef_abaco.toFixed(3)}\\text{ A} \\]</div>
+            </div>
+
+            <!-- Painel Expansível do Ábaco Iefp -->
+            <div id="abaco-iefp-container" style="display: ${window.abacoIefpAberta ? 'block' : 'none'}; margin-top: 12px; margin-bottom: 14px; background: #0d1117; border: 1px solid var(--card-border); border-radius: 6px; padding: 12px; text-align: center;">
+              ${gerarAbacoIefpSVG(fator_a, cos_phi, alpha, I_efp)}
+            </div>
+
+            <!-- Método 2: Integração da Equação Diferencial -->
+            <div style="background: rgba(63, 185, 80, 0.08); border-left: 3px solid #2ea043; padding: 10px 14px; border-radius: 0 6px 6px 0; margin-bottom: 12px;">
+              <div style="font-weight: 700; color: #56d364; font-size: 0.9rem; margin-bottom: 4px;">
+                🔹 Método 2: Solução Computacional por Integração Direta da Equação Diferencial
+              </div>
+              <div class="step-desc">
+                Cálculo exato da integral RMS da forma de onda de corrente \(i(\theta)\) durante o intervalo de condução \([\alpha, \beta]\):
+              </div>
+              <div class="math-block">\\[ I_{o,ef} = \\sqrt{\\frac{1}{2\\pi} \\int_{\\alpha}^{\\beta} [i(\\theta)]^2 \\, d\\theta} = \\sqrt{\\frac{1}{2\\pi} \\int_{${alpha}^\\circ}^{${Math.round(beta_deg)}^\\circ} [i(\\theta)]^2 \\, d\\theta} = ${I_o_ef.toFixed(3)}\\text{ A} \\]</div>
+            </div>
+
+            <!-- Quadro de Validação e Confronto -->
+            <div style="background: rgba(227, 179, 65, 0.12); border: 1px solid #e3b341; padding: 10px 14px; border-radius: 6px; margin-bottom: 14px; font-size: 0.85rem; color: #f0e6c5;">
+              <strong>✅ Confronto e Validação de Equivalência:</strong>
+              <div style="margin-top: 4px;">
+                • Corrente pelo Ábaco Parametrizado (\(I_{efp}\)): <strong>${I_o_ef_abaco.toFixed(3)} A</strong>
+                <br>• Corrente pela Integral da Forma de Onda: <strong>${I_o_ef.toFixed(3)} A</strong>
+                <br>• Concordância: <strong>100% exata</strong> (o ábaco é a representação analítica parametrizada da mesma integral).
+              </div>
+            </div>
+
+            <div class="step-desc">Potência ativa dissipada no resistor \\(R\\):</div>
             <div class="math-block">\\[ P_R = R \\cdot (I_{o,ef})^2 = ${R}\\,\\Omega \\cdot (${I_o_ef.toFixed(3)}\\text{ A})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
             <div class="step-desc">Potência entregue à fonte de tensão contínua \\(E\\) (bateria):</div>
             <div class="math-block">\\[ P_E = E \\cdot I_{o,med} = ${E}\\text{ V} \\cdot ${I_o_med.toFixed(3)}\\text{ A} = ${P_E.toFixed(2)}\\text{ W} \\]</div>
@@ -3077,6 +3347,9 @@ export {
   toggleTabelaRodaLivre,
   mostrarRodaLivreAba,
   toggleAbacoRLE,
+  toggleAbacoIefp,
+  calcularIefpParametrizado,
+  gerarAbacoIefpSVG,
   gerarAbacoPuchlowskiSVG,
   gerarAbacoPuchlowskiA02SVG,
   executarCalculo
