@@ -1019,7 +1019,7 @@ import { atualizarGrafico } from './graficos.js';
             <div class="step-desc">A potência aparente drenada da fonte CA é o produto das grandezas eficazes da entrada:</div>
             <div class="math-block">\\[ S = V_{ef} \\cdot I_{ef} = ${V_rms.toFixed(2)}\\text{ V} \\cdot ${I_o_ef.toFixed(3)}\\text{ A} = ${S.toFixed(2)}\\text{ VA} \\]</div>
             <div class="step-desc">O fator de potência é a razão direta entre a potência ativa e a potência aparente:</div>
-            <div class="math-block">\\[ F_p = \\frac{P_R}{S} = \\frac{${P_R.toFixed(2)}\\text{ W}}{${S.toFixed(2)}\\text{ VA}} = ${FP.toFixed(3)} \\quad \\left( \\text{dedução analítica: } \\frac{R I_p^2 / 4}{(V_p / \\sqrt{2})(I_p / 2)} = \\frac{\\sqrt{2}}{2} \\approx 0{,}707 \\right) \\]</div>
+            <div class="math-block">\\[ F_P = \\frac{P_R}{S} = \\frac{${P_R.toFixed(2)}\\text{ W}}{${S.toFixed(2)}\\text{ VA}} = ${FP.toFixed(3)} \\quad \\left( \\text{dedução analítica: } \\frac{R I_p^2 / 4}{(V_p / \\sqrt{2})(I_p / 2)} = \\frac{\\sqrt{2}}{2} \\approx 0{,}707 \\right) \\]</div>
             <div class="step-desc">
               <strong>Nota didática:</strong> Embora a carga seja puramente resistiva (\\(\\cos\\phi = 1\\)), o fator de potência na entrada é limitado a \\(0{,}707\\). Isso ocorre porque a comutação não linear do diodo bloqueia o semiciclo negativo, distorcendo fortemente a forma de onda da corrente. Em eletrônica de potência, o fator de potência é composto por \\(F_p = F_{\\text{deslocamento}} \\times F_{\\text{distorção}}\\). Como \\(F_{\\text{deslocamento}} = 1\\) e \\(F_{\\text{distorção}} = \\frac{I_{1,ef}}{I_{ef}} = \\frac{\\sqrt{2}}{2}\\), a distorção harmônica reduz a eficiência de aproveitamento da rede CA.
             </div>
@@ -1143,7 +1143,7 @@ import { atualizarGrafico } from './graficos.js';
             <div class="math-block">\\[ I_{ef} = \\frac{V_p}{|Z|} \\cdot I_{efp}(\\phi) = \\frac{${V_p.toFixed(2)}\\text{ V}}{${Z.toFixed(2)}\\,\\Omega} \\cdot ${Iefp} = ${I_o_ef.toFixed(3)}\\text{ A} \\]</div>
             <div class="math-block">\\[ P_R = R \\cdot (I_{ef})^2 = ${R}\\,\\Omega \\cdot (${I_o_ef.toFixed(3)}\\text{ A})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
             <div class="math-block">\\[ S = V_{ef} \\cdot I_{ef} = ${V_rms.toFixed(2)}\\text{ V} \\cdot ${I_o_ef.toFixed(3)}\\text{ A} = ${S.toFixed(2)}\\text{ VA} \\]</div>
-            <div class="math-block">\\[ F_p = \\frac{P_R}{S} = \\frac{${P_R.toFixed(2)}\\text{ W}}{${S.toFixed(2)}\\text{ VA}} = ${FP.toFixed(3)} \\]</div>
+            <div class="math-block">\\[ F_P = \\frac{P_R}{S} = \\frac{${P_R.toFixed(2)}\\text{ W}}{${S.toFixed(2)}\\text{ VA}} = ${FP.toFixed(3)} \\]</div>
             <div class="step-desc">
               <strong>Nota didática:</strong> Com a presença da indutância, o fator de potência é reduzido tanto pela distorção harmônica da forma de onda quanto pelo ângulo de defasagem indutivo \\(\\phi\\).
             </div>
@@ -1284,7 +1284,7 @@ import { atualizarGrafico } from './graficos.js';
             `}
             <div class="step-desc">Potência Aparente \\(S\\) e Fator de Potência \\(F_p\\):</div>
             <div class="math-block">\\[ S = V_{ef} \\cdot I_{in,ef} = ${V_rms.toFixed(2)}\\text{ V} \\cdot ${I_in_ef.toFixed(3)}\\text{ A} = ${S.toFixed(2)}\\text{ VA} \\]</div>
-            <div class="math-block">\\[ F_p = \\frac{P_R}{S} = \\frac{${P_R.toFixed(2)}\\text{ W}}{${S.toFixed(2)}\\text{ VA}} = ${FP.toFixed(3)} \\]</div>
+            <div class="math-block">\\[ F_P = \\frac{P_R}{S} = \\frac{${P_R.toFixed(2)}\\text{ W}}{${S.toFixed(2)}\\text{ VA}} = ${FP.toFixed(3)} \\]</div>
           </div>
         `;
 
@@ -1436,7 +1436,7 @@ import { atualizarGrafico } from './graficos.js';
             <div class="math-block">\\[ P_R = R \\cdot (I_{o,ef})^2 = ${R}\\,\\Omega \\cdot (${I_o_ef.toFixed(3)}\\text{ A})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
             <div class="step-desc">A corrente da fonte CA \\(i_s(t)\\) é alternada pura e possui valor eficaz \\(I_{s,ef} = I_{o,ef}\\):</div>
             <div class="math-block">\\[ S = V_{ef} \\cdot I_{s,ef} = ${V_rms.toFixed(2)}\\text{ V} \\cdot ${I_o_ef.toFixed(3)}\\text{ A} = ${S.toFixed(2)}\\text{ VA} \\]</div>
-            <div class="math-block">\\[ F_p = \\frac{P_R}{S} = \\frac{${P_R.toFixed(2)}}{${S.toFixed(2)}} = ${FP.toFixed(3)} \\]</div>
+            <div class="math-block">\\[ F_P = \\frac{P_R}{S} = \\frac{${P_R.toFixed(2)}\\text{ W}}{${S.toFixed(2)}\\text{ VA}} = ${FP.toFixed(3)} \\]</div>
             <div class="step-desc"><strong>Nota didática:</strong> O fator de potência é rigorosamente unitário (\\(F_p = 1\\)) para carga resistiva em onda completa em ponte, pois a corrente na fonte é puramente senoidal e perfeitamente em fase com a tensão de entrada.</div>
           </div>
 
@@ -1573,7 +1573,7 @@ import { atualizarGrafico } from './graficos.js';
             <div class="step-title">Etapa 4: Potência Ativa, Potência Aparente e Fator de Potência</div>
             <div class="math-block">\\[ P_R = R \\cdot (I_{o,ef})^2 = ${R}\\,\\Omega \\cdot (${I_o_ef.toFixed(3)}\\text{ A})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
             <div class="math-block">\\[ S = V_{ef} \\cdot I_{s,ef} = ${V_rms.toFixed(2)}\\text{ V} \\cdot ${I_o_ef.toFixed(3)}\\text{ A} = ${S.toFixed(2)}\\text{ VA} \\]</div>
-            <div class="math-block">\\[ F_p = \\frac{P_R}{S} = \\frac{${P_R.toFixed(2)}}{${S.toFixed(2)}} = ${FP.toFixed(3)} \\]</div>
+            <div class="math-block">\\[ F_P = \\frac{P_R}{S} = \\frac{${P_R.toFixed(2)}\\text{ W}}{${S.toFixed(2)}\\text{ VA}} = ${FP.toFixed(3)} \\]</div>
           </div>
         `;
       } else if (topologia === "mono_onda_completa_ponte_re") {
@@ -1639,7 +1639,7 @@ import { atualizarGrafico } from './graficos.js';
             <div class="math-block">\\[ P_R = R \\cdot (I_{o,ef})^2 = ${R} \\cdot (${I_o_ef.toFixed(3)})^2 = ${P_R.toFixed(2)}\\text{ W} \\qquad P_E = E \\cdot I_{o,med} = ${E} \\cdot ${I_o_med.toFixed(3)} = ${P_E.toFixed(2)}\\text{ W} \\]</div>
             <div class="math-block">\\[ P_M = P_R + P_E = ${P_R.toFixed(2)} + ${P_E.toFixed(2)} = ${P_M.toFixed(2)}\\text{ W} \\]</div>
             <div class="math-block">\\[ S = V_{ef} \\cdot I_{s,ef} = ${V_rms.toFixed(2)}\\text{ V} \\cdot ${I_o_ef.toFixed(3)}\\text{ A} = ${S.toFixed(2)}\\text{ VA} \\]</div>
-            <div class="math-block">\\[ F_p = \\frac{P_M}{S} = \\frac{${P_M.toFixed(2)}}{${S.toFixed(2)}} = ${FP.toFixed(3)} \\]</div>
+            <div class="math-block">\\[ F_P = \\frac{P_M}{S} = \\frac{${P_M.toFixed(2)}\\text{ W}}{${S.toFixed(2)}\\text{ VA}} = ${FP.toFixed(3)} \\]</div>
           </div>
         `;
       } else if (topologia === "mono_onda_completa_ponte_rle") {
@@ -1764,7 +1764,7 @@ import { atualizarGrafico } from './graficos.js';
             <div class="math-block">\\[ P_R = R \\cdot (I_{o,ef})^2 = ${P_R.toFixed(2)}\\text{ W} \\qquad P_E = E \\cdot I_{o,med} = ${P_E.toFixed(2)}\\text{ W} \\]</div>
             <div class="math-block">\\[ P_M = P_R + P_E = ${P_M.toFixed(2)}\\text{ W} \\]</div>
             <div class="math-block">\\[ S = V_{ef} \\cdot I_{s,ef} = ${V_rms.toFixed(2)}\\text{ V} \\cdot ${I_o_ef.toFixed(3)}\\text{ A} = ${S.toFixed(2)}\\text{ VA} \\]</div>
-            <div class="math-block">\\[ F_p = \\frac{P_M}{S} = \\frac{${P_M.toFixed(2)}}{${S.toFixed(2)}} = ${FP.toFixed(3)} \\]</div>
+            <div class="math-block">\\[ F_P = \\frac{P_M}{S} = \\frac{${P_M.toFixed(2)}\\text{ W}}{${S.toFixed(2)}\\text{ VA}} = ${FP.toFixed(3)} \\]</div>
           </div>
         `;
       } else if (topologia === "mono_meia_onda_controlado_r") {
@@ -1824,15 +1824,15 @@ import { atualizarGrafico } from './graficos.js';
           <div class="step-box">
             <div class="step-title">Etapa 3: Tensão Eficaz e Corrente Eficaz na Carga</div>
             <div class="step-desc">Valor eficaz analítico deduzido pela integração quadrática da forma de onda:</div>
-            <div class="math-block">\\[ V_{R,ef} = V_{ef} \\sqrt{\\frac{1}{2} - \\frac{\\alpha}{2\\pi} + \\frac{\\operatorname{sen}(2\\alpha)}{4\\pi}} = ${V_rms.toFixed(2)} \\cdot \\sqrt{0{,}5 - \\frac{${a_rad.toFixed(3)}}{2\\pi} + \\frac{\\operatorname{sen}(${(2*alpha).toFixed(0)}^\\circ)}{4\\pi}} = ${V_o_ef.toFixed(2)}\\text{ V} \\]</div>
+            <div class="math-block">\\[ V_{R,ef} = V_{ef} \\sqrt{\\frac{1}{2} - \\frac{\\alpha}{2\\pi} + \\frac{\\operatorname{sen}(2\\alpha)}{4\\pi}} = ${V_rms.toFixed(2)} \\cdot \\sqrt{\\frac{1}{2} - \\frac{${a_rad.toFixed(3)}}{2\\pi} + \\frac{\\operatorname{sen}(${(2*alpha).toFixed(0)}^\\circ)}{4\\pi}} = ${V_o_ef.toFixed(2)}\\text{ V} \\]</div>
             <div class="math-block">\\[ I_{R,ef} = \\frac{V_{R,ef}}{R} = \\frac{${V_o_ef.toFixed(2)}}{${R}} = ${I_o_ef.toFixed(3)}\\text{ A} \\]</div>
           </div>
 
           <div class="step-box">
             <div class="step-title">Etapa 4: Potência Ativa, Potência Aparente e Fator de Potência</div>
-            <div class="math-block">\\[ P = R \\cdot (I_{R,ef})^2 = ${R}\\,\\Omega \\cdot (${I_o_ef.toFixed(3)}\\text{ A})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
+            <div class="math-block">\\[ P_R = R \\cdot (I_{R,ef})^2 = ${R}\\,\\Omega \\cdot (${I_o_ef.toFixed(3)}\\text{ A})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
             <div class="math-block">\\[ S = V_{ef} \\cdot I_{R,ef} = ${V_rms.toFixed(2)}\\text{ V} \\cdot ${I_o_ef.toFixed(3)}\\text{ A} = ${S.toFixed(2)}\\text{ VA} \\]</div>
-            <div class="math-block">\\[ FP = \\frac{P}{S} = \\frac{${P_R.toFixed(2)}}{${S.toFixed(2)}} = ${FP.toFixed(3)} \\]</div>
+            <div class="math-block">\\[ F_P = \\frac{P_R}{S} = \\frac{${P_R.toFixed(2)}\\text{ W}}{${S.toFixed(2)}\\text{ VA}} = ${FP.toFixed(3)} \\]</div>
           </div>
         `;
       } else if (topologia === "mono_meia_onda_controlado_rl") {
@@ -1931,11 +1931,11 @@ import { atualizarGrafico } from './graficos.js';
           <div class="step-box">
             <div class="step-title">Etapa 5: Potências e Fator de Potência</div>
             <div class="step-desc">Potência ativa real dissipada no resistor \\(R\\):</div>
-            <div class="math-block">\\[ P = R \\cdot (I_{o,ef})^2 = ${R}\\,\\Omega \\cdot (${I_o_ef.toFixed(3)}\\text{ A})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
+            <div class="math-block">\\[ P_R = R \\cdot (I_{o,ef})^2 = ${R}\\,\\Omega \\cdot (${I_o_ef.toFixed(3)}\\text{ A})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
             <div class="step-desc">Potência aparente total entregue pela rede CA:</div>
             <div class="math-block">\\[ S = V_{ef} \\cdot I_{o,ef} = ${V_rms.toFixed(1)}\\text{ V} \\cdot ${I_o_ef.toFixed(3)}\\text{ A} = ${S.toFixed(2)}\\text{ VA} \\]</div>
             <div class="step-desc">Fator de potência do sistema:</div>
-            <div class="math-block">\\[ F_P = \\frac{P}{S} = \\frac{${P_R.toFixed(2)}}{${S.toFixed(2)}} = ${FP.toFixed(3)} \\]</div>
+            <div class="math-block">\\[ F_P = \\frac{P_R}{S} = \\frac{${P_R.toFixed(2)}\\text{ W}}{${S.toFixed(2)}\\text{ VA}} = ${FP.toFixed(3)} \\]</div>
           </div>
         `;
       } else if (topologia === "mono_meia_onda_controlado_rl_roda_livre") {
@@ -2078,7 +2078,7 @@ import { atualizarGrafico } from './graficos.js';
             <div class="step-desc">Potência aparente fornecida pela rede CA:</div>
             <div class="math-block">\\[ S = V_{ef} \\cdot I_{g,ef} = ${V_rms.toFixed(1)}\\text{ V} \\cdot ${I_T_ef.toFixed(3)}\\text{ A} = ${S.toFixed(2)}\\text{ VA} \\]</div>
             <div class="step-desc">Fator de potência do retificador:</div>
-            <div class="math-block">\\[ F_P = \\frac{P}{S} = \\frac{${P_R.toFixed(2)}}{${S.toFixed(2)}} = ${FP.toFixed(3)} \\]</div>
+            <div class="math-block">\\[ F_P = \\frac{P_R}{S} = \\frac{${P_R.toFixed(2)}\\text{ W}}{${S.toFixed(2)}\\text{ VA}} = ${FP.toFixed(3)} \\]</div>
           </div>
         `;
       } else if (topologia === "mono_meia_onda_controlado_rle") {
@@ -2265,7 +2265,7 @@ import { atualizarGrafico } from './graficos.js';
             <div class="math-block">\\[ P_M = P_R + P_E = ${P_R.toFixed(2)}\\text{ W} + ${P_E.toFixed(2)}\\text{ W} = ${P_M.toFixed(2)}\\text{ W} \\]</div>
             <div class="step-desc">Potência aparente e Fator de Potência na rede CA:</div>
             <div class="math-block">\\[ S = V_{ef} \\cdot I_{o,ef} = ${V_rms.toFixed(1)}\\text{ V} \\cdot ${I_o_ef.toFixed(3)}\\text{ A} = ${S.toFixed(2)}\\text{ VA} \\]</div>
-            <div class="math-block">\\[ F_P = \\frac{P_M}{S} = \\frac{${P_M.toFixed(2)}}{${S.toFixed(2)}} = ${FP.toFixed(3)} \\]</div>
+            <div class="math-block">\\[ F_P = \\frac{P_M}{S} = \\frac{${P_M.toFixed(2)}\\text{ W}}{${S.toFixed(2)}\\text{ VA}} = ${FP.toFixed(3)} \\]</div>
           </div>
         `;
       } else if (topologia === "mono_onda_completa_controlado_r") {
@@ -2310,7 +2310,7 @@ import { atualizarGrafico } from './graficos.js';
           <div class="step-box">
             <div class="step-title">Etapa 2: Tensão Eficaz e Corrente Eficaz na Carga</div>
             <div class="step-desc">Valor eficaz analítico com período de repetição \\(\\pi\\):</div>
-            <div class="math-block">\\[ V_{R,ef} = V_p \\sqrt{\\frac{1}{2} - \\frac{\\alpha}{2\\pi} + \\frac{\\operatorname{sen}(2\\alpha)}{4\\pi}} = ${V_p.toFixed(2)} \\cdot \\sqrt{0{,}5 - \\frac{${a_rad.toFixed(3)}}{2\\pi} + \\frac{\\operatorname{sen}(${(2*alpha).toFixed(0)}^\\circ)}{4\\pi}} = ${V_o_ef.toFixed(2)}\\text{ V} \\]</div>
+            <div class="math-block">\\[ V_{R,ef} = V_{ef} \\sqrt{1 - \\frac{\\alpha}{\\pi} + \\frac{\\operatorname{sen}(2\\alpha)}{2\\pi}} = ${V_rms.toFixed(2)} \\cdot \\sqrt{1 - \\frac{${a_rad.toFixed(3)}}{\\pi} + \\frac{\\operatorname{sen}(${(2*alpha).toFixed(0)}^\\circ)}{2\\pi}} = ${V_o_ef.toFixed(2)}\\text{ V} \\]</div>
             <div class="math-block">\\[ I_{o,ef} = \\frac{V_{R,ef}}{R} = \\frac{${V_o_ef.toFixed(2)}}{${R}} = ${I_o_ef.toFixed(3)}\\text{ A} \\]</div>
           </div>
 
@@ -2318,7 +2318,7 @@ import { atualizarGrafico } from './graficos.js';
             <div class="step-title">Etapa 3: Potência Ativa, Potência Aparente e Fator de Potência</div>
             <div class="math-block">\\[ P_R = R \\cdot (I_{o,ef})^2 = ${R}\\,\\Omega \\cdot (${I_o_ef.toFixed(3)}\\text{ A})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
             <div class="math-block">\\[ S = V_{ef} \\cdot I_{o,ef} = ${V_rms.toFixed(2)}\\text{ V} \\cdot ${I_o_ef.toFixed(3)}\\text{ A} = ${S.toFixed(2)}\\text{ VA} \\]</div>
-            <div class="math-block">\\[ FP = \\frac{P_R}{S} = \\frac{${P_R.toFixed(2)}}{${S.toFixed(2)}} = ${FP.toFixed(3)} \\]</div>
+            <div class="math-block">\\[ F_P = \\frac{P_R}{S} = \\frac{${P_R.toFixed(2)}\\text{ W}}{${S.toFixed(2)}\\text{ VA}} = ${FP.toFixed(3)} \\]</div>
           </div>
         `;
       } else if (topologia === "mono_onda_completa_controlado_rl") {
@@ -2597,7 +2597,7 @@ import { atualizarGrafico } from './graficos.js';
           <div class="step-box">
             <div class="step-title">Etapa 3: Balanço de Potência e Fator de Potência</div>
             <div class="math-block">\\[ P_R = R \\cdot (I_{o,ef})^2 = ${P_R.toFixed(2)}\\text{ W} \\qquad P_E = E \\cdot I_{o,med} = ${P_E.toFixed(2)}\\text{ W} \\]</div>
-            <div class="math-block">\\[ P_M = P_R + P_E = ${P_M.toFixed(2)}\\text{ W} \\qquad S = ${S.toFixed(2)}\\text{ VA} \\qquad FP = ${FP.toFixed(3)} \\]</div>
+            <div class="math-block">\\[ P_M = P_R + P_E = ${P_M.toFixed(2)}\\text{ W} \\qquad S = ${S.toFixed(2)}\\text{ VA} \\qquad F_P = \\frac{P_M}{S} = \\frac{${P_M.toFixed(2)}\\text{ W}}{${S.toFixed(2)}\\text{ VA}} = ${FP.toFixed(3)} \\]</div>
           </div>
         `;
       } else if (topologia === "tri_meia_onda_r") {
@@ -2650,9 +2650,9 @@ import { atualizarGrafico } from './graficos.js';
             <div class="step-title">Etapa 3: Corrente nos Diodos e Fator de Potência Trifásico</div>
             <div class="step-desc">A corrente eficaz em cada diodo (e fase da fonte) corresponde à fração cíclica \\(1/3\\):</div>
             <div class="math-block">\\[ I_{D,ef} = \\sqrt{\\frac{(I_{R,ef})^2}{3}} = \\frac{${I_o_ef.toFixed(2)}}{\\sqrt{3}} = ${I_D_ef.toFixed(2)}\\text{ A} \\]</div>
-            <div class="math-block">\\[ P = R \\cdot (I_{R,ef})^2 = ${R}\\,\\Omega \\cdot (${I_o_ef.toFixed(2)}\\text{ A})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
-            <div class="math-block">\\[ S_{3\\phi} = 3 \\cdot V_{F,ef} \\cdot I_{D,ef} = 3 \\cdot ${V_F_ef.toFixed(2)} \\cdot ${I_D_ef.toFixed(2)} = ${S_3f.toFixed(2)}\\text{ VA} \\]</div>
-            <div class="math-block">\\[ FP = \\frac{P}{S_{3\\phi}} = \\frac{${P_R.toFixed(2)}}{${S_3f.toFixed(2)}} = ${FP.toFixed(2)} \\]</div>
+            <div class="math-block">\\[ P_R = R \\cdot (I_{R,ef})^2 = ${R}\\,\\Omega \\cdot (${I_o_ef.toFixed(2)}\\text{ A})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
+            <div class="math-block">\\[ S_{3\\phi} = 3 \\cdot V_{F,ef} \\cdot I_{D,ef} = 3 \\cdot ${V_F_ef.toFixed(2)}\\text{ V} \\cdot ${I_D_ef.toFixed(2)}\\text{ A} = ${S_3f.toFixed(2)}\\text{ VA} \\]</div>
+            <div class="math-block">\\[ F_P = \\frac{P_R}{S_{3\\phi}} = \\frac{${P_R.toFixed(2)}\\text{ W}}{${S_3f.toFixed(2)}\\text{ VA}} = ${FP.toFixed(2)} \\]</div>
             <div class="step-desc">Tensão reversa máxima de pico sobre os diodos: \\(V_{RRM} = \\sqrt{3}V_{F,p} = ${V_RRM.toFixed(1)}\\text{ V}\\).</div>
           </div>
         `;
@@ -2706,9 +2706,9 @@ import { atualizarGrafico } from './graficos.js';
             <div class="step-title">Etapa 3: Corrente de Linha e Fator de Potência Trifásico</div>
             <div class="step-desc">A corrente da rede conduz dois terços do ciclo:</div>
             <div class="math-block">\\[ I_{s,ef} = I_{o,ef} \\sqrt{\\frac{2}{3}} = ${I_o_ef.toFixed(2)} \\cdot \\sqrt{\\frac{2}{3}} = ${I_s_ef.toFixed(2)}\\text{ A} \\]</div>
-            <div class="math-block">\\[ P = R \\cdot (I_{o,ef})^2 = ${R}\\,\\Omega \\cdot (${I_o_ef.toFixed(2)}\\text{ A})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
-            <div class="math-block">\\[ S_{3\\phi} = \\sqrt{3} \\cdot V_{linha,ef} \\cdot I_{s,ef} = \\sqrt{3} \\cdot ${V_L_ef.toFixed(1)} \\cdot ${I_s_ef.toFixed(2)} = ${S_3f.toFixed(2)}\\text{ VA} \\]</div>
-            <div class="math-block">\\[ FP = \\frac{P}{S_{3\\phi}} = \\frac{${P_R.toFixed(2)}}{${S_3f.toFixed(2)}} = ${FP.toFixed(2)} \\]</div>
+            <div class="math-block">\\[ P_R = R \\cdot (I_{o,ef})^2 = ${R}\\,\\Omega \\cdot (${I_o_ef.toFixed(2)}\\text{ A})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
+            <div class="math-block">\\[ S_{3\\phi} = \\sqrt{3} \\cdot V_{linha,ef} \\cdot I_{s,ef} = \\sqrt{3} \\cdot ${V_L_ef.toFixed(1)}\\text{ V} \\cdot ${I_s_ef.toFixed(2)}\\text{ A} = ${S_3f.toFixed(2)}\\text{ VA} \\]</div>
+            <div class="math-block">\\[ F_P = \\frac{P_R}{S_{3\\phi}} = \\frac{${P_R.toFixed(2)}\\text{ W}}{${S_3f.toFixed(2)}\\text{ VA}} = ${FP.toFixed(2)} \\]</div>
           </div>
         `;
       } else if (topologia === "tri_meia_onda_controlado_r") {
@@ -2777,8 +2777,8 @@ import { atualizarGrafico } from './graficos.js';
           <div class="step-box">
             <div class="step-title">Etapa 3: Corrente de Linha e Fator de Potência Trifásico</div>
             <div class="math-block">\\[ I_{a,ef} = \\frac{I_{R,ef}}{\\sqrt{3}} = \\frac{${I_o_ef.toFixed(2)}}{\\sqrt{3}} = ${I_a_ef.toFixed(2)}\\text{ A} \\]</div>
-            <div class="math-block">\\[ P = R \\cdot (I_{R,ef})^2 = ${P_R.toFixed(2)}\\text{ W} \\qquad S_{3\\phi} = 3 \\cdot V_{F,ef} \\cdot I_{a,ef} = ${S_3f.toFixed(2)}\\text{ VA} \\]</div>
-            <div class="math-block">\\[ FP = \\frac{P}{S_{3\\phi}} = \\frac{${P_R.toFixed(2)}}{${S_3f.toFixed(2)}} = ${FP.toFixed(2)} \\]</div>
+            <div class="math-block">\\[ P_R = R \\cdot (I_{R,ef})^2 = ${P_R.toFixed(2)}\\text{ W} \\qquad S_{3\\phi} = 3 \\cdot V_{F,ef} \\cdot I_{a,ef} = ${S_3f.toFixed(2)}\\text{ VA} \\]</div>
+            <div class="math-block">\\[ F_P = \\frac{P_R}{S_{3\\phi}} = \\frac{${P_R.toFixed(2)}\\text{ W}}{${S_3f.toFixed(2)}\\text{ VA}} = ${FP.toFixed(2)} \\]</div>
           </div>
         `;
       } else if (topologia === "tri_ponte_controlado_r") {
@@ -2849,8 +2849,8 @@ import { atualizarGrafico } from './graficos.js';
           <div class="step-box">
             <div class="step-title">Etapa 3: Corrente de Linha e Fator de Potência Trifásico</div>
             <div class="math-block">\\[ I_{a,ef} = I_{o,ef} \\sqrt{\\frac{2}{3}} = ${I_o_ef.toFixed(2)} \\cdot \\sqrt{\\frac{2}{3}} = ${I_a_ef.toFixed(2)}\\text{ A} \\]</div>
-            <div class="math-block">\\[ P = R \\cdot (I_{o,ef})^2 = ${P_R.toFixed(2)}\\text{ W} \\qquad S_{3\\phi} = \\sqrt{3} \\cdot V_{linha,ef} \\cdot I_{a,ef} = ${S_3f.toFixed(2)}\\text{ VA} \\]</div>
-            <div class="math-block">\\[ FP = \\frac{P}{S_{3\\phi}} = \\frac{${P_R.toFixed(2)}}{${S_3f.toFixed(2)}} = ${FP.toFixed(2)} \\]</div>
+            <div class="math-block">\\[ P_R = R \\cdot (I_{o,ef})^2 = ${P_R.toFixed(2)}\\text{ W} \\qquad S_{3\\phi} = \\sqrt{3} \\cdot V_{linha,ef} \\cdot I_{a,ef} = \\sqrt{3} \\cdot ${V_L_ef.toFixed(1)}\\text{ V} \\cdot ${I_a_ef.toFixed(2)}\\text{ A} = ${S_3f.toFixed(2)}\\text{ VA} \\]</div>
+            <div class="math-block">\\[ F_P = \\frac{P_R}{S_{3\\phi}} = \\frac{${P_R.toFixed(2)}\\text{ W}}{${S_3f.toFixed(2)}\\text{ VA}} = ${FP.toFixed(2)} \\]</div>
           </div>
         `;
       }

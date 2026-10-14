@@ -216,11 +216,27 @@
     .math-block {
       background: #161b22;
       border-left: 3px solid var(--accent);
-      padding: 10px 14px;
-      border-radius: 4px;
-      margin: 8px 0;
+      padding: 12px 18px;
+      border-radius: 6px;
+      margin: 10px 0;
       overflow-x: auto;
+      font-size: 1.15rem;
+      line-height: 1.6;
     }
+
+    /* Otimização de renderização de fontes e equações KaTeX no tema escuro */
+    .katex, .math-block {
+      text-rendering: geometricPrecision;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Garantir que o sinal de igual (=) e operadores relacionais do KaTeX nunca colapsem em um traço único */
+    .katex .mrel {
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
 
     .btn-table-tag {
       background: rgba(88, 166, 255, 0.12);
