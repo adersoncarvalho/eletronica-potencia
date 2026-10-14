@@ -3220,17 +3220,20 @@ import { atualizarGrafico } from './graficos.js';
         } else if (topologia === "mono_onda_completa_controlado_r") {
           const R = parseFloat(document.getElementById("input-r").value);
           const a_val = (parseFloat(document.getElementById("input-alpha").value) * Math.PI) / 180;
-          if (theta >= a_val && theta <= Math.PI) {
+          if (theta >= a_val - 1e-6 && theta <= Math.PI + 1e-6) {
             v_out_val = v_in_val;
             i_out_val = v_out_val / R;
             i_d1_val = i_out_val;
-          } else if (theta >= Math.PI + a_val && theta <= 2 * Math.PI) {
+            v_d_val = 0;
+          } else if (theta >= Math.PI + a_val - 1e-6 && theta <= 2 * Math.PI + 1e-6) {
             v_out_val = -v_in_val;
             i_out_val = v_out_val / R;
             i_d2_val = i_out_val;
+            v_d_val = v_in_val;
           } else {
             v_out_val = 0;
             i_out_val = 0;
+            v_d_val = v_in_val;
           }
         } else if (topologia === "mono_onda_completa_controlado_rl") {
           const R = parseFloat(document.getElementById("input-r").value);
@@ -3456,7 +3459,7 @@ import { atualizarGrafico } from './graficos.js';
         if (!isTrifasico) {
           if (isControlado) {
             if (isOndaCompleta) {
-              if (topologia === "mono_onda_completa_controlado_rl" || topologia === "mono_onda_completa_controlado_rle") {
+              if (topologia === "mono_onda_completa_controlado_r" || topologia === "mono_onda_completa_controlado_rl" || topologia === "mono_onda_completa_controlado_rle") {
                 // v_d_val já calculado exatamente no bloco da topologia
               } else {
                 if (i_d1_val > 0.0001) {

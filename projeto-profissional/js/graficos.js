@@ -464,8 +464,8 @@
         let labelVD = "vD(t) - Tensão no Diodo Principal (V)";
         let titleVD = "Tensão vD (V)";
         if (plotData.is_controlado) {
-          labelVD = "vT(t) - Tensão no Tiristor Principal (V)";
-          titleVD = "Tensão vT (V)";
+          labelVD = plotData.is_onda_completa ? "vT1(t) - Tensão no Tiristor T1 (V)" : "vT(t) - Tensão no Tiristor Principal (V)";
+          titleVD = plotData.is_onda_completa ? "Tensão vT1 (V)" : "Tensão vT (V)";
         } else if (plotData.is_trifasico) {
           labelVD = "vD1(t) - Tensão Reversa Diodo Fase A (V)";
           titleVD = "Tensão vD1 (V)";
