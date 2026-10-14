@@ -3240,79 +3240,75 @@ import { atualizarGrafico } from './graficos.js';
           const Z = Math.sqrt(R * R + XL * XL);
           const phi = Math.atan(XL / R);
           const cos_phi_val = R / Z;
+          const tan_p = XL / R;
           const L_crit = (a_val < Math.PI / 2) ? ((R * Math.tan(a_val)) / omega) : Infinity;
           const isCritico = Math.abs(a_val - phi) < 0.015 || (isFinite(L_crit) && Math.abs(L - L_crit) <= 0.0005);
           const isMCC = (L >= L_crit) || isCritico;
 
-          if (isMCC) {
-            const tan_p = XL / R;
-            const exp_term = Math.exp(-Math.PI / tan_p);
-            const A_mcc = (1 - exp_term > 1e-6) ? (2 * (V_p / Z) * Math.sin(phi - a_val) / (1 - exp_term)) : 0;
-
-            function f_i_mcc(th_abs, th_rel) {
-              return Math.max(0, (V_p / Z) * Math.sin(th_abs - phi) + A_mcc * Math.exp(-th_rel / tan_p));
-            }
-
-            if (theta >= a_val && theta < Math.PI + a_val) {
-              v_out_val = v_in_val;
-              const cur = f_i_mcc(theta, theta - a_val);
-              i_d1_val = cur;
-              i_d2_val = 0;
-              i_out_val = cur;
-            } else if (theta >= Math.PI + a_val) {
-              v_out_val = -v_in_val;
-              const cur = f_i_mcc(theta - Math.PI, theta - (Math.PI + a_val));
-              i_d1_val = 0;
-              i_d2_val = cur;
-              i_out_val = cur;
-            } else {
-              v_out_val = -v_in_val;
-              const cur = f_i_mcc(theta + Math.PI, Math.PI + theta - a_val);
-              i_d1_val = 0;
-              i_d2_val = cur;
-              i_out_val = cur;
-            }
+          // Se estivermos antes do primeiro disparo do tiristor (t < alpha / omega)
+          if (omega_t < a_val - 1e-7) {
+            v_out_val = 0;
+            i_out_val = 0;
+            i_d1_val = 0;
+            i_d2_val = 0;
+            v_d_val = v_in_val / 2;
           } else {
-            const pM = obterPuchlowski((a_val * 180) / Math.PI, cos_phi_val);
-            const b_rad = (pM.beta * Math.PI) / 180;
-            const gamma_val = b_rad - a_val;
-            const tan_p = XL / R;
+            // Número do semiciclo disparado (m = 0, 1, 2, 3...)
+            const m = Math.floor((omega_t - a_val + 1e-7) / Math.PI);
+            const th_rel = (omega_t - a_val + 1e-7) - m * Math.PI; // Ângulo transcorrido no pulso atual [0, pi)
 
-            function f_i_mcd(th_rel) {
-              const th_abs = a_val + th_rel;
-              return (V_p / Z) * (Math.sin(th_abs - phi) - Math.sin(a_val - phi) * Math.exp(-th_rel / tan_p));
-            }
+            let i_pulse = 0;
+            let conducting = false;
 
-            let cond_T1 = false;
-            let cond_T2 = false;
-            let i_val = 0;
-
-            if (theta >= a_val && theta < (a_val + gamma_val)) {
-              cond_T1 = true;
-              i_val = Math.max(0, f_i_mcd(theta - a_val));
-            } else if (theta >= (Math.PI + a_val) && theta < (Math.PI + a_val + gamma_val)) {
-              cond_T2 = true;
-              i_val = Math.max(0, f_i_mcd(theta - (Math.PI + a_val)));
-            } else if (theta < (a_val + gamma_val - Math.PI)) {
-              cond_T2 = true;
-              i_val = Math.max(0, f_i_mcd(Math.PI + theta - a_val));
-            }
-
-            if (cond_T1) {
-              v_out_val = v_in_val;
-              i_out_val = i_val;
-              i_d1_val = i_val;
-              i_d2_val = 0;
-            } else if (cond_T2) {
-              v_out_val = -v_in_val;
-              i_out_val = i_val;
-              i_d1_val = 0;
-              i_d2_val = i_val;
+            if (isCritico) {
+              // Condução Crítica (alpha == phi): corrente é meio-senoide exata extinguindo em pi
+              conducting = (th_rel < Math.PI);
+              i_pulse = conducting ? (V_p / Z) * Math.sin(th_rel) : 0;
+            } else if (isMCC) {
+              // Condução Contínua (L > L_crit, alpha < phi): condução ininterrupta entre pulsos
+              conducting = true;
+              const exp_term = Math.exp(-Math.PI / tan_p);
+              const A_mcc = (1 - exp_term > 1e-6) ? (2 * (V_p / Z) * Math.sin(phi - a_val) / (1 - exp_term)) : 0;
+              i_pulse = (V_p / Z) * Math.sin(a_val + th_rel - phi) + A_mcc * Math.exp(-th_rel / tan_p);
             } else {
+              // Condução Descontínua (L < L_crit, alpha > phi): extingue em beta do ábaco
+              const pM = obterPuchlowski((a_val * 180) / Math.PI, cos_phi_val);
+              const b_rad = (pM.beta * Math.PI) / 180;
+              const gamma_val = b_rad - a_val; // Duração da condução gamma < pi
+
+              if (th_rel < gamma_val) {
+                conducting = true;
+                i_pulse = (V_p / Z) * (Math.sin(a_val + th_rel - phi) - Math.sin(a_val - phi) * Math.exp(-th_rel / tan_p));
+              } else {
+                conducting = false;
+                i_pulse = 0;
+              }
+            }
+
+            i_pulse = Math.max(0, i_pulse);
+
+            if (conducting) {
+              i_out_val = i_pulse;
+              if (m % 2 === 0) {
+                // Par T1, T4 conduz (semiciclo positivo disparado)
+                v_out_val = v_in_val;
+                i_d1_val = i_pulse;
+                i_d2_val = 0;
+                v_d_val = 0;
+              } else {
+                // Par T2, T3 conduz (semiciclo negativo disparado)
+                v_out_val = -v_in_val;
+                i_d1_val = 0;
+                i_d2_val = i_pulse;
+                v_d_val = v_in_val;
+              }
+            } else {
+              // Intervalo de extinção / bloqueio
               v_out_val = 0;
               i_out_val = 0;
               i_d1_val = 0;
               i_d2_val = 0;
+              v_d_val = (v_in_val - v_out_val) / 2;
             }
           }
         } else if (topologia === "mono_onda_completa_controlado_rle") {
@@ -3320,16 +3316,27 @@ import { atualizarGrafico } from './graficos.js';
           const L = parseFloat(document.getElementById("input-l").value);
           const E = parseFloat(document.getElementById("input-e").value);
           const a_val = (parseFloat(document.getElementById("input-alpha").value) * Math.PI) / 180;
-          if (theta >= a_val && theta < Math.PI + a_val) {
-            v_out_val = v_in_val;
-            i_out_val = Math.max(0, (((2 * V_p) / Math.PI) * Math.cos(a_val) - E) / R);
-            i_d1_val = i_out_val;
-            i_d2_val = 0;
-          } else {
-            v_out_val = -v_in_val;
-            i_out_val = Math.max(0, (((2 * V_p) / Math.PI) * Math.cos(a_val) - E) / R);
+          if (omega_t < a_val - 1e-7) {
+            v_out_val = E;
+            i_out_val = 0;
             i_d1_val = 0;
-            i_d2_val = i_out_val;
+            i_d2_val = 0;
+            v_d_val = (v_in_val - E) / 2;
+          } else {
+            const m = Math.floor((omega_t - a_val + 1e-7) / Math.PI);
+            const i_med = Math.max(0, (((2 * V_p) / Math.PI) * Math.cos(a_val) - E) / R);
+            i_out_val = i_med;
+            if (m % 2 === 0) {
+              v_out_val = v_in_val;
+              i_d1_val = i_med;
+              i_d2_val = 0;
+              v_d_val = 0;
+            } else {
+              v_out_val = -v_in_val;
+              i_d1_val = 0;
+              i_d2_val = i_med;
+              v_d_val = v_in_val;
+            }
           }
         } else if (topologia === "tri_meia_onda_r") {
           const R = parseFloat(document.getElementById("input-r").value);
@@ -3449,12 +3456,16 @@ import { atualizarGrafico } from './graficos.js';
         if (!isTrifasico) {
           if (isControlado) {
             if (isOndaCompleta) {
-              if (i_d1_val > 0.0001) {
-                v_d_val = 0;
-              } else if (i_d2_val > 0.0001) {
-                v_d_val = v_in_val;
+              if (topologia === "mono_onda_completa_controlado_rl" || topologia === "mono_onda_completa_controlado_rle") {
+                // v_d_val já calculado exatamente no bloco da topologia
               } else {
-                v_d_val = (v_in_val - v_out_val) / 2;
+                if (i_d1_val > 0.0001) {
+                  v_d_val = 0;
+                } else if (i_d2_val > 0.0001) {
+                  v_d_val = v_in_val;
+                } else {
+                  v_d_val = (v_in_val - v_out_val) / 2;
+                }
               }
             } else {
               v_d_val = (i_d1_val > 0.0001) ? 0 : (v_in_val - v_out_val);
@@ -3462,13 +3473,21 @@ import { atualizarGrafico } from './graficos.js';
             const a_deg = parseFloat(document.getElementById("input-alpha").value);
             const a_rad = (a_deg * Math.PI) / 180;
             if (isOndaCompleta) {
-              const d_g1 = (theta - a_rad + 2 * Math.PI) % (2 * Math.PI);
-              const d_g2 = (theta - (Math.PI + a_rad) + 2 * Math.PI) % (2 * Math.PI);
-              gate_val = (d_g1 <= (8 * Math.PI / 180) || d_g2 <= (8 * Math.PI / 180)) ? 5 : 0;
+              if (omega_t < a_rad - 1e-7) {
+                gate_val = 0;
+              } else {
+                const m_g = Math.floor((omega_t - a_rad + 1e-7) / Math.PI);
+                const th_g = (omega_t - a_rad + 1e-7) - m_g * Math.PI;
+                gate_val = (th_g <= (8 * Math.PI / 180)) ? 5 : 0;
+              }
               i_fonte_val = i_d1_val - i_d2_val;
             } else {
-              const d_g = (theta - a_rad + 2 * Math.PI) % (2 * Math.PI);
-              gate_val = (d_g <= (8 * Math.PI / 180)) ? 5 : 0;
+              if (omega_t < a_rad - 1e-7) {
+                gate_val = 0;
+              } else {
+                const d_g = (theta - a_rad + 2 * Math.PI) % (2 * Math.PI);
+                gate_val = (d_g <= (8 * Math.PI / 180)) ? 5 : 0;
+              }
               i_fonte_val = i_d1_val;
             }
           } else if (isOndaCompleta) {
