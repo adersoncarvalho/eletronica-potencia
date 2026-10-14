@@ -2535,17 +2535,19 @@ import { atualizarGrafico } from './graficos.js';
           <div class="step-box">
             <div class="step-title">Etapa 5: Potência Ativa, Potência Aparente e Fator de Potência</div>
             <div class="step-desc">Potência ativa real dissipada no resistor:</div>
-            <div class="math-block">\\[ P = R \\cdot (I_{o,ef})^2 = ${R}\\,\\Omega \\cdot (${I_o_ef.toFixed(3)}\\text{ A})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
-            <div class="step-desc">Potência aparente total da rede CA (\\(S = V_{ef} \\cdot I_{o,ef}\\)):</div>
-            <div class="math-block">\\[ S = ${V_rms.toFixed(1)}\\text{ V} \\cdot ${I_o_ef.toFixed(3)}\\text{ A} = ${S.toFixed(2)}\\text{ VA} \\]</div>
+            <div class="math-block">\\[ P_R = R \\cdot (I_{o,ef})^2 = ${R}\\,\\Omega \\cdot (${I_o_ef.toFixed(3)}\\text{ A})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
+            <div class="step-desc">Potência aparente total da rede CA:</div>
+            <div class="math-block">\\[ S = V_{ef} \\cdot I_{o,ef} = ${V_rms.toFixed(1)}\\text{ V} \\cdot ${I_o_ef.toFixed(3)}\\text{ A} = ${S.toFixed(2)}\\text{ VA} \\]</div>
             <div class="step-desc">Fator de Potência do retificador:</div>
             ${isCritico ? `
-              <div class="math-block">\\[ FP = \\cos\\alpha = \\cos(${alpha}^\\circ) = ${FP.toFixed(3)} \\]</div>
-              <div class="step-desc">No modo crítico, o fator de distorção harmônica é unitário (\\(g = 1\\)), de modo que \\(FP = g \\cdot \\cos\\phi_1 = \\cos\\alpha\\).</div>
+              <div class="math-block">\\[ F_P = \\frac{P_R}{S} = \\frac{${P_R.toFixed(2)}\\text{ W}}{${S.toFixed(2)}\\text{ VA}} = \\cos\\alpha = \\cos(${alpha}^\\circ) = ${FP.toFixed(2)} \\]</div>
+              <div class="step-desc">No modo crítico, o fator de distorção harmônica é unitário (\\(g = 1\\)), de modo que \\(F_P = g \\cdot \\cos\\phi_1 = \\cos\\alpha\\).</div>
             ` : (isMCC ? `
-              <div class="math-block">\\[ FP = \\frac{2\\sqrt{2}}{\\pi} \\cos\\alpha \\approx 0{,}90 \\cdot \\cos(${alpha}^\\circ) = ${FP.toFixed(3)} \\]</div>
+              <div class="math-block">\\[ F_P = \\frac{P_R}{S} = \\frac{${P_R.toFixed(2)}\\text{ W}}{${S.toFixed(2)}\\text{ VA}} = ${FP.toFixed(2)} \\]</div>
+              <div class="step-desc">Pela relação clássica de condução contínua (com ondulação de corrente desprezível na carga):</div>
+              <div class="math-block">\\[ F_P = \\frac{2\\sqrt{2}}{\\pi} \\cos\\alpha \\approx 0{,}90 \\cdot \\cos(${alpha}^\\circ) = ${FP.toFixed(2)} \\]</div>
             ` : `
-              <div class="math-block">\\[ FP = \\frac{P}{S} = \\frac{${P_R.toFixed(2)}}{${S.toFixed(2)}} = ${FP.toFixed(3)} \\]</div>
+              <div class="math-block">\\[ F_P = \\frac{P_R}{S} = \\frac{${P_R.toFixed(2)}\\text{ W}}{${S.toFixed(2)}\\text{ VA}} = ${FP.toFixed(3)} \\]</div>
             `)}
           </div>
         `;
