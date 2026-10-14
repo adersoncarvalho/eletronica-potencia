@@ -509,7 +509,7 @@ import { atualizarGrafico } from './graficos.js';
           <!-- Badge do 1º Passo (Entrada alpha) -->
           <g filter="url(#puchGlow)">
             <rect x="${(badgeAlphaX - 45).toFixed(1)}" y="254" width="90" height="22" rx="4" fill="#1e293b" stroke="#ef4444" stroke-width="1.2" />
-            <text x="${badgeAlphaX.toFixed(1)}" y="269" text-anchor="middle" fill="#fca5a5" font-size="10" font-family="Segoe UI, -apple-system, sans-serif" font-weight="bold">1º: α = ${alphaAtual}°</text>
+            <text x="${badgeAlphaX.toFixed(1)}" y="269" text-anchor="middle" fill="#fca5a5" font-size="10" font-family="Segoe UI, -apple-system, sans-serif" font-weight="bold">1º: α = ${alpha}°</text>
           </g>
 
           <!-- Callout do 2º Passo (Cruzamento cos phi) -->
