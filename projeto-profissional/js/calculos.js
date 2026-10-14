@@ -1178,26 +1178,26 @@ import { atualizarGrafico } from './graficos.js';
         stepsHTML = `
           <div class="step-box">
             <div class="step-title">Etapa 1: Parâmetros da Carga (Reatância, Impedância e Fator de Potência)</div>
-            <div class="step-desc">Para frequência de \(${freq.toFixed(1)}\text{ Hz}\) (\(\omega = ${omega.toFixed(2)}\text{ rad/s}\)):</div>
-            <div class="math-block">\[ X_L = \omega L = ${omega.toFixed(2)} \cdot ${L} = ${XL.toFixed(3)}\,\Omega \qquad Z = \sqrt{R^2 + X_L^2} = \sqrt{${R}^2 + (${XL.toFixed(3)})^2} = ${Z.toFixed(3)}\,\Omega \]</div>
-            <div class="math-block">\[ \cos(\phi) = \frac{R}{Z} = \frac{${R}}{${Z.toFixed(3)}} \approx ${cos_phi.toFixed(3)} \implies \phi = ${phi_deg.toFixed(2)}^\circ \]</div>
+            <div class="step-desc">Para frequência de \\(${freq.toFixed(1)}\\text{ Hz}\\) (\\(\\omega = ${omega.toFixed(2)}\\text{ rad/s}\\)):</div>
+            <div class="math-block">\\[ X_L = \\omega L = ${omega.toFixed(2)} \\cdot ${L} = ${XL.toFixed(3)}\\,\\Omega \\qquad Z = \\sqrt{R^2 + X_L^2} = \\sqrt{${R}^2 + (${XL.toFixed(3)})^2} = ${Z.toFixed(3)}\\,\\Omega \\]</div>
+            <div class="math-block">\\[ \\cos(\\phi) = \\frac{R}{Z} = \\frac{${R}}{${Z.toFixed(3)}} \\approx ${cos_phi.toFixed(3)} \\implies \\phi = ${phi_deg.toFixed(2)}^\\circ \\]</div>
           </div>
 
           <div class="step-box">
             <div class="step-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
-              <span>Etapa 2: Obtenção do Ângulo de Extinção (\(\beta\)) via Ábaco de Puchlowski</span>
+              <span>Etapa 2: Obtenção do Ângulo de Extinção (\\(\\beta\\)) via Ábaco de Puchlowski</span>
               <button type="button" class="btn-table-tag" onclick="toggleTabelaPuchlowski()" title="Visualizar Ábaco e Tabela de Puchlowski">
                 📊 Ábaco / Tabela de Puchlowski
               </button>
             </div>
             <div class="step-desc">
-              Como não há força contraeletromotriz na carga (\(E = 0\)), temos \(a = \frac{E}{\sqrt{2}V_{ef}} = 0\).
-              Consultando o <strong>Ábaco de Puchlowski</strong> para \(a = 0\) com \(\alpha = ${alpha}^\circ\) e \(\cos\phi \approx ${pMatch.cosMatch.toFixed(1)}\):
+              Como não há força contraeletromotriz na carga (\\(E = 0\\)), temos \\(a = \\frac{E}{\\sqrt{2}V_{ef}} = 0\\).
+              Consultando o <strong>Ábaco de Puchlowski</strong> para \\(a = 0\\) com \\(\\alpha = ${alpha}^\\circ\\) e \\(\\cos\\phi \\approx ${pMatch.cosMatch.toFixed(1)}\\):
               <button type="button" class="btn-table-tag" style="margin-left: 6px; padding: 2px 7px; font-size: 0.74rem;" onclick="toggleTabelaPuchlowski()">📊 Ver Tabela</button>
             </div>
-            <div class="math-block">\[ \beta \approx ${Math.round(beta_tab)}^\circ \quad (${beta_tab_rad.toFixed(3)}\text{ rad}) \]</div>
+            <div class="math-block">\\[ \\beta \\approx ${Math.round(beta_tab)}^\\circ \\quad (${beta_tab_rad.toFixed(3)}\\text{ rad}) \\]</div>
             <div class="step-desc">
-              <strong>Nota Física:</strong> O tiristor conduz além de \(180^\circ\) (atingindo \(\beta = ${Math.round(beta_tab)}^\circ\)) porque a força contraeletromotriz induzida no indutor (\(-L\frac{di}{dt}\)) polariza o tiristor diretamente, sustentando a circulação de corrente mesmo enquanto a tensão da fonte é negativa.
+              <strong>Nota Física:</strong> O tiristor conduz além de \\(180^\\circ\\) (atingindo \\(\\beta = ${Math.round(beta_tab)}^\\circ\\)) porque a força contraeletromotriz induzida no indutor (\\(-L\\frac{di}{dt}\\)) polariza o tiristor diretamente, sustentando a circulação de corrente mesmo enquanto a tensão da fonte é negativa.
             </div>
 
             <!-- Painel Expansível da Tabela de Puchlowski -->
@@ -1208,36 +1208,36 @@ import { atualizarGrafico } from './graficos.js';
 
           <div class="step-box">
             <div class="step-title">Etapa 3: Tensão Média e Corrente Média na Carga</div>
-            <div class="step-desc">A tensão na saída é positiva de \(\alpha\) a \(180^\circ\) e negativa de \(180^\circ\) a \(\beta\):</div>
-            <div class="math-block">\[ V_{o,med} = 0{,}225 \cdot V_{ef} \cdot [\cos(\alpha) - \cos(\beta)] \]</div>
-            <div class="math-block">\[ V_{o,med} = 0{,}225 \cdot ${V_rms.toFixed(1)} \cdot [\cos(${alpha}^\circ) - \cos(${Math.round(beta_tab)}^\circ)] = 0{,}225 \cdot ${V_rms.toFixed(1)} \cdot [${Math.cos(a_rad).toFixed(4)} - (${Math.cos(beta_tab_rad).toFixed(4)})] = ${V_o_med.toFixed(2)}\text{ V} \]</div>
-            <div class="step-desc">Como o indutor em regime permanente tem tensão média nula (\(\bar{v}_L = 0\)):</div>
-            <div class="math-block">\[ I_{o,med} = \frac{V_{o,med}}{R} = \frac{${V_o_med.toFixed(2)}}{${R}} = ${I_o_med.toFixed(3)}\text{ A} \]</div>
+            <div class="step-desc">A tensão na saída é positiva de \\(\\alpha\\) a \\(180^\\circ\\) e negativa de \\(180^\\circ\\) a \\(\\beta\\):</div>
+            <div class="math-block">\\[ V_{o,med} = 0{,}225 \\cdot V_{ef} \\cdot [\\cos(\\alpha) - \\cos(\\beta)] \\]</div>
+            <div class="math-block">\\[ V_{o,med} = 0{,}225 \\cdot ${V_rms.toFixed(1)} \\cdot [\\cos(${alpha}^\\circ) - \\cos(${Math.round(beta_tab)}^\\circ)] = 0{,}225 \\cdot ${V_rms.toFixed(1)} \\cdot [${Math.cos(a_rad).toFixed(4)} - (${Math.cos(beta_tab_rad).toFixed(4)})] = ${V_o_med.toFixed(2)}\\text{ V} \\]</div>
+            <div class="step-desc">Como o indutor em regime permanente tem tensão média nula (\\(\\bar{v}_L = 0\\)):</div>
+            <div class="math-block">\\[ I_{o,med} = \\frac{V_{o,med}}{R} = \\frac{${V_o_med.toFixed(2)}}{${R}} = ${I_o_med.toFixed(3)}\\text{ A} \\]</div>
           </div>
 
           <div class="step-box">
             <div class="step-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
-              <span>Etapa 4: Corrente Eficaz na Carga (Tabela Parametrizada \(I_{efp}\))</span>
+              <span>Etapa 4: Corrente Eficaz na Carga (Tabela Parametrizada \\(I_{efp}\\))</span>
               <button type="button" class="btn-table-tag" onclick="toggleTabelaPuchlowski()" title="Visualizar Tabela de Iefp">
                 📊 Consultar Tabela
               </button>
             </div>
             <div class="step-desc">
-              Consultando a <strong>Tabela de Corrente Eficaz Parametrizada</strong> (Slide 13 da UTFPR) para \(\alpha = ${alpha}^\circ\) e \(\cos\phi \approx ${pMatch.cosMatch.toFixed(1)}\):
+              Consultando a <strong>Tabela de Corrente Eficaz Parametrizada</strong> (Slide 13 da UTFPR) para \\(\\alpha = ${alpha}^\\circ\\) e \\(\\cos\\phi \\approx ${pMatch.cosMatch.toFixed(1)}\\):
             </div>
-            <div class="math-block">\[ I_{efp} = ${I_efp_tab.toFixed(4)} \]</div>
+            <div class="math-block">\\[ I_{efp} = ${I_efp_tab.toFixed(4)} \\]</div>
             <div class="step-desc">Calculando a corrente eficaz na carga:</div>
-            <div class="math-block">\[ I_{o,ef} = \frac{\sqrt{2} \cdot V_{ef}}{Z} \cdot I_{efp} = \frac{\sqrt{2} \cdot ${V_rms.toFixed(1)}}{${Z.toFixed(3)}} \cdot ${I_efp_tab.toFixed(4)} = ${I_o_ef.toFixed(3)}\text{ A} \]</div>
+            <div class="math-block">\\[ I_{o,ef} = \\frac{\\sqrt{2} \\cdot V_{ef}}{Z} \\cdot I_{efp} = \\frac{\\sqrt{2} \\cdot ${V_rms.toFixed(1)}}{${Z.toFixed(3)}} \\cdot ${I_efp_tab.toFixed(4)} = ${I_o_ef.toFixed(3)}\\text{ A} \\]</div>
           </div>
 
           <div class="step-box">
             <div class="step-title">Etapa 5: Potências e Fator de Potência</div>
-            <div class="step-desc">Potência ativa real dissipada no resistor \(R\):</div>
-            <div class="math-block">\[ P = R \cdot (I_{o,ef})^2 = ${R}\,\Omega \cdot (${I_o_ef.toFixed(3)}\text{ A})^2 = ${P_R.toFixed(2)}\text{ W} \]</div>
+            <div class="step-desc">Potência ativa real dissipada no resistor \\(R\\):</div>
+            <div class="math-block">\\[ P = R \\cdot (I_{o,ef})^2 = ${R}\\,\\Omega \\cdot (${I_o_ef.toFixed(3)}\\text{ A})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
             <div class="step-desc">Potência aparente total entregue pela rede CA:</div>
-            <div class="math-block">\[ S = V_{ef} \cdot I_{o,ef} = ${V_rms.toFixed(1)}\text{ V} \cdot ${I_o_ef.toFixed(3)}\text{ A} = ${S.toFixed(2)}\text{ VA} \]</div>
+            <div class="math-block">\\[ S = V_{ef} \\cdot I_{o,ef} = ${V_rms.toFixed(1)}\\text{ V} \\cdot ${I_o_ef.toFixed(3)}\\text{ A} = ${S.toFixed(2)}\\text{ VA} \\]</div>
             <div class="step-desc">Fator de potência do sistema:</div>
-            <div class="math-block">\[ F_P = \frac{P}{S} = \frac{${P_R.toFixed(2)}}{${S.toFixed(2)}} = ${FP.toFixed(3)} \]</div>
+            <div class="math-block">\\[ F_P = \\frac{P}{S} = \\frac{${P_R.toFixed(2)}}{${S.toFixed(2)}} = ${FP.toFixed(3)} \\]</div>
           </div>
         `;
       } else if (topologia === "mono_meia_onda_controlado_rl_roda_livre") {
