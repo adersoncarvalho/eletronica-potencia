@@ -3245,16 +3245,33 @@ import { atualizarGrafico } from './graficos.js';
           const isMCC = (L >= L_crit) || isCritico;
 
           if (isMCC) {
+            const tan_p = XL / R;
+            const exp_term = Math.exp(-Math.PI / tan_p);
+            const A_mcc = (1 - exp_term > 1e-6) ? (2 * (V_p / Z) * Math.sin(phi - a_val) / (1 - exp_term)) : 0;
+
+            function f_i_mcc(th_abs, th_rel) {
+              return Math.max(0, (V_p / Z) * Math.sin(th_abs - phi) + A_mcc * Math.exp(-th_rel / tan_p));
+            }
+
             if (theta >= a_val && theta < Math.PI + a_val) {
               v_out_val = v_in_val;
-              i_d1_val = Math.max(0, (((2 * V_p) / Math.PI) * Math.cos(a_val)) / R);
+              const cur = f_i_mcc(theta, theta - a_val);
+              i_d1_val = cur;
               i_d2_val = 0;
+              i_out_val = cur;
+            } else if (theta >= Math.PI + a_val) {
+              v_out_val = -v_in_val;
+              const cur = f_i_mcc(theta - Math.PI, theta - (Math.PI + a_val));
+              i_d1_val = 0;
+              i_d2_val = cur;
+              i_out_val = cur;
             } else {
               v_out_val = -v_in_val;
+              const cur = f_i_mcc(theta + Math.PI, Math.PI + theta - a_val);
               i_d1_val = 0;
-              i_d2_val = Math.max(0, (((2 * V_p) / Math.PI) * Math.cos(a_val)) / R);
+              i_d2_val = cur;
+              i_out_val = cur;
             }
-            i_out_val = i_d1_val + i_d2_val;
           } else {
             const pM = obterPuchlowski((a_val * 180) / Math.PI, cos_phi_val);
             const b_rad = (pM.beta * Math.PI) / 180;
@@ -3432,9 +3449,15 @@ import { atualizarGrafico } from './graficos.js';
         if (!isTrifasico) {
           if (isControlado) {
             if (isOndaCompleta) {
-              v_d_val = (v_in_val >= 0) ? (v_in_val - v_out_val) : -v_out_val;
+              if (i_d1_val > 0.0001) {
+                v_d_val = 0;
+              } else if (i_d2_val > 0.0001) {
+                v_d_val = v_in_val;
+              } else {
+                v_d_val = (v_in_val - v_out_val) / 2;
+              }
             } else {
-              v_d_val = v_in_val - v_out_val;
+              v_d_val = (i_d1_val > 0.0001) ? 0 : (v_in_val - v_out_val);
             }
             const a_deg = parseFloat(document.getElementById("input-alpha").value);
             const a_rad = (a_deg * Math.PI) / 180;
@@ -3453,11 +3476,17 @@ import { atualizarGrafico } from './graficos.js';
               const N_tap = parseFloat(document.getElementById("input-n").value) || 1;
               v_d_val = (v_in_val / N_tap) - v_out_val;
             } else {
-              v_d_val = (v_in_val >= 0) ? 0 : -v_out_val;
+              if (i_d1_val > 0.0001) {
+                v_d_val = 0;
+              } else if (i_d2_val > 0.0001) {
+                v_d_val = v_in_val;
+              } else {
+                v_d_val = (v_in_val - v_out_val) / 2;
+              }
             }
             i_fonte_val = i_d1_val - i_d2_val;
           } else {
-            v_d_val = v_in_val - v_out_val;
+            v_d_val = (i_d1_val > 0.0001) ? 0 : (v_in_val - v_out_val);
             i_fonte_val = i_d1_val;
           }
         }
