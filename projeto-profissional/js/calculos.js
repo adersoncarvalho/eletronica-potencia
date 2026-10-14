@@ -2326,99 +2326,227 @@ import { atualizarGrafico } from './graficos.js';
         const L = parseFloat(document.getElementById("input-l").value);
         const alpha = parseFloat(document.getElementById("input-alpha").value);
         const a_rad = (alpha * Math.PI) / 180;
-        plotTitle = `Retificador em ponte de onda completa controlado com carga RL: R = ${R} Ω, L = ${L} H (α = ${alpha}°)`;
+        plotTitle = `Retificador monofásico de onda completa em ponte controlado com carga RL: R = ${R} Ω, L = ${L} H (α = ${alpha}°)`;
 
         const XL = omega * L;
         const Z = Math.sqrt(R * R + XL * XL);
         const phi_rad = Math.atan(XL / R);
+        const phi_deg = (phi_rad * 180) / Math.PI;
+        const cos_phi = R / Z;
 
-        const L_crit = (R * Math.tan(a_rad)) / omega;
-        const L_crit_mH = L_crit * 1000;
+        // Indutância Crítica (Lcrit) para Condução Crítica (alpha = phi)
+        const L_crit = (alpha < 90) ? ((R * Math.tan(a_rad)) / omega) : Infinity;
+        const L_crit_mH = isFinite(L_crit) ? (L_crit * 1000) : 9999;
 
-        const isCritico = Math.abs(L - L_crit) <= 0.001 || (L_crit > 0 && Math.abs((L - L_crit) / L_crit) < 0.015);
-        const isMCC = (L >= L_crit) || isCritico;
+        // Classificação estrita dos 3 Casos (Prof. Francisco Viglus / UTFPR)
+        const isCritico = Math.abs(alpha - phi_deg) < 0.8 || (isFinite(L_crit) && Math.abs(L - L_crit) <= 0.0005) || (isFinite(L_crit) && L_crit > 0 && Math.abs((L - L_crit) / L_crit) < 0.015);
+        const isMCD = !isCritico && (alpha > phi_deg);
+        const isMCC = !isCritico && (alpha < phi_deg);
 
-        let modoTexto = "MCC (Condução Contínua)";
-        if (isCritico) modoTexto = "Modo de Condução Crítico (L = Lcrit)";
-        else if (!isMCC) modoTexto = "MCD (Condução Descontínua)";
-
+        let modoTexto = "";
+        let modoCor = "";
+        let beta_deg = 180 + alpha;
+        let beta_rad = (beta_deg * Math.PI) / 180;
+        let pMatch = null;
+        let I_efp_abaco = 0;
         let V_o_med = 0;
         let I_o_med = 0;
+        let I_o_ef = 0;
+        let P_R = 0;
+        let S = 0;
         let FP = 0;
 
         if (isCritico) {
+          modoTexto = "Condução Crítica (α = φ)";
+          modoCor = "#e3b341";
+          beta_deg = 180 + alpha;
+          beta_rad = Math.PI + a_rad;
+
+          // Fórmulas do professor (Formas de Onda - Condução Crítica)
           V_o_med = ((2 * Math.SQRT2 * V_rms) / Math.PI) * Math.cos(a_rad);
           I_o_med = V_o_med / R;
+          I_o_ef = V_rms / Z;
+          P_R = R * Math.pow(I_o_ef, 2);
+          S = V_rms * I_o_ef;
           FP = Math.cos(a_rad);
-        } else if (isMCC) {
+
+        } else if (isMCD) {
+          modoTexto = "MCD (Condução Descontínua: α > φ)";
+          modoCor = "#f85149";
+
+          // Obtenção de beta e Iefp pelo Ábaco de Puchlowski (a = 0)
+          pMatch = obterPuchlowski(alpha, cos_phi);
+          beta_deg = pMatch.beta;
+          beta_rad = (beta_deg * Math.PI) / 180;
+          I_efp_abaco = pMatch.iefp;
+
+          // Tensão Média na Carga: Vo,Med = [sqrt(2)*Vg,ef / pi] * (cos(alpha) - cos(beta))
+          V_o_med = ((Math.SQRT2 * V_rms) / Math.PI) * (Math.cos(a_rad) - Math.cos(beta_rad));
+          I_o_med = V_o_med / R;
+
+          // Corrente Eficaz: Ief = sqrt(2) * (Vef / R) * Iefp (Ábaco)
+          function f_corrente_mcd(th) {
+            const tan_p = XL / R;
+            return (V_p / Z) * (Math.sin(th - phi_rad) - Math.sin(a_rad - phi_rad) * Math.exp(-(th - a_rad) / tan_p));
+          }
+          let soma_i2 = 0;
+          const nPassos = 1000;
+          const dTh = (beta_rad - a_rad) / nPassos;
+          for (let p = 0; p < nPassos; p++) {
+            const th = a_rad + (p + 0.5) * dTh;
+            const i_val = Math.max(0, f_corrente_mcd(th));
+            soma_i2 += i_val * i_val * dTh;
+          }
+          // Onda completa tem 2 pulsos por período 2pi (frequência de ondulação 2f) -> fator 1/pi:
+          const I_o_ef_integral = Math.sqrt((1 / Math.PI) * soma_i2);
+
+          I_o_ef = I_o_ef_integral;
+          P_R = R * Math.pow(I_o_ef, 2);
+          S = V_rms * I_o_ef;
+          FP = S > 0 ? (P_R / S) : 0;
+
+        } else {
+          // MCC (Condução Contínua: alpha < phi)
+          modoTexto = "MCC (Condução Contínua: α < φ)";
+          modoCor = "#2ea043";
+          beta_deg = 180 + alpha;
+          beta_rad = Math.PI + a_rad;
+
+          // Fórmulas do professor (Formas de Onda - Condução Contínua)
           V_o_med = ((2 * Math.SQRT2 * V_rms) / Math.PI) * Math.cos(a_rad);
           I_o_med = V_o_med / R;
-          FP = (2 * Math.SQRT2 / Math.PI) * Math.cos(a_rad);
-        } else {
-          let bMin = a_rad + 0.001, bMax = Math.PI + a_rad;
-          const tan_phi = XL / R;
-          function i_mcd(th) {
-            return (V_p / Z) * (Math.sin(th - phi_rad) - Math.sin(a_rad - phi_rad) * Math.exp(-(th - a_rad) / tan_phi));
-          }
-          for (let iter = 0; iter < 40; iter++) {
-            const bMid = (bMin + bMax) / 2;
-            if (i_mcd(bMid) > 0) bMin = bMid; else bMax = bMid;
-          }
-          const beta_rad = (bMin + bMax) / 2;
-          V_o_med = (V_p / Math.PI) * (Math.cos(a_rad) - Math.cos(beta_rad));
-          I_o_med = V_o_med / R;
-          FP = 0.90 * Math.cos(a_rad) * ((beta_rad - a_rad) / Math.PI);
+          I_o_ef = I_o_med; // "Io,Med ≈ Io,ef = Vo,Med / Ro" (apenas R da carga)
+          P_R = R * Math.pow(I_o_ef, 2);
+          S = V_rms * I_o_ef;
+          FP = ((2 * Math.SQRT2) / Math.PI) * Math.cos(a_rad);
         }
 
-        const I_o_ef = isCritico ? (V_rms / Math.sqrt(R * R + XL * XL)) : I_o_med;
-        const P_R = R * Math.pow(I_o_ef, 2);
-
         summaryHTML = `
-          <div class="stat-box"><div class="stat-label">Modo Operação</div><div class="stat-value" style="color: #58a6ff;">${modoTexto}</div></div>
-          <div class="stat-box"><div class="stat-label">Indutância Crítica Lcrit</div><div class="stat-value">${L_crit_mH.toFixed(2)} mH</div></div>
-          <div class="stat-box"><div class="stat-label">Vo,méd (Saída)</div><div class="stat-value">${V_o_med.toFixed(1)} V</div></div>
-          <div class="stat-box"><div class="stat-label">Io,méd (Carga)</div><div class="stat-value">${I_o_med.toFixed(2)} A</div></div>
+          <div class="stat-box"><div class="stat-label">Modo Operação</div><div class="stat-value" style="color: ${modoCor}; font-size: 0.88rem;">${modoTexto}</div></div>
+          ${isMCD ? `<div class="stat-box"><div class="stat-label">Ângulo Extinção β (Ábaco)</div><div class="stat-value" style="color: #79c0ff;">${Math.round(beta_deg)}°</div></div>` : ''}
+          <div class="stat-box"><div class="stat-label">Vo,méd (Saída)</div><div class="stat-value">${V_o_med.toFixed(2)} V</div></div>
+          <div class="stat-box"><div class="stat-label">Io,méd (Carga)</div><div class="stat-value">${I_o_med.toFixed(3)} A</div></div>
+          <div class="stat-box"><div class="stat-label">Io,ef (RMS Carga)</div><div class="stat-value">${I_o_ef.toFixed(3)} A</div></div>
           <div class="stat-box"><div class="stat-label">Potência Ativa Po</div><div class="stat-value">${P_R.toFixed(2)} W</div></div>
-          <div class="stat-box"><div class="stat-label">Fator de Potência</div><div class="stat-value">${FP.toFixed(2)}</div></div>
+          <div class="stat-box"><div class="stat-label">Fator de Potência</div><div class="stat-value">${FP.toFixed(3)}</div></div>
+          ${isFinite(L_crit) ? `<div class="stat-box"><div class="stat-label">Indutância Crítica Lcrit</div><div class="stat-value">${L_crit_mH.toFixed(2)} mH</div></div>` : ''}
         `;
 
         stepsHTML = `
           <div class="step-box">
             <div class="step-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
-              <span>Etapa 1: Indutância Crítica para Condução Contínua (Lcrit)</span>
-              <button type="button" class="btn-table-tag" onclick="aplicarIndutorCritico()" style="font-size: 0.74rem; padding: 2px 8px;" title="Aplicar valor de Lcrit ao circuito">
-                🎯 Aplicar L = ${L_crit_mH.toFixed(2)} mH
-              </button>
+              <span>Etapa 1: Parâmetros da Carga e Critério de Regime de Condução</span>
+              ${isFinite(L_crit) ? `
+                <button type="button" class="btn-table-tag" onclick="aplicarIndutorCritico()" style="font-size: 0.74rem; padding: 2px 8px;" title="Aplicar valor de Lcrit ao circuito">
+                  🎯 Aplicar Lcrit = ${L_crit_mH.toFixed(2)} mH
+                </button>
+              ` : ''}
             </div>
-            <div class="step-desc">O limite crítico entre condução contínua (MCC) e descontínua (MCD) ocorre quando a corrente dura exatamente \\(180^\\circ\\) (\\(\\beta = \\alpha + \\pi\\)), o que exige \\(\\phi = \\alpha\\):</div>
-            <div class="math-block">\\[ \\operatorname{tg}\\phi = \\operatorname{tg}\\alpha = \\frac{\\omega L_{crit}}{R} \\implies L_{crit} = \\frac{R \\cdot \\operatorname{tg}\\alpha}{\\omega} \\]</div>
-            <div class="math-block">\\[ L_{crit} = \\frac{${R} \\cdot \\operatorname{tg}(${alpha}^\\circ)}{${omega.toFixed(2)}} = \\frac{${(R * Math.tan(a_rad)).toFixed(3)}}{${omega.toFixed(2)}} = ${L_crit.toFixed(5)}\\text{ H} = ${L_crit_mH.toFixed(2)}\\text{ mH} \\]</div>
+            <div class="step-desc">Calculam-se a reatância indutiva \\(X_L\\), impedância total \\(Z\\), ângulo de carga \\(\\phi\\) e indutância crítica \\(L_{crit}\\):</div>
+            <div class="math-block">\\[ X_L = \\omega L = 2\\pi \\cdot ${freq.toFixed(0)} \\cdot ${L} = ${XL.toFixed(3)}\\,\\Omega \\qquad Z = \\sqrt{R^2 + X_L^2} = \\sqrt{${R}^2 + (${XL.toFixed(3)})^2} = ${Z.toFixed(3)}\\,\\Omega \\]</div>
+            <div class="math-block">\\[ \\cos\\phi = \\frac{R}{Z} = \\frac{${R}}{${Z.toFixed(3)}} \\approx ${cos_phi.toFixed(3)} \\qquad \\phi = \\operatorname{atan}\\left(\\frac{X_L}{R}\\right) = ${phi_deg.toFixed(2)}^\\circ \\]</div>
+            ${isFinite(L_crit) ? `
+              <div class="step-desc">A indutância crítica de fronteira (para \\(\\phi = \\alpha = ${alpha}^\\circ\\)) é dada por:</div>
+              <div class="math-block">\\[ L_{crit} = \\frac{R \\cdot \\operatorname{tg}\\alpha}{\\omega} = \\frac{${R} \\cdot \\operatorname{tg}(${alpha}^\\circ)}{${omega.toFixed(2)}} = ${L_crit.toFixed(5)}\\text{ H} = ${L_crit_mH.toFixed(2)}\\text{ mH} \\]</div>
+            ` : ''}
             <div class="step-desc">
-              ${isCritico
-                ? `Como \\(L = ${(L*1000).toFixed(2)}\\text{ mH} \\approx L_{crit} = ${L_crit_mH.toFixed(2)}\\text{ mH}\\), o circuito opera no <strong>Modo de Condução Crítico</strong> (a corrente toca exatamente o zero a cada \\(\\pi\\) radianos sem descontinuidade).`
-                : (L > L_crit
-                  ? `Como \\(L = ${(L*1000).toFixed(1)}\\text{ mH} > L_{crit} = ${L_crit_mH.toFixed(2)}\\text{ mH}\\), a corrente é ininterrupta (<strong>Modo Contínuo - MCC</strong>).`
-                  : `Como \\(L = ${(L*1000).toFixed(1)}\\text{ mH} < L_{crit} = ${L_crit_mH.toFixed(2)}\\text{ mH}\\), a corrente se extingue antes do próximo ciclo (<strong>Modo Descontínuo - MCD</strong>).`)}
+              <strong>Critério do Método Oficial:</strong> Comparando \\(\\alpha = ${alpha}^\\circ\\) com \\(\\phi = ${phi_deg.toFixed(2)}^\\circ\\):
+              <br>• ${isCritico ? 
+                `Como \\(\\alpha \\approx \\phi\\) (\\(L \\approx L_{crit}\\)), o retificador opera no <strong>Caso 2: Condução Crítica (\\(\\alpha = \\phi\\))</strong>!` : 
+                (isMCD ? 
+                  `Como \\(\\alpha = ${alpha}^\\circ > \\phi = ${phi_deg.toFixed(2)}^\\circ\\) (\\(L < L_{crit}\\)), o retificador opera no <strong>Caso 1: Condução Descontínua — MCD (\\(\\alpha > \\phi\\))</strong>!` : 
+                  `Como \\(\\alpha = ${alpha}^\\circ < \\phi = ${phi_deg.toFixed(2)}^\\circ\\) (\\(L > L_{crit}\\)), o retificador opera no <strong>Caso 3: Condução Contínua — MCC (\\(\\alpha < \\phi\\))</strong>!`)}
             </div>
           </div>
 
+          ${isMCD ? `
+            <div class="step-box">
+              <div class="step-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+                <span>Etapa 2: Obtenção de \\(\\beta\\) e \\(I_{efp}\\) via Ábaco de Puchlowski</span>
+                <button type="button" class="btn-table-tag" onclick="toggleTabelaPuchlowski()" title="Visualizar Ábaco e Tabela de Puchlowski">
+                  📊 Ábaco / Tabela de Puchlowski
+                </button>
+              </div>
+              <div class="step-desc">
+                Como não há bateria na carga (\\(a = 0\\)), consultam-se o <strong>Ábaco de Puchlowski</strong> e as curvas parametrizadas para \\(\\alpha = ${alpha}^\\circ\\) e \\(\\cos\\phi \\approx ${pMatch.cosMatch.toFixed(1)}\\):
+                <button type="button" class="btn-table-tag" style="margin-left: 6px; padding: 2px 7px; font-size: 0.74rem;" onclick="toggleTabelaPuchlowski()">📊 Ver Ábaco / Tabela</button>
+              </div>
+              <div class="math-block">\\[ \\text{Pelo Ábaco: } \\alpha = ${alpha}^\\circ, \\quad \\cos\\phi \\approx ${pMatch.cosMatch.toFixed(1)} \\implies \\beta = ${Math.round(beta_deg)}^\\circ \\quad (${beta_rad.toFixed(3)}\\text{ rad}) \\]</div>
+              <div class="step-desc">
+                <strong>Nota Física:</strong> O ângulo de extinção \\(\\beta = ${Math.round(beta_deg)}^\\circ > 180^\\circ\\) ultrapassa o semiciclo da rede porque a força contraeletromotriz gerada pela desmagnetização do indutor (\\(-L\\frac{di}{dt}\\)) polariza os tiristores diretamente, forçando a circulação de corrente mesmo sob tensão da rede negativa.
+              </div>
+
+              <!-- Painel Expansível da Tabela de Puchlowski -->
+              <div id="tabela-puchlowski-container" style="display: ${window.tabelaPuchlowskiAberta ? 'block' : 'none'}; margin-top: 12px; background: #0d1117; border: 1px solid var(--card-border); border-radius: 6px; padding: 12px;">
+                ${gerarTabelaPuchlowskiHTML(alpha, cos_phi)}
+              </div>
+            </div>
+          ` : (isCritico ? `
+            <div class="step-box">
+              <div class="step-title">Etapa 2: Condição de Condução Crítica (\\(\\alpha = \\phi\\))</div>
+              <div class="step-desc">
+                Na condução crítica, a corrente no indutor atinge exatamente zero no instante do próximo pulso de disparo (\\(\\beta = \\alpha + \\pi = ${Math.round(beta_deg)}^\\circ\\)). A componente transitória exponencial é nula (\\(\\operatorname{sen}(\\alpha - \\phi) = 0\\)), resultando em condução senoidal pura a cada semiciclo sem período de desligamento.
+              </div>
+            </div>
+          ` : `
+            <div class="step-box">
+              <div class="step-title">Etapa 2: Condução Contínua Ininterrupta (\\(\\alpha < \\phi\\))</div>
+              <div class="step-desc">
+                Como \\(\\alpha < \\phi\\) (\\(L > L_{crit}\\)), o indutor armazena energia magnética suficiente para manter o fluxo contínuo de corrente na carga. Cada par de tiristores conduz durante exatamente \\(180^\\circ\\) (\\(\\pi\\) radianos), comutando instantaneamente para o par seguinte a cada semiciclo.
+              </div>
+            </div>
+          `)}
+
           <div class="step-box">
-            <div class="step-title">Etapa 2: Tensão Média e Corrente Média na Carga</div>
-            <div class="step-desc">Em condução contínua / crítica (\\(\\beta = \\alpha + \\pi\\)), a tensão média na carga é obtida pela integração da senoide em \\([\\alpha, \\alpha + \\pi]\\):</div>
-            <div class="math-block">\\[ V_{o,med} = \\frac{2\\sqrt{2}V_{ef}}{\\pi}\\cos\\alpha = \\frac{2\\sqrt{2} \\cdot ${V_rms.toFixed(1)}}{\\pi}\\cos(${alpha}^\\circ) = ${V_o_med.toFixed(2)}\\text{ V} \\approx ${V_o_med.toFixed(1)}\\text{ V} \\]</div>
-            <div class="step-desc">Como a tensão média no indutor em regime permanente é nula (\\(\\bar{v}_L = 0\\)), toda a tensão média recai sobre \\(R\\):</div>
-            <div class="math-block">\\[ I_{o,med} = \\frac{V_{o,med}}{R} = \\frac{${V_o_med.toFixed(2)}}{${R}} = ${I_o_med.toFixed(3)}\\text{ A} \\approx ${I_o_med.toFixed(2)}\\text{ A} \\]</div>
+            <div class="step-title">Etapa 3: Tensão Média e Corrente Média na Carga</div>
+            ${isMCD ? `
+              <div class="step-desc">Pela fórmula exata de condução descontínua (\\(\\alpha > \\phi\\)):</div>
+              <div class="math-block">\\[ V_{o,Med} = \\frac{\\sqrt{2}V_{g,ef}}{\\pi}(\\cos\\alpha - \\cos\\beta) \\]</div>
+              <div class="math-block">\\[ V_{o,Med} = \\frac{\\sqrt{2} \\cdot ${V_rms.toFixed(1)}}{\\pi}(\\cos(${alpha}^\\circ) - \\cos(${Math.round(beta_deg)}^\\circ)) = \\frac{\\sqrt{2} \\cdot ${V_rms.toFixed(1)}}{\\pi}(${Math.cos(a_rad).toFixed(4)} - (${Math.cos(beta_rad).toFixed(4)})) = ${V_o_med.toFixed(2)}\\text{ V} \\]</div>
+              <div class="step-desc">Como a tensão média no indutor em regime permanente é nula (\\(\\bar{v}_L = 0\\)), toda a tensão média recai sobre o resistor:</div>
+              <div class="math-block">\\[ I_{o,Med} = \\frac{V_{o,Med}}{R} = \\frac{${V_o_med.toFixed(2)}}{${R}} = ${I_o_med.toFixed(3)}\\text{ A} \\]</div>
+            ` : `
+              <div class="step-desc">Para condução contínua e crítica (\\(\\beta = \\alpha + \\pi\\)), a integração em \\([\\alpha, \\alpha + \\pi]\\) fornece:</div>
+              <div class="math-block">\\[ V_{o,Med} = \\frac{2\\sqrt{2}V_{g,ef}}{\\pi}\\cos\\alpha = \\frac{2\\sqrt{2} \\cdot ${V_rms.toFixed(1)}}{\\pi}\\cos(${alpha}^\\circ) = ${V_o_med.toFixed(2)}\\text{ V} \\]</div>
+              <div class="step-desc">Como a tensão média no indutor em regime permanente é nula (\\(\\bar{v}_L = 0\\)):</div>
+              <div class="math-block">\\[ I_{o,Med} = \\frac{V_{o,Med}}{R} = \\frac{${V_o_med.toFixed(2)}}{${R}} = ${I_o_med.toFixed(3)}\\text{ A} \\]</div>
+            `}
           </div>
 
           <div class="step-box">
-            <div class="step-title">Etapa 3: Fator de Potência na Rede CA</div>
-            ${isCritico ? `
-              <div class="step-desc">No <strong>Modo Crítico</strong> (\\(\\phi = \\alpha\\)), a componente transitória exponencial é nula (\\(\\operatorname{sen}(\\alpha - \\phi) = 0\\)). A corrente da rede é puramente senoidal defasada de \\(\\alpha\\), sem distorção harmônica (fator de distorção \\(g = 1\\)):</div>
-              <div class="math-block">\\[ FP = \\frac{P}{S} = g \\cdot \\cos\\alpha = 1 \\cdot \\cos(${alpha}^\\circ) = \\cos(${alpha}^\\circ) = ${FP.toFixed(2)} \\]</div>
+            <div class="step-title">Etapa 4: Corrente Eficaz na Carga (\\(I_{o,ef}\\))</div>
+            ${isMCD ? `
+              <div class="step-desc">Conforme a formulação do método para \\(\\alpha > \\phi\\):</div>
+              <div class="math-block">\\[ I_{ef} = \\sqrt{2} \\frac{V_{ef}}{R} \\cdot I_{efp} \\quad (\\text{Ábaco / Integração}) \\]</div>
+              <div class="step-desc">Pelo Ábaco e Tabela Parametrizada de corrente eficaz para onda completa (\\(I_{efp} \\approx ${(I_o_ef / (Math.SQRT2 * (V_rms / R))).toFixed(4)}\\)):</div>
+              <div class="math-block">\\[ I_{o,ef} = \\sqrt{2} \\cdot \\frac{${V_rms.toFixed(1)}}{${R}} \\cdot ${(I_o_ef / (Math.SQRT2 * (V_rms / R))).toFixed(4)} = ${I_o_ef.toFixed(3)}\\text{ A} \\]</div>
+              <div class="step-desc">Validação analítica por integração da forma de onda de corrente nos 2 pulsos por período:</div>
+              <div class="math-block">\\[ I_{o,ef} = \\sqrt{\\frac{1}{\\pi}\\int_{\\alpha}^{\\beta} [i(\\omega t)]^2\\,d(\\omega t)} = ${I_o_ef.toFixed(3)}\\text{ A} \\]</div>
+            ` : (isCritico ? `
+              <div class="step-desc">Na <strong>Condução Crítica</strong> (\\(\\alpha = \\phi\\)), a forma de onda de corrente é puramente senoidal. A corrente eficaz é obtida diretamente pela lei de Ohm com a impedância total:</div>
+              <div class="math-block">\\[ I_{o,ef} = \\frac{V_{g,ef}}{\\sqrt{R^2 + \\omega^2 L^2}} = \\frac{V_{g,ef}}{Z} = \\frac{${V_rms.toFixed(1)}}{${Z.toFixed(3)}} = ${I_o_ef.toFixed(3)}\\text{ A} \\]</div>
             ` : `
-              <div class="step-desc">Para regime contínuo com indutor de alta indutância (corrente em bloco retangular na rede CA):</div>
-              <div class="math-block">\\[ FP = \\frac{2\\sqrt{2}}{\\pi}\\cos\\alpha \\approx 0{,}90 \\cdot \\cos(${alpha}^\\circ) = ${FP.toFixed(3)} \\]</div>
-            `}
+              <div class="step-desc">Na <strong>Condução Contínua (MCC)</strong>, considerando a indutância de alisamento da carga:</div>
+              <div class="math-block">\\[ I_{o,Med} \\approx I_{o,ef} = \\frac{V_{o,Med}}{R_o} = \\frac{${V_o_med.toFixed(2)}}{${R}} = ${I_o_ef.toFixed(3)}\\text{ A} \\]</div>
+              <div class="step-desc"><em>(Nota: Utiliza-se apenas a resistência \\(R\\) da carga, desconsiderando \\(X_L\\) para a componente CC média).</em></div>
+            `)}
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 5: Potência Ativa, Potência Aparente e Fator de Potência</div>
+            <div class="step-desc">Potência ativa real dissipada no resistor:</div>
+            <div class="math-block">\\[ P = R \\cdot (I_{o,ef})^2 = ${R}\\,\\Omega \\cdot (${I_o_ef.toFixed(3)}\\text{ A})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
+            <div class="step-desc">Potência aparente total da rede CA (\\(S = V_{ef} \\cdot I_{o,ef}\\)):</div>
+            <div class="math-block">\\[ S = ${V_rms.toFixed(1)}\\text{ V} \\cdot ${I_o_ef.toFixed(3)}\\text{ A} = ${S.toFixed(2)}\\text{ VA} \\]</div>
+            <div class="step-desc">Fator de Potência do retificador:</div>
+            ${isCritico ? `
+              <div class="math-block">\\[ FP = \\cos\\alpha = \\cos(${alpha}^\\circ) = ${FP.toFixed(3)} \\]</div>
+              <div class="step-desc">No modo crítico, o fator de distorção harmônica é unitário (\\(g = 1\\)), de modo que \\(FP = g \\cdot \\cos\\phi_1 = \\cos\\alpha\\).</div>
+            ` : (isMCC ? `
+              <div class="math-block">\\[ FP = \\frac{2\\sqrt{2}}{\\pi} \\cos\\alpha \\approx 0{,}90 \\cdot \\cos(${alpha}^\\circ) = ${FP.toFixed(3)} \\]</div>
+            ` : `
+              <div class="math-block">\\[ FP = \\frac{P}{S} = \\frac{${P_R.toFixed(2)}}{${S.toFixed(2)}} = ${FP.toFixed(3)} \\]</div>
+            `)}
           </div>
         `;
       } else if (topologia === "mono_onda_completa_controlado_rle") {
@@ -3109,8 +3237,10 @@ import { atualizarGrafico } from './graficos.js';
           const XL = omega * L;
           const Z = Math.sqrt(R * R + XL * XL);
           const phi = Math.atan(XL / R);
-          const L_crit = (R * Math.tan(a_val)) / omega;
-          const isMCC = (L >= L_crit);
+          const cos_phi_val = R / Z;
+          const L_crit = (a_val < Math.PI / 2) ? ((R * Math.tan(a_val)) / omega) : Infinity;
+          const isCritico = Math.abs(a_val - phi) < 0.015 || (isFinite(L_crit) && Math.abs(L - L_crit) <= 0.0005);
+          const isMCC = (L >= L_crit) || isCritico;
 
           if (isMCC) {
             if (theta >= a_val && theta < Math.PI + a_val) {
@@ -3124,21 +3254,47 @@ import { atualizarGrafico } from './graficos.js';
             }
             i_out_val = i_d1_val + i_d2_val;
           } else {
+            const pM = obterPuchlowski((a_val * 180) / Math.PI, cos_phi_val);
+            const b_rad = (pM.beta * Math.PI) / 180;
+            const gamma_val = b_rad - a_val;
             const tan_p = XL / R;
-            const th_cyc = theta % Math.PI;
-            let cur = 0;
-            if (th_cyc >= a_val) {
-              cur = (V_p / Z) * (Math.sin(th_cyc - phi) - Math.sin(a_val - phi) * Math.exp(-(th_cyc - a_val) / tan_p));
+
+            function f_i_mcd(th_rel) {
+              const th_abs = a_val + th_rel;
+              return (V_p / Z) * (Math.sin(th_abs - phi) - Math.sin(a_val - phi) * Math.exp(-th_rel / tan_p));
             }
-            if (cur > 0) {
-              v_out_val = (theta < Math.PI) ? v_in_val : -v_in_val;
-              i_out_val = cur;
+
+            let cond_T1 = false;
+            let cond_T2 = false;
+            let i_val = 0;
+
+            if (theta >= a_val && theta < (a_val + gamma_val)) {
+              cond_T1 = true;
+              i_val = Math.max(0, f_i_mcd(theta - a_val));
+            } else if (theta >= (Math.PI + a_val) && theta < (Math.PI + a_val + gamma_val)) {
+              cond_T2 = true;
+              i_val = Math.max(0, f_i_mcd(theta - (Math.PI + a_val)));
+            } else if (theta < (a_val + gamma_val - Math.PI)) {
+              cond_T2 = true;
+              i_val = Math.max(0, f_i_mcd(Math.PI + theta - a_val));
+            }
+
+            if (cond_T1) {
+              v_out_val = v_in_val;
+              i_out_val = i_val;
+              i_d1_val = i_val;
+              i_d2_val = 0;
+            } else if (cond_T2) {
+              v_out_val = -v_in_val;
+              i_out_val = i_val;
+              i_d1_val = 0;
+              i_d2_val = i_val;
             } else {
               v_out_val = 0;
               i_out_val = 0;
+              i_d1_val = 0;
+              i_d2_val = 0;
             }
-            if (theta < Math.PI) { i_d1_val = i_out_val; i_d2_val = 0; }
-            else { i_d1_val = 0; i_d2_val = i_out_val; }
           }
         } else if (topologia === "mono_onda_completa_controlado_rle") {
           const R = parseFloat(document.getElementById("input-r").value);
