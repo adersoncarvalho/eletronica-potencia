@@ -173,7 +173,15 @@ import { atualizarGrafico } from './graficos.js';
       };
     }
 
+    window.puchlowskiAbaAtiva = window.puchlowskiAbaAtiva || 'tabela';
+    window.tabelaPuchlowskiAberta = window.tabelaPuchlowskiAberta || false;
+    window.rodaLivreAbaAtiva = window.rodaLivreAbaAtiva || 'carga';
+    window.tabelaRodaLivreAberta = window.tabelaRodaLivreAberta || false;
+    window.abacoRLEAberta = window.abacoRLEAberta || false;
+    window.tabelaBetaAberta = window.tabelaBetaAberta || false;
+
     function mostrarRodaLivreAba(aba) {
+      window.rodaLivreAbaAtiva = aba;
       const painelCarga = document.getElementById("rl-painel-carga");
       const painelFonte = document.getElementById("rl-painel-fonte");
       const btnCarga = document.getElementById("btn-rl-carga");
@@ -194,6 +202,7 @@ import { atualizarGrafico } from './graficos.js';
     function gerarTabelaRodaLivreHTML(alphaAtual, cosPhiAtual) {
       const matchCarga = obterIefRodaLivre(alphaAtual, cosPhiAtual);
       const matchFonte = obterIgEfpRodaLivre(alphaAtual, cosPhiAtual);
+      const isTabFonte = (window.rodaLivreAbaAtiva === 'fonte');
 
       let headerCols = '<th>α [°]</th>';
       for (let c of COS_PHIS_RODA_LIVRE) {
@@ -253,16 +262,16 @@ import { atualizarGrafico } from './graficos.js';
         </div>
 
         <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-          <button type="button" id="btn-rl-carga" class="btn-table-tag active" onclick="mostrarRodaLivreAba('carga')">
+          <button type="button" id="btn-rl-carga" class="btn-table-tag ${!isTabFonte ? 'active' : ''}" onclick="mostrarRodaLivreAba('carga')">
             📊 Corrente na Carga: Ief (Slide 35)
           </button>
-          <button type="button" id="btn-rl-fonte" class="btn-table-tag" onclick="mostrarRodaLivreAba('fonte')">
+          <button type="button" id="btn-rl-fonte" class="btn-table-tag ${isTabFonte ? 'active' : ''}" onclick="mostrarRodaLivreAba('fonte')">
             🔌 Corrente na Fonte CA: Ig,efp (Slide 36)
           </button>
         </div>
 
         <!-- Painel 1: Tabela de Corrente na Carga (Slide 35) -->
-        <div id="rl-painel-carga" style="max-height: 270px; overflow-x: auto; overflow-y: auto; border: 1px solid #30363d; border-radius: 6px;">
+        <div id="rl-painel-carga" style="display: ${!isTabFonte ? 'block' : 'none'}; max-height: 270px; overflow-x: auto; overflow-y: auto; border: 1px solid #30363d; border-radius: 6px;">
           <table class="tabela-conferencia tabela-puchlowski">
             <thead>
               <tr>${headerCols}</tr>
@@ -279,7 +288,7 @@ import { atualizarGrafico } from './graficos.js';
         </div>
 
         <!-- Painel 2: Tabela de Corrente na Fonte CA (Slide 36) -->
-        <div id="rl-painel-fonte" style="display: none; max-height: 270px; overflow-x: auto; overflow-y: auto; border: 1px solid #30363d; border-radius: 6px;">
+        <div id="rl-painel-fonte" style="display: ${isTabFonte ? 'block' : 'none'}; max-height: 270px; overflow-x: auto; overflow-y: auto; border: 1px solid #30363d; border-radius: 6px;">
           <table class="tabela-conferencia tabela-puchlowski">
             <thead>
               <tr>${headerCols}</tr>
@@ -302,6 +311,7 @@ import { atualizarGrafico } from './graficos.js';
       if (box) {
         const isHidden = (box.style.display === "none");
         box.style.display = isHidden ? "block" : "none";
+        window.tabelaRodaLivreAberta = isHidden;
         if (isHidden) {
           setTimeout(() => {
             const row = box.querySelector(".row-destaque");
@@ -318,6 +328,7 @@ import { atualizarGrafico } from './graficos.js';
       if (box) {
         const isHidden = (box.style.display === "none");
         box.style.display = isHidden ? "block" : "none";
+        window.abacoRLEAberta = isHidden;
       }
     }
 
@@ -347,6 +358,7 @@ import { atualizarGrafico } from './graficos.js';
       if (box) {
         const isHidden = (box.style.display === "none");
         box.style.display = isHidden ? "block" : "none";
+        window.tabelaBetaAberta = isHidden;
         if (isHidden) {
           setTimeout(() => {
             const row = box.querySelector(".row-destaque");
@@ -442,8 +454,155 @@ import { atualizarGrafico } from './graficos.js';
       };
     }
 
+    function gerarAbacoPuchlowskiSVG(alpha, cosMatch, beta) {
+      const alphaClamped = Math.max(0, Math.min(180, Number(alpha) || 0));
+      const betaClamped = Math.max(180, Math.min(360, Number(beta) || 180));
+      const cosVal = Number(cosMatch) || 0;
+
+      // Mapeamento pixel do Ábaco para a = 0 (Base: 338 x 296)
+      // Eixo Horizontal alpha: alpha = 0° -> x = 35; alpha = 180° -> x = 327
+      const x_alpha = 35 + ((alphaClamped * (327 - 35)) / 180);
+      
+      // Eixo Vertical beta: beta = 180° -> y = 242; beta = 360° -> y = 12
+      const y_beta = 242 - (((betaClamped - 180) * (242 - 12)) / 180);
+
+      const y_mid = (242 + y_beta) / 2;
+      const x_mid = (35 + x_alpha) / 2;
+      const showVerticalArrow = (242 - y_beta) > 22;
+      const showHorizontalArrow = (x_alpha - 35) > 22;
+
+      const badgeAlphaX = Math.max(52, Math.min(280, x_alpha));
+      const calloutX = x_alpha > 210 ? (x_alpha - 94) : (x_alpha + 12);
+      const calloutY = Math.max(22, Math.min(225, y_beta - 8));
+
+      return `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="-45 -15 395 325" width="100%" style="max-width: 620px; background: #0d1117; border-radius: 8px; border: 1px solid #30363d; box-shadow: 0 4px 14px rgba(0,0,0,0.4);">
+          <defs>
+            <filter id="puchGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000000" flood-opacity="0.8"/>
+            </filter>
+          </defs>
+
+          <!-- Imagem Base Limpa do Ábaco de Puchlowski (a = 0) -->
+          <image href="img/abaco_puchlowski_base_a0.png" x="0" y="0" width="338" height="296" />
+
+          <!-- 1º Passo: Linha tracejada vertical subindo em alpha -->
+          <line x1="${x_alpha.toFixed(1)}" y1="242" x2="${x_alpha.toFixed(1)}" y2="${y_beta.toFixed(1)}" stroke="#ef4444" stroke-width="2.4" stroke-dasharray="4,3" />
+          ${showVerticalArrow ? `
+            <polygon points="${x_alpha.toFixed(1)},${(y_mid - 6).toFixed(1)} ${(x_alpha - 4).toFixed(1)},${(y_mid + 4).toFixed(1)} ${(x_alpha + 4).toFixed(1)},${(y_mid + 4).toFixed(1)}" fill="#ef4444" />
+          ` : ''}
+
+          <!-- 3º Passo: Linha tracejada horizontal rebatendo para o eixo vertical à esquerda -->
+          <line x1="${x_alpha.toFixed(1)}" y1="${y_beta.toFixed(1)}" x2="35" y2="${y_beta.toFixed(1)}" stroke="#ef4444" stroke-width="2.4" stroke-dasharray="4,3" />
+          ${showHorizontalArrow ? `
+            <polygon points="${(x_mid - 6).toFixed(1)},${y_beta.toFixed(1)} ${(x_mid + 4).toFixed(1)},${(y_beta - 4).toFixed(1)} ${(x_mid + 4).toFixed(1)},${(y_beta + 4).toFixed(1)}" fill="#ef4444" />
+          ` : ''}
+
+          <!-- Indicadores nos eixos -->
+          <polygon points="${x_alpha.toFixed(1)},242 ${(x_alpha - 4).toFixed(1)},248 ${(x_alpha + 4).toFixed(1)},248" fill="#ef4444" />
+          <polygon points="35,${y_beta.toFixed(1)} 41,${(y_beta - 4).toFixed(1)} 41,${(y_beta + 4).toFixed(1)}" fill="#ef4444" />
+
+          <!-- Ponto de Interseção na Curva cos(phi) -->
+          <circle cx="${x_alpha.toFixed(1)}" cy="${y_beta.toFixed(1)}" r="10" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-opacity="0.5" />
+          <circle cx="${x_alpha.toFixed(1)}" cy="${y_beta.toFixed(1)}" r="5" fill="#ef4444" stroke="#ffffff" stroke-width="1.8" />
+
+          <!-- Badge do 1º Passo (Entrada alpha) -->
+          <g filter="url(#puchGlow)">
+            <rect x="${(badgeAlphaX - 45).toFixed(1)}" y="254" width="90" height="22" rx="4" fill="#1e293b" stroke="#ef4444" stroke-width="1.2" />
+            <text x="${badgeAlphaX.toFixed(1)}" y="269" text-anchor="middle" fill="#fca5a5" font-size="10" font-family="Segoe UI, -apple-system, sans-serif" font-weight="bold">1º: α = ${alphaAtual}°</text>
+          </g>
+
+          <!-- Callout do 2º Passo (Cruzamento cos phi) -->
+          <g filter="url(#puchGlow)">
+            <rect x="${calloutX.toFixed(1)}" y="${(calloutY - 14).toFixed(1)}" width="88" height="20" rx="4" fill="#111827" stroke="#f59e0b" stroke-width="1.2" opacity="0.95" />
+            <text x="${(calloutX + 44).toFixed(1)}" y="${calloutY.toFixed(1)}" text-anchor="middle" fill="#fef08a" font-size="9.5" font-family="Segoe UI, -apple-system, sans-serif" font-weight="bold">2º: cosφ ≈ ${cosVal.toFixed(1)}</text>
+          </g>
+
+          <!-- Badge do 3º Passo (Leitura de beta à esquerda) -->
+          <g filter="url(#puchGlow)">
+            <rect x="-42" y="${(y_beta - 11).toFixed(1)}" width="74" height="22" rx="4" fill="#1e293b" stroke="#388bfd" stroke-width="1.2" />
+            <text x="-5" y="${(y_beta + 4).toFixed(1)}" text-anchor="middle" fill="#93c5fd" font-size="10" font-family="Segoe UI, -apple-system, sans-serif" font-weight="bold">3º: β ≈ ${Math.round(beta)}°</text>
+          </g>
+        </svg>
+      `;
+    }
+
+    function gerarAbacoPuchlowskiA02SVG(alpha, cosMatch, beta) {
+      const alphaClamped = Math.max(0, Math.min(180, Number(alpha) || 0));
+      const betaClamped = Math.max(160, Math.min(280, Number(beta) || 160));
+      const cosVal = Number(cosMatch) || 0;
+
+      // Mapeamento pixel do Ábaco para a = 0.2 (Base: 338 x 296)
+      // Eixo Horizontal alpha: alpha = 0° -> x = 38; alpha = 180° -> x = 327
+      const x_alpha = 38 + ((alphaClamped * (327 - 38)) / 180);
+      
+      // Eixo Vertical beta: beta = 160° -> y = 242; beta = 280° -> y = 12
+      const y_beta = 242 - (((betaClamped - 160) * (242 - 12)) / 120);
+
+      const y_mid = (242 + y_beta) / 2;
+      const x_mid = (38 + x_alpha) / 2;
+      const showVerticalArrow = (242 - y_beta) > 22;
+      const showHorizontalArrow = (x_alpha - 38) > 22;
+
+      const badgeAlphaX = Math.max(52, Math.min(280, x_alpha));
+      const calloutX = x_alpha > 210 ? (x_alpha - 94) : (x_alpha + 12);
+      const calloutY = Math.max(22, Math.min(225, y_beta - 8));
+
+      return `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="-45 -15 395 325" width="100%" style="max-width: 620px; background: #0d1117; border-radius: 8px; border: 1px solid #30363d; box-shadow: 0 4px 14px rgba(0,0,0,0.4);">
+          <defs>
+            <filter id="puchGlowA02" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000000" flood-opacity="0.8"/>
+            </filter>
+          </defs>
+
+          <!-- Imagem Base Limpa do Ábaco de Puchlowski (a = 0.2) -->
+          <image href="img/abaco_puchlowski_base_a02.png" x="0" y="0" width="338" height="296" />
+
+          <!-- 1º Passo: Linha tracejada vertical subindo em alpha -->
+          <line x1="${x_alpha.toFixed(1)}" y1="242" x2="${x_alpha.toFixed(1)}" y2="${y_beta.toFixed(1)}" stroke="#ef4444" stroke-width="2.4" stroke-dasharray="4,3" />
+          ${showVerticalArrow ? `
+            <polygon points="${x_alpha.toFixed(1)},${(y_mid - 6).toFixed(1)} ${(x_alpha - 4).toFixed(1)},${(y_mid + 4).toFixed(1)} ${(x_alpha + 4).toFixed(1)},${(y_mid + 4).toFixed(1)}" fill="#ef4444" />
+          ` : ''}
+
+          <!-- 3º Passo: Linha tracejada horizontal rebatendo para o eixo vertical à esquerda -->
+          <line x1="${x_alpha.toFixed(1)}" y1="${y_beta.toFixed(1)}" x2="38" y2="${y_beta.toFixed(1)}" stroke="#ef4444" stroke-width="2.4" stroke-dasharray="4,3" />
+          ${showHorizontalArrow ? `
+            <polygon points="${(x_mid - 6).toFixed(1)},${y_beta.toFixed(1)} ${(x_mid + 4).toFixed(1)},${(y_beta - 4).toFixed(1)} ${(x_mid + 4).toFixed(1)},${(y_beta + 4).toFixed(1)}" fill="#ef4444" />
+          ` : ''}
+
+          <!-- Indicadores nos eixos -->
+          <polygon points="${x_alpha.toFixed(1)},242 ${(x_alpha - 4).toFixed(1)},248 ${(x_alpha + 4).toFixed(1)},248" fill="#ef4444" />
+          <polygon points="38,${y_beta.toFixed(1)} 44,${(y_beta - 4).toFixed(1)} 44,${(y_beta + 4).toFixed(1)}" fill="#ef4444" />
+
+          <!-- Ponto de Interseção na Curva cos(phi) -->
+          <circle cx="${x_alpha.toFixed(1)}" cy="${y_beta.toFixed(1)}" r="10" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-opacity="0.5" />
+          <circle cx="${x_alpha.toFixed(1)}" cy="${y_beta.toFixed(1)}" r="5" fill="#ef4444" stroke="#ffffff" stroke-width="1.8" />
+
+          <!-- Badge do 1º Passo (Entrada alpha) -->
+          <g filter="url(#puchGlowA02)">
+            <rect x="${(badgeAlphaX - 45).toFixed(1)}" y="254" width="90" height="22" rx="4" fill="#1e293b" stroke="#ef4444" stroke-width="1.2" />
+            <text x="${badgeAlphaX.toFixed(1)}" y="269" text-anchor="middle" fill="#fca5a5" font-size="10" font-family="Segoe UI, -apple-system, sans-serif" font-weight="bold">1º: α = ${alpha}°</text>
+          </g>
+
+          <!-- Callout do 2º Passo (Cruzamento cos phi) -->
+          <g filter="url(#puchGlowA02)">
+            <rect x="${calloutX.toFixed(1)}" y="${(calloutY - 14).toFixed(1)}" width="88" height="20" rx="4" fill="#111827" stroke="#f59e0b" stroke-width="1.2" opacity="0.95" />
+            <text x="${(calloutX + 44).toFixed(1)}" y="${calloutY.toFixed(1)}" text-anchor="middle" fill="#fef08a" font-size="9.5" font-family="Segoe UI, -apple-system, sans-serif" font-weight="bold">2º: cosφ ≈ ${cosVal.toFixed(1)}</text>
+          </g>
+
+          <!-- Badge do 3º Passo (Leitura de beta à esquerda) -->
+          <g filter="url(#puchGlowA02)">
+            <rect x="-42" y="${(y_beta - 11).toFixed(1)}" width="74" height="22" rx="4" fill="#1e293b" stroke="#388bfd" stroke-width="1.2" />
+            <text x="-5" y="${(y_beta + 4).toFixed(1)}" text-anchor="middle" fill="#93c5fd" font-size="10" font-family="Segoe UI, -apple-system, sans-serif" font-weight="bold">3º: β ≈ ${Math.round(beta)}°</text>
+          </g>
+        </svg>
+      `;
+    }
+
     function gerarTabelaPuchlowskiHTML(alphaAtual, cosPhiAtual) {
       const pMatch = obterPuchlowski(alphaAtual, cosPhiAtual);
+      const isTabGraf = (window.puchlowskiAbaAtiva === 'grafico');
 
       let headerCols = '<th>α [°]</th>';
       for (let c of COS_PHIS_PUCHLOWSKI) {
@@ -485,16 +644,16 @@ import { atualizarGrafico } from './graficos.js';
         </div>
 
         <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-          <button type="button" id="btn-puch-tab" class="btn-table-tag active" onclick="mostrarPuchlowskiAba('tabela')">
+          <button type="button" id="btn-puch-tab" class="btn-table-tag ${!isTabGraf ? 'active' : ''}" onclick="mostrarPuchlowskiAba('tabela')">
             📊 Tabela Numérica (Iefp & β)
           </button>
-          <button type="button" id="btn-puch-graf" class="btn-table-tag" onclick="mostrarPuchlowskiAba('grafico')">
+          <button type="button" id="btn-puch-graf" class="btn-table-tag ${isTabGraf ? 'active' : ''}" onclick="mostrarPuchlowskiAba('grafico')">
             📈 Ábaco Gráfico Traçado (a = 0)
           </button>
         </div>
 
         <!-- Painel 1: Tabela Numérica -->
-        <div id="puchlowski-painel-tabela" style="max-height: 270px; overflow-x: auto; overflow-y: auto; border: 1px solid #30363d; border-radius: 6px;">
+        <div id="puchlowski-painel-tabela" style="display: ${!isTabGraf ? 'block' : 'none'}; max-height: 270px; overflow-x: auto; overflow-y: auto; border: 1px solid #30363d; border-radius: 6px;">
           <table class="tabela-conferencia tabela-puchlowski">
             <thead>
               <tr>${headerCols}</tr>
@@ -505,16 +664,14 @@ import { atualizarGrafico } from './graficos.js';
           </table>
         </div>
 
-        <!-- Painel 2: Ábaco Gráfico Traçado -->
-        <div id="puchlowski-painel-grafico" style="display: none; text-align: center; background: #161b22; padding: 12px; border-radius: 6px; border: 1px solid #30363d;">
+        <!-- Painel 2: Ábaco Gráfico Traçado Dinâmico -->
+        <div id="puchlowski-painel-grafico" style="display: ${isTabGraf ? 'block' : 'none'}; text-align: center; background: #161b22; padding: 12px; border-radius: 6px; border: 1px solid #30363d;">
           <div style="font-size: 0.85rem; color: #c9d1d9; margin-bottom: 8px;">
-            <strong>Traçado do Ponto de Operação no Ábaco de Puchlowski (a = 0):</strong>
+            <strong>Traçado Dinâmico do Ponto de Operação no Ábaco de Puchlowski (a = 0):</strong>
             <br><span style="color: #8b949e; font-size: 0.78rem;">1º Subir em α = ${alphaAtual}° ➔ 2º Cruzar com a curva cos(φ) ≈ ${pMatch.cosMatch.toFixed(1)} ➔ 3º Rebater à esquerda e ler β ≈ ${Math.round(pMatch.beta)}°</span>
           </div>
           <div style="display: flex; justify-content: center; margin: 6px 0;">
-            <a href="img/abaco_puchlowski_zoom_detalhado.png" target="_blank" title="Clique para ver o gráfico ampliado em alta resolução">
-              <img src="img/abaco_puchlowski_zoom_detalhado.png" alt="Ábaco de Puchlowski Traçado" style="max-width: 100%; max-height: 380px; border-radius: 6px; border: 1px solid #30363d; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
-            </a>
+            ${gerarAbacoPuchlowskiSVG(alphaAtual, pMatch.cosMatch, pMatch.beta)}
           </div>
           <div style="margin-top: 8px; font-size: 0.78rem;">
             <a href="img/abaco_puchlowski_completo_tracado.png" target="_blank" style="color: #58a6ff; text-decoration: underline;">
@@ -526,6 +683,7 @@ import { atualizarGrafico } from './graficos.js';
     }
 
     function mostrarPuchlowskiAba(aba) {
+      window.puchlowskiAbaAtiva = aba;
       const painelTab = document.getElementById("puchlowski-painel-tabela");
       const painelGraf = document.getElementById("puchlowski-painel-grafico");
       const btnTab = document.getElementById("btn-puch-tab");
@@ -548,10 +706,11 @@ import { atualizarGrafico } from './graficos.js';
       if (box) {
         const isHidden = (box.style.display === "none");
         box.style.display = isHidden ? "block" : "none";
+        window.tabelaPuchlowskiAberta = isHidden;
         if (isHidden) {
           setTimeout(() => {
             const row = box.querySelector(".row-destaque");
-            if (row) {
+            if (row && window.puchlowskiAbaAtiva === 'tabela') {
               row.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
           }, 40);
@@ -714,7 +873,7 @@ import { atualizarGrafico } from './graficos.js';
             <div class="step-desc">Observe que \\(\\beta > 180^\\circ\\), demonstrando que a tensão na carga se torna negativa antes do diodo bloquear.</div>
 
             <!-- Painel Expansível da Tabela de Conferência -->
-            <div id="tabela-beta-container" style="display: none; margin-top: 12px; background: #0d1117; border: 1px solid var(--card-border); border-radius: 6px; padding: 12px;">
+            <div id="tabela-beta-container" style="display: ${window.tabelaBetaAberta ? 'block' : 'none'}; margin-top: 12px; background: #0d1117; border: 1px solid var(--card-border); border-radius: 6px; padding: 12px;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                 <span style="font-size: 0.85rem; font-weight: 600; color: #58a6ff;">Tabela Numérica: Ângulo de Carga \\(\\phi\\) vs \\(\\beta\\) e \\(I_{efp}\\)</span>
                 <span style="font-size: 0.78rem; color: #e3b341; font-weight: 600;">Linha Destacada: \\(\\phi = ${Math.round(phi_deg)}^\\circ \\implies \\beta = ${beta_deg}^\\circ, I_{efp} = ${Iefp}\\)</span>
@@ -1507,7 +1666,7 @@ import { atualizarGrafico } from './graficos.js';
             </div>
 
             <!-- Painel Expansível da Tabela de Puchlowski -->
-            <div id="tabela-puchlowski-container" style="display: none; margin-top: 12px; background: #0d1117; border: 1px solid var(--card-border); border-radius: 6px; padding: 12px;">
+            <div id="tabela-puchlowski-container" style="display: ${window.tabelaPuchlowskiAberta ? 'block' : 'none'}; margin-top: 12px; background: #0d1117; border: 1px solid var(--card-border); border-radius: 6px; padding: 12px;">
               ${gerarTabelaPuchlowskiHTML(alpha, cos_phi)}
             </div>
           </div>
@@ -1656,7 +1815,7 @@ import { atualizarGrafico } from './graficos.js';
               <div class="math-block">\\[ P = R \\cdot (I_{R,ef})^2 = ${R}\\,\\Omega \\cdot (${I_o_ef.toFixed(3)}\\text{ A})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
 
               <!-- Painel Expansível da Tabela de Roda Livre -->
-              <div id="tabela-roda-livre-container" style="display: none; margin-top: 12px; background: #0d1117; border: 1px solid var(--card-border); border-radius: 6px; padding: 12px;">
+              <div id="tabela-roda-livre-container" style="display: ${window.tabelaRodaLivreAberta ? 'block' : 'none'}; margin-top: 12px; background: #0d1117; border: 1px solid var(--card-border); border-radius: 6px; padding: 12px;">
                 ${gerarTabelaRodaLivreHTML(alpha, cos_phi)}
               </div>
             `}
@@ -1783,15 +1942,17 @@ import { atualizarGrafico } from './graficos.js';
             </div>
 
             <!-- Painel Expansível do Ábaco RLE -->
-            <div id="abaco-rle-container" style="display: none; margin-top: 12px; background: #0d1117; border: 1px solid var(--card-border); border-radius: 6px; padding: 12px; text-align: center;">
+            <div id="abaco-rle-container" style="display: ${window.abacoRLEAberta ? 'block' : 'none'}; margin-top: 12px; background: #0d1117; border: 1px solid var(--card-border); border-radius: 6px; padding: 12px; text-align: center;">
               <div style="font-size: 0.85rem; color: #c9d1d9; margin-bottom: 8px;">
-                <strong>Ábaco de Puchlowski para Carga RLE (a = ${fator_a.toFixed(1)}):</strong>
+                <strong>Traçado Dinâmico do Ponto de Operação no Ábaco de Puchlowski (a = ${fator_a.toFixed(1)}):</strong>
                 <br><span style="color: #8b949e; font-size: 0.78rem;">1º Subir em α = ${alpha}° ➔ 2º Cruzar com curva cos(φ) ≈ ${cos_phi.toFixed(1)} ➔ 3º Rebater à esquerda e ler β ≈ ${Math.round(beta_deg)}°</span>
               </div>
               <div style="display: flex; justify-content: center; margin: 8px 0;">
-                <a href="${Math.abs(fator_a - 0.2) < 0.1 ? 'img/abaco_puchlowski_a02_tracado.png' : 'img/abaco_puchlowski_completo_tracado.png'}" target="_blank" title="Clique para ampliar em alta resolução">
-                  <img src="${Math.abs(fator_a - 0.2) < 0.1 ? 'img/abaco_puchlowski_a02_tracado.png' : 'img/abaco_puchlowski_completo_tracado.png'}" alt="Ábaco RLE Traçado" style="max-width: 100%; max-height: 380px; border-radius: 6px; border: 1px solid #30363d; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
-                </a>
+                ${Math.abs(fator_a - 0.2) < 0.1 ? gerarAbacoPuchlowskiA02SVG(alpha, cos_phi, beta_deg) : `
+                  <a href="img/abaco_puchlowski_completo_tracado.png" target="_blank" title="Clique para ampliar em alta resolução">
+                    <img src="img/abaco_puchlowski_completo_tracado.png" alt="Ábaco RLE Traçado" style="max-width: 100%; max-height: 380px; border-radius: 6px; border: 1px solid #30363d; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                  </a>
+                `}
               </div>
               <div style="margin-top: 8px; font-size: 0.78rem;">
                 <a href="img/abaco_puchlowski_completo_tracado.png" target="_blank" style="color: #58a6ff; text-decoration: underline;">
@@ -2900,5 +3061,7 @@ export {
   toggleTabelaRodaLivre,
   mostrarRodaLivreAba,
   toggleAbacoRLE,
+  gerarAbacoPuchlowskiSVG,
+  gerarAbacoPuchlowskiA02SVG,
   executarCalculo
 };

@@ -25,6 +25,8 @@ import {
   toggleTabelaRodaLivre,
   mostrarRodaLivreAba,
   toggleAbacoRLE,
+  gerarAbacoPuchlowskiSVG,
+  gerarAbacoPuchlowskiA02SVG,
   executarCalculo
 } from './calculos.js';
 
@@ -1922,6 +1924,8 @@ window.gerarTabelaRodaLivreHTML = gerarTabelaRodaLivreHTML;
 window.obterIefRodaLivre = obterIefRodaLivre;
 window.obterIgEfpRodaLivre = obterIgEfpRodaLivre;
 window.toggleAbacoRLE = toggleAbacoRLE;
+window.gerarAbacoPuchlowskiSVG = gerarAbacoPuchlowskiSVG;
+window.gerarAbacoPuchlowskiA02SVG = gerarAbacoPuchlowskiA02SVG;
 
 // Disparo inicial garantido
 atualizarSubmodelos();
