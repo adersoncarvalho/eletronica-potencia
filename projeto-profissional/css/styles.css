@@ -241,6 +241,12 @@
       border-color: #58a6ff;
       color: #ffffff;
     }
+    .btn-table-tag.active {
+      background: #1f6feb;
+      border-color: #58a6ff;
+      color: #ffffff;
+      font-weight: 600;
+    }
 
     .tabela-conferencia {
       width: 100%;
@@ -476,4 +482,4 @@
         grid-template-columns: 1fr;
       }
     }
-  </style>
+

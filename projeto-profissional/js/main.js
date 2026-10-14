@@ -16,6 +16,7 @@ import {
   obterPuchlowski,
   gerarTabelaPuchlowskiHTML,
   toggleTabelaPuchlowski,
+  mostrarPuchlowskiAba,
   executarCalculo
 } from './calculos.js';
 
@@ -1894,6 +1895,7 @@ window.atualizarInterface = atualizarInterface;
 window.executarCalculo = executarCalculo;
 window.toggleTabelaBeta = toggleTabelaBeta;
 window.toggleTabelaPuchlowski = toggleTabelaPuchlowski;
+window.mostrarPuchlowskiAba = mostrarPuchlowskiAba;
 window.gerarTabelaPuchlowskiHTML = gerarTabelaPuchlowskiHTML;
 window.obterPuchlowski = obterPuchlowski;
 window.filtrarCanais = filtrarCanais;

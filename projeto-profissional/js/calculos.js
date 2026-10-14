@@ -214,9 +214,9 @@ import { atualizarGrafico } from './graficos.js';
       }
 
       return `
-        <div style="margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <div style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
           <div>
-            <span style="font-size: 0.88rem; font-weight: 700; color: #58a6ff;">Tabela de Corrente Eficaz Parametrizada (Iefp) e Ábaco de Puchlowski (a = 0)</span>
+            <span style="font-size: 0.88rem; font-weight: 700; color: #58a6ff;">Ábaco e Tabela de Puchlowski (a = 0)</span>
             <div style="font-size: 0.76rem; color: #8b949e;">Fonte: UTFPR (Prof. Francisco José Viglus) / K. P. Puchlowski</div>
           </div>
           <div style="font-size: 0.8rem; background: rgba(227, 179, 65, 0.15); border: 1px solid #e3b341; padding: 4px 10px; border-radius: 4px; color: #f0e6c5;">
@@ -225,7 +225,18 @@ import { atualizarGrafico } from './graficos.js';
             <span style="color: #58a6ff; font-weight: bold;">β = ${Math.round(pMatch.beta)}°</span>
           </div>
         </div>
-        <div style="max-height: 260px; overflow-x: auto; overflow-y: auto; border: 1px solid #30363d; border-radius: 6px;">
+
+        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+          <button type="button" id="btn-puch-tab" class="btn-table-tag active" onclick="mostrarPuchlowskiAba('tabela')">
+            📊 Tabela Numérica (Iefp & β)
+          </button>
+          <button type="button" id="btn-puch-graf" class="btn-table-tag" onclick="mostrarPuchlowskiAba('grafico')">
+            📈 Ábaco Gráfico Traçado (a = 0)
+          </button>
+        </div>
+
+        <!-- Painel 1: Tabela Numérica -->
+        <div id="puchlowski-painel-tabela" style="max-height: 270px; overflow-x: auto; overflow-y: auto; border: 1px solid #30363d; border-radius: 6px;">
           <table class="tabela-conferencia tabela-puchlowski">
             <thead>
               <tr>${headerCols}</tr>
@@ -235,7 +246,43 @@ import { atualizarGrafico } from './graficos.js';
             </tbody>
           </table>
         </div>
+
+        <!-- Painel 2: Ábaco Gráfico Traçado -->
+        <div id="puchlowski-painel-grafico" style="display: none; text-align: center; background: #161b22; padding: 12px; border-radius: 6px; border: 1px solid #30363d;">
+          <div style="font-size: 0.85rem; color: #c9d1d9; margin-bottom: 8px;">
+            <strong>Traçado do Ponto de Operação no Ábaco de Puchlowski (a = 0):</strong>
+            <br><span style="color: #8b949e; font-size: 0.78rem;">1º Subir em α = ${alphaAtual}° ➔ 2º Cruzar com a curva cos(φ) ≈ ${pMatch.cosMatch.toFixed(1)} ➔ 3º Rebater à esquerda e ler β ≈ ${Math.round(pMatch.beta)}°</span>
+          </div>
+          <div style="display: flex; justify-content: center; margin: 6px 0;">
+            <a href="img/abaco_puchlowski_zoom_detalhado.png" target="_blank" title="Clique para ver o gráfico ampliado em alta resolução">
+              <img src="img/abaco_puchlowski_zoom_detalhado.png" alt="Ábaco de Puchlowski Traçado" style="max-width: 100%; max-height: 380px; border-radius: 6px; border: 1px solid #30363d; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+            </a>
+          </div>
+          <div style="margin-top: 8px; font-size: 0.78rem;">
+            <a href="img/abaco_puchlowski_completo_tracado.png" target="_blank" style="color: #58a6ff; text-decoration: underline;">
+              📄 Ver Folha Completa da Aula (com os 4 Ábacos de a = 0 até a = 0,6 e Fórmulas)
+            </a>
+          </div>
+        </div>
       `;
+    }
+
+    function mostrarPuchlowskiAba(aba) {
+      const painelTab = document.getElementById("puchlowski-painel-tabela");
+      const painelGraf = document.getElementById("puchlowski-painel-grafico");
+      const btnTab = document.getElementById("btn-puch-tab");
+      const btnGraf = document.getElementById("btn-puch-graf");
+      if (aba === 'tabela') {
+        if (painelTab) painelTab.style.display = 'block';
+        if (painelGraf) painelGraf.style.display = 'none';
+        if (btnTab) btnTab.classList.add('active');
+        if (btnGraf) btnGraf.classList.remove('active');
+      } else {
+        if (painelTab) painelTab.style.display = 'none';
+        if (painelGraf) painelGraf.style.display = 'block';
+        if (btnTab) btnTab.classList.remove('active');
+        if (btnGraf) btnGraf.classList.add('active');
+      }
     }
 
     function toggleTabelaPuchlowski() {
@@ -253,6 +300,7 @@ import { atualizarGrafico } from './graficos.js';
         }
       }
     }
+
 
 
     function executarCalculo() {
@@ -2445,5 +2493,6 @@ export {
   obterPuchlowski,
   gerarTabelaPuchlowskiHTML,
   toggleTabelaPuchlowski,
+  mostrarPuchlowskiAba,
   executarCalculo
 };
