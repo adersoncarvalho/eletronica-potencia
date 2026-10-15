@@ -347,96 +347,104 @@ import {
       `,
 
       tri_ponte_completa_r: `
-        <svg viewBox="0 0 520 240" xmlns="http://www.w3.org/2000/svg">
-          <!-- Fontes Trifasicas va, vb, vc à Esquerda -->
-          <circle cx="50" cy="55" r="16" stroke="#58a6ff" stroke-width="2" fill="#161b22" />
-          <path d="M 42 55 Q 46 47 50 55 T 58 55" stroke="#58a6ff" stroke-width="2" fill="none" />
-          <text x="25" y="60" fill="#f0f6fc" font-size="11" font-weight="bold">va</text>
+        <svg viewBox="0 0 520 250" xmlns="http://www.w3.org/2000/svg">
+          <!-- Barramento Neutro (n) e Conexoes das Fontes a Esquerda -->
+          <circle cx="34" cy="125" r="3.5" fill="#58a6ff" />
+          <text x="20" y="129" fill="#8b949e" font-size="12" font-weight="bold">n</text>
+          <line x1="34" y1="125" x2="50" y2="125" stroke="#58a6ff" stroke-width="2" />
+          <line x1="50" y1="85" x2="50" y2="165" stroke="#58a6ff" stroke-width="2" />
+          <line x1="50" y1="85" x2="70" y2="85" stroke="#58a6ff" stroke-width="2" />
+          <line x1="50" y1="125" x2="70" y2="125" stroke="#58a6ff" stroke-width="2" />
+          <line x1="50" y1="165" x2="70" y2="165" stroke="#58a6ff" stroke-width="2" />
 
-          <circle cx="50" cy="110" r="16" stroke="#58a6ff" stroke-width="2" fill="#161b22" />
-          <path d="M 42 110 Q 46 102 50 110 T 58 110" stroke="#58a6ff" stroke-width="2" fill="none" />
-          <text x="25" y="115" fill="#f0f6fc" font-size="11" font-weight="bold">vb</text>
+          <!-- Fontes Trifasicas va(t), vb(t), vc(t) -->
+          <!-- Fonte va(t) -->
+          <circle cx="86" cy="85" r="16" stroke="#58a6ff" stroke-width="2" fill="#161b22" />
+          <path d="M 78 85 Q 82 77 86 85 T 94 85" stroke="#58a6ff" stroke-width="2" fill="none" />
+          <text x="86" y="62" fill="#f0f6fc" font-size="11" font-weight="bold" text-anchor="middle">va(t)</text>
 
-          <circle cx="50" cy="165" r="16" stroke="#58a6ff" stroke-width="2" fill="#161b22" />
-          <path d="M 42 165 Q 46 157 50 165 T 58 165" stroke="#58a6ff" stroke-width="2" fill="none" />
-          <text x="25" y="170" fill="#f0f6fc" font-size="11" font-weight="bold">vc</text>
+          <!-- Fonte vb(t) -->
+          <circle cx="86" cy="125" r="16" stroke="#58a6ff" stroke-width="2" fill="#161b22" />
+          <path d="M 78 125 Q 82 117 86 125 T 94 125" stroke="#58a6ff" stroke-width="2" fill="none" />
+          <text x="86" y="102" fill="#f0f6fc" font-size="11" font-weight="bold" text-anchor="middle">vb(t)</text>
 
-          <!-- Neutro comum n -->
-          <line x1="66" y1="55" x2="82" y2="55" stroke="#8b949e" stroke-width="1.5" />
-          <line x1="66" y1="110" x2="82" y2="110" stroke="#8b949e" stroke-width="1.5" />
-          <line x1="66" y1="165" x2="82" y2="165" stroke="#8b949e" stroke-width="1.5" />
-          <line x1="82" y1="55" x2="82" y2="165" stroke="#8b949e" stroke-width="1.5" stroke-dasharray="3,3" />
-          <text x="88" y="115" fill="#8b949e" font-size="11">n</text>
+          <!-- Fonte vc(t) -->
+          <circle cx="86" cy="165" r="16" stroke="#58a6ff" stroke-width="2" fill="#161b22" />
+          <path d="M 78 165 Q 82 157 86 165 T 94 165" stroke="#58a6ff" stroke-width="2" fill="none" />
+          <text x="86" y="142" fill="#f0f6fc" font-size="11" font-weight="bold" text-anchor="middle">vc(t)</text>
 
-          <!-- Barramentos CC (+) Superior e (-) Inferior -->
-          <line x1="160" y1="25" x2="410" y2="25" stroke="#58a6ff" stroke-width="2.5" />
-          <line x1="160" y1="205" x2="410" y2="205" stroke="#58a6ff" stroke-width="2.5" />
+          <!-- Linhas Horizontais Paralelas das Fases a, b, c -->
+          <!-- Linha Fase a ate Braco 1 (X=190) -->
+          <line x1="102" y1="85" x2="190" y2="85" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="190" cy="85" r="3.5" fill="#58a6ff" />
+          <text x="198" y="82" fill="#58a6ff" font-size="11" font-weight="bold">a</text>
 
-          <!-- Braco 1 (X=160, Fase a): D1 (topo) e D2 (base) -->
-          <line x1="160" y1="25" x2="160" y2="45" stroke="#58a6ff" stroke-width="2" />
-          <polygon points="150,70 170,70 160,45" fill="#238636" stroke="#238636" stroke-width="2" />
-          <line x1="150" y1="45" x2="170" y2="45" stroke="#238636" stroke-width="2.5" />
-          <text x="138" y="60" fill="#f0f6fc" font-size="11" font-weight="bold">D1</text>
-          <line x1="160" y1="70" x2="160" y2="160" stroke="#58a6ff" stroke-width="2" />
-          <polygon points="150,185 170,185 160,160" fill="#238636" stroke="#238636" stroke-width="2" />
-          <line x1="150" y1="160" x2="170" y2="160" stroke="#238636" stroke-width="2.5" />
-          <text x="138" y="175" fill="#f0f6fc" font-size="11" font-weight="bold">D2</text>
-          <line x1="160" y1="185" x2="160" y2="205" stroke="#58a6ff" stroke-width="2" />
+          <!-- Linha Fase b ate Braco 2 (X=270) -->
+          <line x1="102" y1="125" x2="270" y2="125" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="270" cy="125" r="3.5" fill="#58a6ff" />
+          <text x="278" y="122" fill="#58a6ff" font-size="11" font-weight="bold">b</text>
 
-          <!-- Braco 2 (X=230, Fase b): D3 (topo) e D4 (base) -->
-          <line x1="230" y1="25" x2="230" y2="45" stroke="#58a6ff" stroke-width="2" />
-          <polygon points="220,70 240,70 230,45" fill="#238636" stroke="#238636" stroke-width="2" />
-          <line x1="220" y1="45" x2="240" y2="45" stroke="#238636" stroke-width="2.5" />
-          <text x="208" y="60" fill="#f0f6fc" font-size="11" font-weight="bold">D3</text>
-          <line x1="230" y1="70" x2="230" y2="160" stroke="#58a6ff" stroke-width="2" />
-          <polygon points="220,185 240,185 230,160" fill="#238636" stroke="#238636" stroke-width="2" />
-          <line x1="220" y1="160" x2="240" y2="160" stroke="#238636" stroke-width="2.5" />
-          <text x="208" y="175" fill="#f0f6fc" font-size="11" font-weight="bold">D4</text>
-          <line x1="230" y1="185" x2="230" y2="205" stroke="#58a6ff" stroke-width="2" />
+          <!-- Linha Fase c ate Braco 3 (X=350) -->
+          <line x1="102" y1="165" x2="350" y2="165" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="350" cy="165" r="3.5" fill="#58a6ff" />
+          <text x="358" y="162" fill="#58a6ff" font-size="11" font-weight="bold">c</text>
 
-          <!-- Braco 3 (X=300, Fase c): D5 (topo) e D6 (base) -->
-          <line x1="300" y1="25" x2="300" y2="45" stroke="#58a6ff" stroke-width="2" />
-          <polygon points="290,70 310,70 300,45" fill="#238636" stroke="#238636" stroke-width="2" />
-          <line x1="290" y1="45" x2="310" y2="45" stroke="#238636" stroke-width="2.5" />
-          <text x="278" y="60" fill="#f0f6fc" font-size="11" font-weight="bold">D5</text>
-          <line x1="300" y1="70" x2="300" y2="160" stroke="#58a6ff" stroke-width="2" />
-          <polygon points="290,185 310,185 300,160" fill="#238636" stroke="#238636" stroke-width="2" />
-          <line x1="290" y1="160" x2="310" y2="160" stroke="#238636" stroke-width="2.5" />
-          <text x="278" y="175" fill="#f0f6fc" font-size="11" font-weight="bold">D6</text>
-          <line x1="300" y1="185" x2="300" y2="205" stroke="#58a6ff" stroke-width="2" />
+          <!-- Barramentos CC (+) Superior (Y=25) e (-) Inferior (Y=225) -->
+          <line x1="190" y1="25" x2="445" y2="25" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="190" y1="225" x2="445" y2="225" stroke="#58a6ff" stroke-width="2.5" />
 
-          <!-- Conexoes das Linhas a, b, c -->
-          <line x1="34" y1="55" x2="110" y2="55" stroke="#58a6ff" stroke-width="2" />
-          <line x1="110" y1="55" x2="110" y2="115" stroke="#58a6ff" stroke-width="2" />
-          <line x1="110" y1="115" x2="160" y2="115" stroke="#58a6ff" stroke-width="2" />
-          <circle cx="160" cy="115" r="3" fill="#58a6ff" />
-          <text x="165" y="110" fill="#58a6ff" font-size="10" font-weight="bold">a</text>
+          <!-- Braco 1 (X=190, Fase a): D1 (topo) e D2 (base) -->
+          <circle cx="190" cy="25" r="3.5" fill="#58a6ff" />
+          <line x1="190" y1="25" x2="190" y2="42" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="180,62 200,62 190,42" fill="#238636" stroke="#238636" stroke-width="2" />
+          <line x1="180" y1="42" x2="200" y2="42" stroke="#238636" stroke-width="2.5" />
+          <text x="206" y="56" fill="#f0f6fc" font-size="11" font-weight="bold">D1</text>
+          <line x1="190" y1="62" x2="190" y2="188" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="180,208 200,208 190,188" fill="#238636" stroke="#238636" stroke-width="2" />
+          <line x1="180" y1="188" x2="200" y2="188" stroke="#238636" stroke-width="2.5" />
+          <text x="206" y="202" fill="#f0f6fc" font-size="11" font-weight="bold">D2</text>
+          <line x1="190" y1="208" x2="190" y2="225" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="190" cy="225" r="3.5" fill="#58a6ff" />
 
-          <line x1="34" y1="110" x2="120" y2="110" stroke="#58a6ff" stroke-width="2" />
-          <line x1="120" y1="110" x2="120" y2="125" stroke="#58a6ff" stroke-width="2" />
-          <line x1="120" y1="125" x2="230" y2="125" stroke="#58a6ff" stroke-width="2" />
-          <circle cx="230" cy="125" r="3" fill="#58a6ff" />
-          <text x="235" y="120" fill="#58a6ff" font-size="10" font-weight="bold">b</text>
+          <!-- Braco 2 (X=270, Fase b): D3 (topo) e D4 (base) -->
+          <circle cx="270" cy="25" r="3.5" fill="#58a6ff" />
+          <line x1="270" y1="25" x2="270" y2="42" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="260,62 280,62 270,42" fill="#238636" stroke="#238636" stroke-width="2" />
+          <line x1="260" y1="42" x2="280" y2="42" stroke="#238636" stroke-width="2.5" />
+          <text x="286" y="56" fill="#f0f6fc" font-size="11" font-weight="bold">D3</text>
+          <line x1="270" y1="62" x2="270" y2="188" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="260,208 280,208 270,188" fill="#238636" stroke="#238636" stroke-width="2" />
+          <line x1="260" y1="188" x2="280" y2="188" stroke="#238636" stroke-width="2.5" />
+          <text x="286" y="202" fill="#f0f6fc" font-size="11" font-weight="bold">D4</text>
+          <line x1="270" y1="208" x2="270" y2="225" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="270" cy="225" r="3.5" fill="#58a6ff" />
 
-          <line x1="34" y1="165" x2="130" y2="165" stroke="#58a6ff" stroke-width="2" />
-          <line x1="130" y1="165" x2="130" y2="135" stroke="#58a6ff" stroke-width="2" />
-          <line x1="130" y1="135" x2="300" y2="135" stroke="#58a6ff" stroke-width="2" />
-          <circle cx="300" cy="135" r="3" fill="#58a6ff" />
-          <text x="305" y="130" fill="#58a6ff" font-size="10" font-weight="bold">c</text>
+          <!-- Braco 3 (X=350, Fase c): D5 (topo) e D6 (base) -->
+          <circle cx="350" cy="25" r="3.5" fill="#58a6ff" />
+          <line x1="350" y1="25" x2="350" y2="42" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="340,62 360,62 350,42" fill="#238636" stroke="#238636" stroke-width="2" />
+          <line x1="340" y1="42" x2="360" y2="42" stroke="#238636" stroke-width="2.5" />
+          <text x="366" y="56" fill="#f0f6fc" font-size="11" font-weight="bold">D5</text>
+          <line x1="350" y1="62" x2="350" y2="188" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="340,208 360,208 350,188" fill="#238636" stroke="#238636" stroke-width="2" />
+          <line x1="340" y1="188" x2="360" y2="188" stroke="#238636" stroke-width="2.5" />
+          <text x="366" y="202" fill="#f0f6fc" font-size="11" font-weight="bold">D6</text>
+          <line x1="350" y1="208" x2="350" y2="225" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="350" cy="225" r="3.5" fill="#58a6ff" />
 
           <!-- Carga R: Resistor Zigue-Zague Didatico -->
-          <line x1="410" y1="25" x2="410" y2="70" stroke="#58a6ff" stroke-width="2.5" />
-          <path d="M 410 70 L 410 75 L 420 81 L 400 90 L 420 99 L 400 108 L 420 117 L 400 126 L 420 135 L 400 144 L 410 150 L 410 155" stroke="#e3b341" stroke-width="2.5" fill="none" />
-          <line x1="410" y1="155" x2="410" y2="205" stroke="#58a6ff" stroke-width="2.5" />
-          <text x="432" y="115" fill="#e3b341" font-size="14" font-weight="bold">R</text>
+          <line x1="445" y1="25" x2="445" y2="75" stroke="#58a6ff" stroke-width="2.5" />
+          <path d="M 445 75 L 445 80 L 455 86 L 435 95 L 455 104 L 435 113 L 455 122 L 435 131 L 455 140 L 435 149 L 445 155 L 445 175" stroke="#e3b341" stroke-width="2.5" fill="none" />
+          <line x1="445" y1="175" x2="445" y2="225" stroke="#58a6ff" stroke-width="2.5" />
+          <text x="466" y="129" fill="#e3b341" font-size="14" font-weight="bold">R</text>
 
-          <!-- Polaridade e Rótulos -->
-          <text x="390" y="55" fill="#58a6ff" font-size="14" font-weight="bold">+</text>
-          <text x="392" y="185" fill="#58a6ff" font-size="16" font-weight="bold">-</text>
-          <text x="450" y="115" fill="#58a6ff" font-size="13" font-weight="bold">vo(t)</text>
-          <line x1="340" y1="17" x2="375" y2="17" stroke="#f0883e" stroke-width="2" />
-          <polygon points="375,14 383,17 375,20" fill="#f0883e" />
-          <text x="358" y="11" fill="#f0883e" font-size="11" font-weight="bold" text-anchor="middle">io(t)</text>
+          <!-- Polaridade e Rotulos Didaticos -->
+          <text x="425" y="55" fill="#58a6ff" font-size="14" font-weight="bold">+</text>
+          <text x="427" y="205" fill="#58a6ff" font-size="16" font-weight="bold">-</text>
+          <text x="485" y="129" fill="#58a6ff" font-size="12" font-weight="bold">vo(t)</text>
+          <line x1="375" y1="16" x2="415" y2="16" stroke="#f0883e" stroke-width="2" />
+          <polygon points="415,13 423,16 415,19" fill="#f0883e" />
+          <text x="395" y="10" fill="#f0883e" font-size="11" font-weight="bold" text-anchor="middle">io(t)</text>
         </svg>
       `,
 
@@ -1152,102 +1160,110 @@ import {
       `,
 
       tri_ponte_controlado_r: `
-        <svg viewBox="0 0 520 240" xmlns="http://www.w3.org/2000/svg">
-          <!-- Fontes Trifasicas va, vb, vc à Esquerda -->
-          <circle cx="50" cy="55" r="16" stroke="#58a6ff" stroke-width="2" fill="#161b22" />
-          <path d="M 42 55 Q 46 47 50 55 T 58 55" stroke="#58a6ff" stroke-width="2" fill="none" />
-          <text x="25" y="60" fill="#f0f6fc" font-size="11" font-weight="bold">va</text>
+        <svg viewBox="0 0 520 250" xmlns="http://www.w3.org/2000/svg">
+          <!-- Barramento Neutro (n) e Conexoes das Fontes a Esquerda -->
+          <circle cx="34" cy="125" r="3.5" fill="#58a6ff" />
+          <text x="20" y="129" fill="#8b949e" font-size="12" font-weight="bold">n</text>
+          <line x1="34" y1="125" x2="50" y2="125" stroke="#58a6ff" stroke-width="2" />
+          <line x1="50" y1="85" x2="50" y2="165" stroke="#58a6ff" stroke-width="2" />
+          <line x1="50" y1="85" x2="70" y2="85" stroke="#58a6ff" stroke-width="2" />
+          <line x1="50" y1="125" x2="70" y2="125" stroke="#58a6ff" stroke-width="2" />
+          <line x1="50" y1="165" x2="70" y2="165" stroke="#58a6ff" stroke-width="2" />
 
-          <circle cx="50" cy="110" r="16" stroke="#58a6ff" stroke-width="2" fill="#161b22" />
-          <path d="M 42 110 Q 46 102 50 110 T 58 110" stroke="#58a6ff" stroke-width="2" fill="none" />
-          <text x="25" y="115" fill="#f0f6fc" font-size="11" font-weight="bold">vb</text>
+          <!-- Fontes Trifasicas va(t), vb(t), vc(t) -->
+          <!-- Fonte va(t) -->
+          <circle cx="86" cy="85" r="16" stroke="#58a6ff" stroke-width="2" fill="#161b22" />
+          <path d="M 78 85 Q 82 77 86 85 T 94 85" stroke="#58a6ff" stroke-width="2" fill="none" />
+          <text x="86" y="62" fill="#f0f6fc" font-size="11" font-weight="bold" text-anchor="middle">va(t)</text>
 
-          <circle cx="50" cy="165" r="16" stroke="#58a6ff" stroke-width="2" fill="#161b22" />
-          <path d="M 42 165 Q 46 157 50 165 T 58 165" stroke="#58a6ff" stroke-width="2" fill="none" />
-          <text x="25" y="170" fill="#f0f6fc" font-size="11" font-weight="bold">vc</text>
+          <!-- Fonte vb(t) -->
+          <circle cx="86" cy="125" r="16" stroke="#58a6ff" stroke-width="2" fill="#161b22" />
+          <path d="M 78 125 Q 82 117 86 125 T 94 125" stroke="#58a6ff" stroke-width="2" fill="none" />
+          <text x="86" y="102" fill="#f0f6fc" font-size="11" font-weight="bold" text-anchor="middle">vb(t)</text>
 
-          <!-- Neutro comum n -->
-          <line x1="66" y1="55" x2="82" y2="55" stroke="#8b949e" stroke-width="1.5" />
-          <line x1="66" y1="110" x2="82" y2="110" stroke="#8b949e" stroke-width="1.5" />
-          <line x1="66" y1="165" x2="82" y2="165" stroke="#8b949e" stroke-width="1.5" />
-          <line x1="82" y1="55" x2="82" y2="165" stroke="#8b949e" stroke-width="1.5" stroke-dasharray="3,3" />
-          <text x="88" y="115" fill="#8b949e" font-size="11">n</text>
+          <!-- Fonte vc(t) -->
+          <circle cx="86" cy="165" r="16" stroke="#58a6ff" stroke-width="2" fill="#161b22" />
+          <path d="M 78 165 Q 82 157 86 165 T 94 165" stroke="#58a6ff" stroke-width="2" fill="none" />
+          <text x="86" y="142" fill="#f0f6fc" font-size="11" font-weight="bold" text-anchor="middle">vc(t)</text>
 
-          <!-- Barramentos CC (+) Superior e (-) Inferior -->
-          <line x1="160" y1="25" x2="410" y2="25" stroke="#58a6ff" stroke-width="2.5" />
-          <line x1="160" y1="205" x2="410" y2="205" stroke="#58a6ff" stroke-width="2.5" />
+          <!-- Linhas Horizontais Paralelas das Fases a, b, c -->
+          <!-- Linha Fase a ate Braco 1 (X=190) -->
+          <line x1="102" y1="85" x2="190" y2="85" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="190" cy="85" r="3.5" fill="#58a6ff" />
+          <text x="198" y="82" fill="#58a6ff" font-size="11" font-weight="bold">a</text>
 
-          <!-- Braco 1 (X=160, Fase a): T1 (topo) e T2 (base) -->
-          <line x1="160" y1="25" x2="160" y2="45" stroke="#58a6ff" stroke-width="2" />
-          <polygon points="150,70 170,70 160,45" fill="#238636" stroke="#238636" stroke-width="2" />
-          <line x1="150" y1="45" x2="170" y2="45" stroke="#238636" stroke-width="2.5" />
-          <path d="M 153 53 L 145 58" stroke="#f0883e" stroke-width="1.8" />
-          <text x="136" y="55" fill="#f0f6fc" font-size="10" font-weight="bold">T1</text>
-          <line x1="160" y1="70" x2="160" y2="160" stroke="#58a6ff" stroke-width="2" />
-          <polygon points="150,185 170,185 160,160" fill="#238636" stroke="#238636" stroke-width="2" />
-          <line x1="150" y1="160" x2="170" y2="160" stroke="#238636" stroke-width="2.5" />
-          <path d="M 153 168 L 145 173" stroke="#f0883e" stroke-width="1.8" />
-          <text x="136" y="170" fill="#f0f6fc" font-size="10" font-weight="bold">T2</text>
-          <line x1="160" y1="185" x2="160" y2="205" stroke="#58a6ff" stroke-width="2" />
+          <!-- Linha Fase b ate Braco 2 (X=270) -->
+          <line x1="102" y1="125" x2="270" y2="125" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="270" cy="125" r="3.5" fill="#58a6ff" />
+          <text x="278" y="122" fill="#58a6ff" font-size="11" font-weight="bold">b</text>
 
-          <!-- Braco 2 (X=230, Fase b): T3 (topo) e T4 (base) -->
-          <line x1="230" y1="25" x2="230" y2="45" stroke="#58a6ff" stroke-width="2" />
-          <polygon points="220,70 240,70 230,45" fill="#238636" stroke="#238636" stroke-width="2" />
-          <line x1="220" y1="45" x2="240" y2="45" stroke="#238636" stroke-width="2.5" />
-          <path d="M 223 53 L 215 58" stroke="#f0883e" stroke-width="1.8" />
-          <text x="206" y="55" fill="#f0f6fc" font-size="10" font-weight="bold">T3</text>
-          <line x1="230" y1="70" x2="230" y2="160" stroke="#58a6ff" stroke-width="2" />
-          <polygon points="220,185 240,185 230,160" fill="#238636" stroke="#238636" stroke-width="2" />
-          <line x1="220" y1="160" x2="240" y2="160" stroke="#238636" stroke-width="2.5" />
-          <path d="M 223 168 L 215 173" stroke="#f0883e" stroke-width="1.8" />
-          <text x="206" y="170" fill="#f0f6fc" font-size="10" font-weight="bold">T4</text>
-          <line x1="230" y1="185" x2="230" y2="205" stroke="#58a6ff" stroke-width="2" />
+          <!-- Linha Fase c ate Braco 3 (X=350) -->
+          <line x1="102" y1="165" x2="350" y2="165" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="350" cy="165" r="3.5" fill="#58a6ff" />
+          <text x="358" y="162" fill="#58a6ff" font-size="11" font-weight="bold">c</text>
 
-          <!-- Braco 3 (X=300, Fase c): T5 (topo) e T6 (base) -->
-          <line x1="300" y1="25" x2="300" y2="45" stroke="#58a6ff" stroke-width="2" />
-          <polygon points="290,70 310,70 300,45" fill="#238636" stroke="#238636" stroke-width="2" />
-          <line x1="290" y1="45" x2="310" y2="45" stroke="#238636" stroke-width="2.5" />
-          <path d="M 293 53 L 285 58" stroke="#f0883e" stroke-width="1.8" />
-          <text x="276" y="55" fill="#f0f6fc" font-size="10" font-weight="bold">T5</text>
-          <line x1="300" y1="70" x2="300" y2="160" stroke="#58a6ff" stroke-width="2" />
-          <polygon points="290,185 310,185 300,160" fill="#238636" stroke="#238636" stroke-width="2" />
-          <line x1="290" y1="160" x2="310" y2="160" stroke="#238636" stroke-width="2.5" />
-          <path d="M 293 168 L 285 173" stroke="#f0883e" stroke-width="1.8" />
-          <text x="276" y="170" fill="#f0f6fc" font-size="10" font-weight="bold">T6</text>
-          <line x1="300" y1="185" x2="300" y2="205" stroke="#58a6ff" stroke-width="2" />
+          <!-- Barramentos CC (+) Superior (Y=25) e (-) Inferior (Y=225) -->
+          <line x1="190" y1="25" x2="445" y2="25" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="190" y1="225" x2="445" y2="225" stroke="#58a6ff" stroke-width="2.5" />
 
-          <!-- Conexoes das Linhas a, b, c -->
-          <line x1="34" y1="55" x2="110" y2="55" stroke="#58a6ff" stroke-width="2" />
-          <line x1="110" y1="55" x2="110" y2="115" stroke="#58a6ff" stroke-width="2" />
-          <line x1="110" y1="115" x2="160" y2="115" stroke="#58a6ff" stroke-width="2" />
-          <circle cx="160" cy="115" r="3" fill="#58a6ff" />
-          <text x="165" y="110" fill="#58a6ff" font-size="10" font-weight="bold">a</text>
+          <!-- Braco 1 (X=190, Fase a): T1 (topo) e T2 (base) -->
+          <circle cx="190" cy="25" r="3.5" fill="#58a6ff" />
+          <line x1="190" y1="25" x2="190" y2="42" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="180,62 200,62 190,42" fill="#238636" stroke="#238636" stroke-width="2" />
+          <line x1="180" y1="42" x2="200" y2="42" stroke="#238636" stroke-width="2.5" />
+          <path d="M 183 50 L 175 55" stroke="#f0883e" stroke-width="1.8" />
+          <text x="206" y="56" fill="#f0f6fc" font-size="11" font-weight="bold">T1</text>
+          <line x1="190" y1="62" x2="190" y2="188" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="180,208 200,208 190,188" fill="#238636" stroke="#238636" stroke-width="2" />
+          <line x1="180" y1="188" x2="200" y2="188" stroke="#238636" stroke-width="2.5" />
+          <path d="M 183 196 L 175 201" stroke="#f0883e" stroke-width="1.8" />
+          <text x="206" y="202" fill="#f0f6fc" font-size="11" font-weight="bold">T2</text>
+          <line x1="190" y1="208" x2="190" y2="225" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="190" cy="225" r="3.5" fill="#58a6ff" />
 
-          <line x1="34" y1="110" x2="120" y2="110" stroke="#58a6ff" stroke-width="2" />
-          <line x1="120" y1="110" x2="120" y2="125" stroke="#58a6ff" stroke-width="2" />
-          <line x1="120" y1="125" x2="230" y2="125" stroke="#58a6ff" stroke-width="2" />
-          <circle cx="230" cy="125" r="3" fill="#58a6ff" />
-          <text x="235" y="120" fill="#58a6ff" font-size="10" font-weight="bold">b</text>
+          <!-- Braco 2 (X=270, Fase b): T3 (topo) e T4 (base) -->
+          <circle cx="270" cy="25" r="3.5" fill="#58a6ff" />
+          <line x1="270" y1="25" x2="270" y2="42" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="260,62 280,62 270,42" fill="#238636" stroke="#238636" stroke-width="2" />
+          <line x1="260" y1="42" x2="280" y2="42" stroke="#238636" stroke-width="2.5" />
+          <path d="M 263 50 L 255 55" stroke="#f0883e" stroke-width="1.8" />
+          <text x="286" y="56" fill="#f0f6fc" font-size="11" font-weight="bold">T3</text>
+          <line x1="270" y1="62" x2="270" y2="188" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="260,208 280,208 270,188" fill="#238636" stroke="#238636" stroke-width="2" />
+          <line x1="260" y1="188" x2="280" y2="188" stroke="#238636" stroke-width="2.5" />
+          <path d="M 263 196 L 255 201" stroke="#f0883e" stroke-width="1.8" />
+          <text x="286" y="202" fill="#f0f6fc" font-size="11" font-weight="bold">T4</text>
+          <line x1="270" y1="208" x2="270" y2="225" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="270" cy="225" r="3.5" fill="#58a6ff" />
 
-          <line x1="34" y1="165" x2="130" y2="165" stroke="#58a6ff" stroke-width="2" />
-          <line x1="130" y1="165" x2="130" y2="135" stroke="#58a6ff" stroke-width="2" />
-          <line x1="130" y1="135" x2="300" y2="135" stroke="#58a6ff" stroke-width="2" />
-          <circle cx="300" cy="135" r="3" fill="#58a6ff" />
-          <text x="305" y="130" fill="#58a6ff" font-size="10" font-weight="bold">c</text>
+          <!-- Braco 3 (X=350, Fase c): T5 (topo) e T6 (base) -->
+          <circle cx="350" cy="25" r="3.5" fill="#58a6ff" />
+          <line x1="350" y1="25" x2="350" y2="42" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="340,62 360,62 350,42" fill="#238636" stroke="#238636" stroke-width="2" />
+          <line x1="340" y1="42" x2="360" y2="42" stroke="#238636" stroke-width="2.5" />
+          <path d="M 343 50 L 335 55" stroke="#f0883e" stroke-width="1.8" />
+          <text x="366" y="56" fill="#f0f6fc" font-size="11" font-weight="bold">T5</text>
+          <line x1="350" y1="62" x2="350" y2="188" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="340,208 360,208 350,188" fill="#238636" stroke="#238636" stroke-width="2" />
+          <line x1="340" y1="188" x2="360" y2="188" stroke="#238636" stroke-width="2.5" />
+          <path d="M 343 196 L 335 201" stroke="#f0883e" stroke-width="1.8" />
+          <text x="366" y="202" fill="#f0f6fc" font-size="11" font-weight="bold">T6</text>
+          <line x1="350" y1="208" x2="350" y2="225" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="350" cy="225" r="3.5" fill="#58a6ff" />
 
           <!-- Carga R: Resistor Zigue-Zague Didatico -->
-          <line x1="410" y1="25" x2="410" y2="70" stroke="#58a6ff" stroke-width="2.5" />
-          <path d="M 410 70 L 410 75 L 420 81 L 400 90 L 420 99 L 400 108 L 420 117 L 400 126 L 420 135 L 400 144 L 410 150 L 410 155" stroke="#e3b341" stroke-width="2.5" fill="none" />
-          <line x1="410" y1="155" x2="410" y2="205" stroke="#58a6ff" stroke-width="2.5" />
-          <text x="432" y="115" fill="#e3b341" font-size="14" font-weight="bold">R</text>
+          <line x1="445" y1="25" x2="445" y2="75" stroke="#58a6ff" stroke-width="2.5" />
+          <path d="M 445 75 L 445 80 L 455 86 L 435 95 L 455 104 L 435 113 L 455 122 L 435 131 L 455 140 L 435 149 L 445 155 L 445 175" stroke="#e3b341" stroke-width="2.5" fill="none" />
+          <line x1="445" y1="175" x2="445" y2="225" stroke="#58a6ff" stroke-width="2.5" />
+          <text x="466" y="129" fill="#e3b341" font-size="14" font-weight="bold">R</text>
 
-          <!-- Polaridade e Rótulos -->
-          <text x="390" y="55" fill="#58a6ff" font-size="14" font-weight="bold">+</text>
-          <text x="392" y="185" fill="#58a6ff" font-size="16" font-weight="bold">-</text>
-          <text x="450" y="115" fill="#58a6ff" font-size="13" font-weight="bold">vo(t)</text>
-          <line x1="340" y1="17" x2="375" y2="17" stroke="#f0883e" stroke-width="2" />
-          <polygon points="375,14 383,17 375,20" fill="#f0883e" />
-          <text x="358" y="11" fill="#f0883e" font-size="11" font-weight="bold" text-anchor="middle">io(t)</text>
+          <!-- Polaridade e Rotulos Didaticos -->
+          <text x="425" y="55" fill="#58a6ff" font-size="14" font-weight="bold">+</text>
+          <text x="427" y="205" fill="#58a6ff" font-size="16" font-weight="bold">-</text>
+          <text x="485" y="129" fill="#58a6ff" font-size="12" font-weight="bold">vo(t)</text>
+          <line x1="375" y1="16" x2="415" y2="16" stroke="#f0883e" stroke-width="2" />
+          <polygon points="415,13 423,16 415,19" fill="#f0883e" />
+          <text x="395" y="10" fill="#f0883e" font-size="11" font-weight="bold" text-anchor="middle">io(t)</text>
         </svg>
       `
     };
