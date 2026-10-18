@@ -1,7 +1,15 @@
+# Arquivos pesados e roteiros de aula
 *.pdf
+*.rar
 roteiro01/
 roteiro02/
 roteiro03/
 roteiro04/
-*.log
+roteiro1a/
+Lista06/
+
+# Scripts e arquivos temporarios de desenvolvimento
+scratch/
+*.py
 *.ps1
+*.log
