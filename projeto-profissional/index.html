@@ -19,8 +19,17 @@
 
   <div class="container">
     <header>
-      <h1>Laboratório Virtual de Eletrônica de Potência</h1>
-      <p>Calculadora Didática, Memorial de Cálculos e Visualização Dinâmica de Formas de Onda</p>
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+        <div style="text-align: left;">
+          <h1>Laboratório Virtual de Eletrônica de Potência</h1>
+          <p>Calculadora Didática, Memorial de Cálculos e Visualização Dinâmica de Formas de Onda</p>
+        </div>
+        <div>
+          <button type="button" id="btn-theme-toggle" class="btn-theme-toggle" onclick="alternarTema()">
+            <span id="theme-icon">☀️</span> <span id="theme-text">Modo Claro</span>
+          </button>
+        </div>
+      </div>
     </header>
 
     <!-- 1. SELEÇÃO DINÂMICA (Menus Cascata) -->
@@ -275,12 +284,40 @@
           <canvas id="chartIg"></canvas>
         </div>
 
-        <!-- Subplot 6: Tensão e Corrente Juntas (Escala Dupla) -->
-        <div class="subplot-box" id="box-chartBoth" style="height: 185px;">
-          <canvas id="chartBoth"></canvas>
-        </div>
-
         <div id="plot-footer-caption" class="oscilloscope-caption"></div>
+
+        <!-- SEÇÃO FINAL: FORMAS DE ONDA COMBINADAS COM JANELA MEASURE (ESTILO PSIM) -->
+        <div class="measure-section" id="section-measure" style="margin-top: 28px; border-top: 2px dashed var(--card-border); padding-top: 22px;">
+          
+          <!-- Bloco A.1: Formas de Onda na Carga -->
+          <div class="measure-card-block" id="block-measure-carga" style="margin-bottom: 24px;">
+            <div class="measure-heading">
+              <span class="measure-heading-text" id="title-measure-carga">A.1 Formas de Onda na Carga (Tensão e Corrente com Janela Measure):</span>
+            </div>
+            
+            <div class="subplot-box" id="box-chartMeasureCarga" style="height: 250px; margin-bottom: 14px;">
+              <canvas id="chartMeasureCarga"></canvas>
+            </div>
+
+            <!-- Tabela Measure da Carga Posicionada ABAIXO do gráfico -->
+            <div id="container-measure-table-carga"></div>
+          </div>
+
+          <!-- Bloco A.2: Formas de Onda na Fonte -->
+          <div class="measure-card-block" id="block-measure-fonte">
+            <div class="measure-heading">
+              <span class="measure-heading-text" id="title-measure-fonte">A.2 Formas de Onda na Fonte (Tensão e Corrente com Janela Measure):</span>
+            </div>
+            
+            <div class="subplot-box" id="box-chartMeasureFonte" style="height: 250px; margin-bottom: 14px;">
+              <canvas id="chartMeasureFonte"></canvas>
+            </div>
+
+            <!-- Tabela Measure da Fonte Posicionada ABAIXO do gráfico -->
+            <div id="container-measure-table-fonte"></div>
+          </div>
+
+        </div>
       </div>
     </div>
 

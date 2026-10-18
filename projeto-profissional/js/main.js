@@ -37,7 +37,8 @@ import {
   atualizarGrafico,
   filtrarCanais,
   exportarCSV,
-  salvarOsciloscopioPNG
+  salvarOsciloscopioPNG,
+  toggleFormatoMeasure
 } from './graficos.js';
 
     // Submodelos por categoria
@@ -2393,6 +2394,41 @@ import {
       }
     }
 
+
+    // Gerenciamento de Tema (Modo Escuro / Modo Claro)
+    function alternarTema() {
+      const isLight = document.body.classList.toggle("light-mode");
+      const theme = isLight ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", theme);
+      localStorage.setItem("calculadora_tema", theme);
+
+      const icon = document.getElementById("theme-icon");
+      const text = document.getElementById("theme-text");
+      if (icon && text) {
+        icon.textContent = isLight ? "🌙" : "☀️";
+        text.textContent = isLight ? "Modo Escuro" : "Modo Claro";
+      }
+
+      if (window.ultimoPlotData && window.atualizarGrafico) {
+        window.atualizarGrafico(window.ultimoPlotData);
+      }
+    }
+    window.alternarTema = alternarTema;
+
+    (function aplicarTemaInicial() {
+      const temaSalvo = localStorage.getItem("calculadora_tema");
+      if (temaSalvo === "light") {
+        document.body.classList.add("light-mode");
+        document.documentElement.setAttribute("data-theme", "light");
+        const icon = document.getElementById("theme-icon");
+        const text = document.getElementById("theme-text");
+        if (icon && text) {
+          icon.textContent = "🌙";
+          text.textContent = "Modo Escuro";
+        }
+      }
+    })();
+
 // Expor handlers inline para o DOM
 window.toggleGuiaCircuitos = toggleGuiaCircuitos;
 window.atualizarSubmodelos = atualizarSubmodelos;
@@ -2406,6 +2442,8 @@ window.obterPuchlowski = obterPuchlowski;
 window.filtrarCanais = filtrarCanais;
 window.exportarCSV = exportarCSV;
 window.salvarOsciloscopioPNG = salvarOsciloscopioPNG;
+window.atualizarGrafico = atualizarGrafico;
+window.toggleFormatoMeasure = toggleFormatoMeasure;
 window.TABELA_BETA = TABELA_BETA;
 window.TABELA_IEFP = TABELA_IEFP;
 window.TABELA_IEFP_RODA_LIVRE = TABELA_IEFP_RODA_LIVRE;

@@ -14,17 +14,35 @@
     let chartIInst = null;
     let chartIgInst = null;
     let chartBothInst = null;
+    let chartMeasureCargaInst = null;
+    let chartMeasureFonteInst = null;
+
+    function getThemeColors() {
+      const isLight = document.body.classList.contains("light-mode") || document.documentElement.getAttribute("data-theme") === "light";
+      return {
+        isLight,
+        gridColor: isLight ? 'rgba(0, 0, 0, 0.08)' : '#21262d',
+        zeroLineColor: isLight ? '#d0d7de' : '#383e47',
+        boxBorderColor: isLight ? '#d0d7de' : '#30363d',
+        tickColor: isLight ? '#57606a' : '#8b949e',
+        titleColor: isLight ? '#1f2328' : '#c9d1d9',
+        legendColor: isLight ? '#1f2328' : '#f0f6fc',
+        voColor: isLight ? '#cf222e' : '#f85149',
+        ioColor: isLight ? '#0969da' : '#58a6ff'
+      };
+    }
 
     // Plugin 1: Traça linha em y = 0
     const zeroLinePlugin = {
       id: 'zeroLinePlugin',
       afterDraw(chart) {
+        const theme = getThemeColors();
         const { ctx, chartArea, scales: { y } } = chart;
         if (!chartArea || !y) return;
         const yZero = y.getPixelForValue(0);
         if (yZero >= chartArea.top && yZero <= chartArea.bottom) {
           ctx.save();
-          ctx.strokeStyle = '#383e47';
+          ctx.strokeStyle = theme.zeroLineColor;
           ctx.lineWidth = 1.2;
           ctx.beginPath();
           ctx.moveTo(chartArea.left, yZero);
@@ -35,22 +53,81 @@
       }
     };
 
-    // Plugin 2: Desenha moldura em torno de cada gráfico (estilo Matplotlib/Dark Theme)
+    // Plugin 2: Desenha moldura em torno de cada gráfico
     const boxBorderPlugin = {
       id: 'boxBorderPlugin',
       afterDraw(chart) {
+        const theme = getThemeColors();
         const { ctx, chartArea } = chart;
         if (!chartArea) return;
         ctx.save();
-        ctx.strokeStyle = '#30363d';
+        ctx.strokeStyle = theme.boxBorderColor;
         ctx.lineWidth = 1.2;
         ctx.strokeRect(chartArea.left, chartArea.top, chartArea.right - chartArea.left, chartArea.bottom - chartArea.top);
         ctx.restore();
       }
     };
 
+    // Plugin 3: Traça cursores verticais X1 e X2 com tags [1] e [2] (Estilo PSIM Measure)
+    const psimCursorsPlugin = {
+      id: 'psimCursorsPlugin',
+      afterDraw(chart, args, options) {
+        if (!options || !options.enabled) return;
+        const { ctx, chartArea, scales: { x } } = chart;
+        if (!chartArea || !x) return;
+
+        const idx1 = options.idx1;
+        const idx2 = options.idx2;
+        if (idx1 === undefined || idx2 === undefined) return;
+
+        const x1Pixel = x.getPixelForValue(idx1);
+        const x2Pixel = x.getPixelForValue(idx2);
+
+        ctx.save();
+        ctx.strokeStyle = '#e06c75';
+        ctx.lineWidth = 1.2;
+
+        if (x1Pixel >= chartArea.left && x1Pixel <= chartArea.right) {
+          ctx.beginPath();
+          ctx.moveTo(x1Pixel, chartArea.top);
+          ctx.lineTo(x1Pixel, chartArea.bottom);
+          ctx.stroke();
+
+          // Cursor tag 1
+          ctx.fillStyle = '#38bdf8';
+          ctx.fillRect(x1Pixel - 7, chartArea.bottom + 2, 14, 14);
+          ctx.fillStyle = '#0f172a';
+          ctx.font = 'bold 9px monospace';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('1', x1Pixel, chartArea.bottom + 9);
+        }
+
+        if (x2Pixel >= chartArea.left && x2Pixel <= chartArea.right) {
+          ctx.beginPath();
+          ctx.moveTo(x2Pixel, chartArea.top);
+          ctx.lineTo(x2Pixel, chartArea.bottom);
+          ctx.stroke();
+
+          // Cursor tag 2
+          ctx.fillStyle = '#38bdf8';
+          ctx.fillRect(x2Pixel - 7, chartArea.bottom + 2, 14, 14);
+          ctx.fillStyle = '#0f172a';
+          ctx.font = 'bold 9px monospace';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('2', x2Pixel, chartArea.bottom + 9);
+        }
+
+        ctx.restore();
+      }
+    };
+
     function criarSubplot(canvasId, datasetLabel, dataValues, yTitle, showXAxis, plotData, lineColor) {
-      const ctx = document.getElementById(canvasId).getContext("2d");
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return null;
+      const ctx = canvas.getContext("2d");
+      const theme = getThemeColors();
       return new Chart(ctx, {
         type: 'line',
         data: {
@@ -58,7 +135,7 @@
           datasets: [{
             label: datasetLabel,
             data: dataValues,
-            borderColor: lineColor || '#58a6ff',
+            borderColor: lineColor || (theme.isLight ? '#0969da' : '#58a6ff'),
             backgroundColor: 'transparent',
             borderWidth: 2,
             fill: false,
@@ -81,7 +158,7 @@
               labels: {
                 boxWidth: 22,
                 boxHeight: 2,
-                color: '#f0f6fc',
+                color: theme.legendColor,
                 font: { size: 12, style: 'italic', weight: 'bold' }
               }
             },
@@ -98,13 +175,13 @@
           scales: {
             x: {
               grid: {
-                color: '#21262d',
+                color: theme.gridColor,
                 lineWidth: 1,
                 drawTicks: showXAxis
               },
               ticks: {
                 display: showXAxis,
-                color: '#8b949e',
+                color: theme.tickColor,
                 maxTicksLimit: 9,
                 callback: function(val, idx) {
                   return Math.round(plotData.t[idx]);
@@ -113,25 +190,25 @@
               title: {
                 display: showXAxis,
                 text: 'Tempo (ms)',
-                color: '#c9d1d9',
+                color: theme.titleColor,
                 font: { size: 13, weight: '600' }
               },
               border: { display: false }
             },
             y: {
               grid: {
-                color: '#21262d',
+                color: theme.gridColor,
                 lineWidth: 1
               },
               ticks: {
-                color: '#8b949e',
+                color: theme.tickColor,
                 maxTicksLimit: 5,
                 font: { size: 11 }
               },
               title: {
                 display: true,
                 text: yTitle,
-                color: '#c9d1d9',
+                color: theme.titleColor,
                 font: { size: 12, weight: '600' }
               },
               border: { display: false }
@@ -143,7 +220,10 @@
     }
 
     function criarSubplotMulti(canvasId, datasets, yTitle, showXAxis, plotData) {
-      const ctx = document.getElementById(canvasId).getContext("2d");
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return null;
+      const ctx = canvas.getContext("2d");
+      const theme = getThemeColors();
       return new Chart(ctx, {
         type: 'line',
         data: {
@@ -175,7 +255,7 @@
               labels: {
                 boxWidth: 20,
                 boxHeight: 2,
-                color: '#f0f6fc',
+                color: theme.legendColor,
                 font: { size: 11, weight: 'bold' }
               }
             },
@@ -192,13 +272,13 @@
           scales: {
             x: {
               grid: {
-                color: '#21262d',
+                color: theme.gridColor,
                 lineWidth: 1,
                 drawTicks: showXAxis
               },
               ticks: {
                 display: showXAxis,
-                color: '#8b949e',
+                color: theme.tickColor,
                 maxTicksLimit: 9,
                 callback: function(val, idx) {
                   return Math.round(plotData.t[idx]);
@@ -207,25 +287,25 @@
               title: {
                 display: showXAxis,
                 text: 'Tempo (ms)',
-                color: '#c9d1d9',
+                color: theme.titleColor,
                 font: { size: 13, weight: '600' }
               },
               border: { display: false }
             },
             y: {
               grid: {
-                color: '#21262d',
+                color: theme.gridColor,
                 lineWidth: 1
               },
               ticks: {
-                color: '#8b949e',
+                color: theme.tickColor,
                 maxTicksLimit: 5,
                 font: { size: 11 }
               },
               title: {
                 display: true,
                 text: yTitle,
-                color: '#c9d1d9',
+                color: theme.titleColor,
                 font: { size: 12, weight: '600' }
               },
               border: { display: false }
@@ -237,7 +317,10 @@
     }
 
     function criarSubplotCombinado(canvasId, plotData) {
-      const ctx = document.getElementById(canvasId).getContext("2d");
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return null;
+      const ctx = canvas.getContext("2d");
+      const theme = getThemeColors();
       return new Chart(ctx, {
         type: 'line',
         data: {
@@ -246,7 +329,7 @@
             {
               label: 'vo(t) - Tensão na carga [V]',
               data: plotData.v_out,
-              borderColor: '#58a6ff',
+              borderColor: theme.voColor,
               backgroundColor: 'transparent',
               borderWidth: 2,
               fill: false,
@@ -282,7 +365,7 @@
               labels: {
                 boxWidth: 20,
                 boxHeight: 2,
-                color: '#f0f6fc',
+                color: theme.legendColor,
                 font: { size: 12, weight: 'bold' }
               }
             },
@@ -299,13 +382,13 @@
           scales: {
             x: {
               grid: {
-                color: '#21262d',
+                color: theme.gridColor,
                 lineWidth: 1,
                 drawTicks: true
               },
               ticks: {
                 display: true,
-                color: '#8b949e',
+                color: theme.tickColor,
                 maxTicksLimit: 9,
                 callback: function(val, idx) {
                   return Math.round(plotData.t[idx]);
@@ -314,7 +397,7 @@
               title: {
                 display: true,
                 text: 'Tempo (ms)',
-                color: '#c9d1d9',
+                color: theme.titleColor,
                 font: { size: 13, weight: '600' }
               },
               border: { display: false }
@@ -323,18 +406,18 @@
               type: 'linear',
               position: 'left',
               grid: {
-                color: '#21262d',
+                color: theme.gridColor,
                 lineWidth: 1
               },
               ticks: {
-                color: '#58a6ff',
+                color: theme.voColor,
                 maxTicksLimit: 5,
                 font: { size: 11 }
               },
               title: {
                 display: true,
                 text: 'Tensão vo(t) [V]',
-                color: '#58a6ff',
+                color: theme.voColor,
                 font: { size: 12, weight: '600' }
               },
               border: { display: false }
@@ -363,6 +446,384 @@
         plugins: [zeroLinePlugin, boxBorderPlugin]
       });
     }
+
+
+    // ==========================================================================
+    // CÁLCULO E RENDERIZAÇÃO DA JANELA MEASURE (ESTILO PSIM)
+    // ==========================================================================
+    let formatoMeasureEngenharia = false;
+
+    function calcularMedicoesPSIM(plotData) {
+      if (!plotData || !plotData.t || plotData.t.length === 0) return null;
+      const freq = plotData.freq || 60;
+      const T = 1 / freq;
+      const N = plotData.t.length;
+
+      const t_sec = plotData.t.map(ms => ms / 1000);
+      const x1_target = T;
+      const x2_target = 2 * T;
+
+      let idx1 = 0;
+      let idx2 = N - 1;
+      let minDiff1 = Infinity;
+      let minDiff2 = Infinity;
+
+      for (let i = 0; i < N; i++) {
+        const diff1 = Math.abs(t_sec[i] - x1_target);
+        if (diff1 < minDiff1) {
+          minDiff1 = diff1;
+          idx1 = i;
+        }
+        const diff2 = Math.abs(t_sec[i] - x2_target);
+        if (diff2 < minDiff2) {
+          minDiff2 = diff2;
+          idx2 = i;
+        }
+      }
+
+      if (idx2 <= idx1) {
+        idx1 = 0;
+        idx2 = N - 1;
+      }
+
+      const numPontosPeriodo = idx2 - idx1;
+      const X1 = t_sec[idx1];
+      const X2 = t_sec[idx2];
+      const DeltaX = X2 - X1;
+
+      function statsSignal(arr) {
+        if (!arr || arr.length === 0) {
+          return { valX1: 0, valX2: 0, delta: 0, avg: 0, avgAbs: 0, rms: 0 };
+        }
+        let sum = 0;
+        let sumAbs = 0;
+        let sumSq = 0;
+        for (let i = idx1; i < idx2; i++) {
+          const val = arr[i] || 0;
+          sum += val;
+          sumAbs += Math.abs(val);
+          sumSq += val * val;
+        }
+        const avg = sum / numPontosPeriodo;
+        const avgAbs = sumAbs / numPontosPeriodo;
+        const rms = Math.sqrt(Math.max(0, sumSq / numPontosPeriodo));
+        const valX1 = arr[idx1] || 0;
+        const valX2 = arr[idx2] || 0;
+        const delta = valX2 - valX1;
+        return { valX1, valX2, delta, avg, avgAbs, rms };
+      }
+
+      function statsPower(vArr, iArr, vRms, iRms) {
+        if (!vArr || !iArr || vArr.length === 0 || iArr.length === 0) {
+          return { P: 0, S: 0, PF: 0 };
+        }
+        let sumP = 0;
+        for (let i = idx1; i < idx2; i++) {
+          sumP += (vArr[i] || 0) * (iArr[i] || 0);
+        }
+        const P = sumP / numPontosPeriodo;
+        const S = vRms * iRms;
+        const PF = S > 1e-4 ? Math.min(1, Math.max(0, Math.abs(P) / S)) : 0;
+        return { P, S, PF };
+      }
+
+      const vCargaStats = statsSignal(plotData.v_out);
+      const iCargaStats = statsSignal(plotData.i_out);
+      const pCargaStats = statsPower(plotData.v_out, plotData.i_out, vCargaStats.rms, iCargaStats.rms);
+
+      const vFonteStats = statsSignal(plotData.v_in);
+      const iFonteStats = statsSignal(plotData.i_fonte);
+      const pFonteStats = statsPower(plotData.v_in, plotData.i_fonte, vFonteStats.rms, iFonteStats.rms);
+
+      return {
+        idx1,
+        idx2,
+        X1,
+        X2,
+        DeltaX,
+        carga: {
+          v: vCargaStats,
+          i: iCargaStats,
+          p: pCargaStats
+        },
+        fonte: {
+          v: vFonteStats,
+          i: iFonteStats,
+          p: pFonteStats
+        }
+      };
+    }
+
+    function criarSubplotMeasure(canvasId, plotData, tipo, statsMedicoes) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return null;
+      const ctx = canvas.getContext("2d");
+      const theme = getThemeColors();
+
+      const isCarga = (tipo === 'carga');
+      const labelV = isCarga ? 'V_Carga1' : 'V_Fonte1';
+      const labelI = isCarga ? 'I_Carga1' : 'I_Fonte1';
+      const dataV = isCarga ? plotData.v_out : plotData.v_in;
+      const dataI = isCarga ? plotData.i_out : plotData.i_fonte;
+      const titleV = isCarga ? 'Tensão V_Carga [V]' : 'Tensão V_Fonte [V]';
+      const titleI = isCarga ? 'Corrente I_Carga [A]' : 'Corrente I_Fonte [A]';
+
+      const timeLabels = plotData.t.map(ms => (ms / 1000).toFixed(4));
+
+      return new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: timeLabels,
+          datasets: [
+            {
+              label: labelV,
+              data: dataV,
+              borderColor: '#cf222e',
+              backgroundColor: 'transparent',
+              borderWidth: 2,
+              fill: false,
+              pointRadius: 0,
+              tension: 0,
+              yAxisID: 'y'
+            },
+            {
+              label: labelI,
+              data: dataI,
+              borderColor: '#0969da',
+              backgroundColor: 'transparent',
+              borderWidth: 2,
+              fill: false,
+              pointRadius: 0,
+              tension: 0,
+              yAxisID: 'y1'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          interaction: {
+            mode: 'index',
+            intersect: false
+          },
+          plugins: {
+            legend: {
+              position: 'top',
+              align: 'start',
+              labels: {
+                boxWidth: 14,
+                boxHeight: 2,
+                color: theme.legendColor,
+                font: { size: 12, weight: 'bold', family: 'ui-monospace, Consolas, monospace' }
+              }
+            },
+            tooltip: {
+              callbacks: {
+                title: function(items) { return `Time = ${items[0].label} s (${(parseFloat(items[0].label)*1000).toFixed(2)} ms)`; },
+                label: function(item) {
+                  const unit = item.datasetIndex === 0 ? ' V' : ' A';
+                  return ` ${item.dataset.label}: ${item.parsed.y.toFixed(3)}${unit}`;
+                }
+              }
+            },
+            psimCursorsPlugin: {
+              enabled: true,
+              idx1: statsMedicoes.idx1,
+              idx2: statsMedicoes.idx2
+            }
+          },
+          layout: {
+            padding: { left: 4, right: 12, top: 4, bottom: 18 }
+          },
+          scales: {
+            x: {
+              grid: {
+                color: theme.gridColor,
+                lineWidth: 1,
+                drawTicks: true
+              },
+              ticks: {
+                color: theme.tickColor,
+                maxTicksLimit: 9,
+                callback: function(val, idx) {
+                  const tSec = plotData.t[idx] / 1000;
+                  return tSec.toFixed(3);
+                }
+              },
+              title: {
+                display: true,
+                text: 'Time (s)',
+                color: theme.titleColor,
+                font: { size: 12, weight: '600' }
+              },
+              border: { display: false }
+            },
+            y: {
+              type: 'linear',
+              position: 'left',
+              grid: {
+                color: theme.gridColor,
+                lineWidth: 1
+              },
+              ticks: {
+                color: '#cf222e',
+                maxTicksLimit: 6,
+                font: { size: 11, weight: '600' }
+              },
+              title: {
+                display: true,
+                text: titleV,
+                color: '#cf222e',
+                font: { size: 12, weight: '600' }
+              },
+              border: { display: false }
+            },
+            y1: {
+              type: 'linear',
+              position: 'right',
+              grid: {
+                drawOnChartArea: false
+              },
+              ticks: {
+                color: '#0969da',
+                maxTicksLimit: 6,
+                font: { size: 11, weight: '600' }
+              },
+              title: {
+                display: true,
+                text: titleI,
+                color: '#0969da',
+                font: { size: 12, weight: '600' }
+              },
+              border: { display: false }
+            }
+          }
+        },
+        plugins: [zeroLinePlugin, boxBorderPlugin, psimCursorsPlugin]
+      });
+    }
+
+    function gerarTabelaMeasureHTML(stats, tipo, modoEngenharia) {
+      const isCarga = (tipo === 'carga');
+      const labelI = isCarga ? 'I_Carga1' : 'I_Fonte1';
+      const labelV = isCarga ? 'V_Carga1' : 'V_Fonte1';
+      const data = isCarga ? stats.carga : stats.fonte;
+
+      function fmtNum(val, unit = '') {
+        if (val === undefined || val === null || isNaN(val)) return '—';
+        if (modoEngenharia) {
+          if (Math.abs(val) < 0.001 && val !== 0) return (val * 1000).toFixed(2) + ' m' + unit;
+          return val.toFixed(2) + (unit ? ' ' + unit : '');
+        } else {
+          return val.toExponential(5);
+        }
+      }
+
+      function fmtTime(val) {
+        if (modoEngenharia) {
+          return (val * 1000).toFixed(2) + ' ms';
+        }
+        return val.toExponential(5);
+      }
+
+      const tituloSecao = isCarga ? 'Medições na Carga' : 'Medições na Fonte';
+
+      return `
+        <div class="psim-window">
+          <div class="psim-window-header">
+            <span class="psim-title">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h11A1.5 1.5 0 0 1 15 2.5v11a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 13.5v-11zM2.5 2a.5.5 0 0 0-.5.5v11a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 .5-.5v-11a.5.5 0 0 0-.5-.5h-11z"/><path d="M3 4h10v1H3V4zm0 3h10v1H3V7zm0 3h10v1H3v-1z"/></svg>
+              Measure &bull; ${tituloSecao}
+            </span>
+            <div class="psim-tools">
+              <button type="button" class="btn-psim-mode" onclick="toggleFormatoMeasure('${tipo}')" title="Alternar entre notação científica PSIM e unidades de engenharia">
+                ${modoEngenharia ? 'Modo: Engenharia (V, A, W)' : 'Modo: Científico (PSIM)'}
+              </button>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="psim-table">
+              <thead>
+                <tr>
+                  <th style="min-width: 90px; text-align: left;">Measure</th>
+                  <th>X1</th>
+                  <th>X2</th>
+                  <th>&Delta;</th>
+                  <th>Average</th>
+                  <th>Average |X|</th>
+                  <th>RMS</th>
+                  <th>P</th>
+                  <th>S</th>
+                  <th>PF</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="row-time">
+                  <td style="font-weight: 700; text-align: left;">Time</td>
+                  <td>${fmtTime(stats.X1)}</td>
+                  <td>${fmtTime(stats.X2)}</td>
+                  <td>${fmtTime(stats.DeltaX)}</td>
+                  <td class="empty-cell"></td>
+                  <td class="empty-cell"></td>
+                  <td class="empty-cell"></td>
+                  <td class="empty-cell"></td>
+                  <td class="empty-cell"></td>
+                  <td class="empty-cell"></td>
+                </tr>
+                <tr class="row-i">
+                  <td style="font-weight: 700; text-align: left;">${labelI}</td>
+                  <td>${fmtNum(data.i.valX1, 'A')}</td>
+                  <td>${fmtNum(data.i.valX2, 'A')}</td>
+                  <td>${fmtNum(data.i.delta, 'A')}</td>
+                  <td>${fmtNum(data.i.avg, 'A')}</td>
+                  <td>${fmtNum(data.i.avgAbs, 'A')}</td>
+                  <td>${fmtNum(data.i.rms, 'A')}</td>
+                  <td>${fmtNum(data.p.P, 'W')}</td>
+                  <td>${fmtNum(data.p.S, 'VA')}</td>
+                  <td>${fmtNum(data.p.PF, '')}</td>
+                </tr>
+                <tr class="row-v">
+                  <td style="font-weight: 700; text-align: left;">${labelV}</td>
+                  <td>${fmtNum(data.v.valX1, 'V')}</td>
+                  <td>${fmtNum(data.v.valX2, 'V')}</td>
+                  <td>${fmtNum(data.v.delta, 'V')}</td>
+                  <td>${fmtNum(data.v.avg, 'V')}</td>
+                  <td>${fmtNum(data.v.avgAbs, 'V')}</td>
+                  <td>${fmtNum(data.v.rms, 'V')}</td>
+                  <td class="empty-cell"></td>
+                  <td class="empty-cell"></td>
+                  <td class="empty-cell"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderizarTabelasMeasure(statsMedicoes) {
+      if (!statsMedicoes) return;
+      window.ultimasMedicoesPSIM = statsMedicoes;
+
+      const contCarga = document.getElementById("container-measure-table-carga");
+      const contFonte = document.getElementById("container-measure-table-fonte");
+
+      if (contCarga) {
+        contCarga.innerHTML = gerarTabelaMeasureHTML(statsMedicoes, 'carga', formatoMeasureEngenharia);
+      }
+      if (contFonte) {
+        contFonte.innerHTML = gerarTabelaMeasureHTML(statsMedicoes, 'fonte', formatoMeasureEngenharia);
+      }
+    }
+
+    function toggleFormatoMeasure(tipo) {
+      formatoMeasureEngenharia = !formatoMeasureEngenharia;
+      if (window.ultimasMedicoesPSIM) {
+        renderizarTabelasMeasure(window.ultimasMedicoesPSIM);
+      }
+    }
+    window.toggleFormatoMeasure = toggleFormatoMeasure;
 
     var ultimoPlotData = null;
     window.ultimoPlotData = null;
@@ -414,6 +875,8 @@
       if (chartIInst) chartIInst.destroy();
       if (chartIgInst) chartIgInst.destroy();
       if (chartBothInst) chartBothInst.destroy();
+      if (chartMeasureCargaInst) chartMeasureCargaInst.destroy();
+      if (chartMeasureFonteInst) chartMeasureFonteInst.destroy();
 
       if (plotData.is_trifasico) {
         chartVinInst = criarSubplotMulti("chartVin", [
@@ -566,6 +1029,23 @@
       }
 
       chartBothInst = criarSubplotCombinado("chartBoth", plotData);
+
+      // Renderização das Janelas e Gráficos de Medição PSIM (A.1 Carga e A.2 Fonte)
+      const statsMedicoes = calcularMedicoesPSIM(plotData);
+      if (statsMedicoes) {
+        chartMeasureCargaInst = criarSubplotMeasure("chartMeasureCarga", plotData, 'carga', statsMedicoes);
+        chartMeasureFonteInst = criarSubplotMeasure("chartMeasureFonte", plotData, 'fonte', statsMedicoes);
+        renderizarTabelasMeasure(statsMedicoes);
+
+        const titleFonteEl = document.getElementById("title-measure-fonte");
+        if (titleFonteEl) {
+          titleFonteEl.innerText = plotData.is_inversor
+            ? "A.2 Formas de Onda na Fonte CC (Tensão e Corrente com Janela Measure):"
+            : (plotData.is_trifasico
+                ? "A.2 Formas de Onda na Fonte CA (Tensão e Corrente de Fase A com Janela Measure):"
+                : "A.2 Formas de Onda na Fonte CA (Tensão e Corrente com Janela Measure):");
+        }
+      }
     }
 
     // Filtragem de canais do osciloscópio
@@ -587,9 +1067,12 @@
         id2: document.getElementById("box-chartID2"),
         id3: document.getElementById("box-chartID3"),
         i: document.getElementById("box-chartI"),
-        ig: document.getElementById("box-chartIg"),
-        both: document.getElementById("box-chartBoth")
+        ig: document.getElementById("box-chartIg")
       };
+
+      const blockMeasureSection = document.getElementById("section-measure");
+      const blockMeasureCarga = document.getElementById("block-measure-carga");
+      const blockMeasureFonte = document.getElementById("block-measure-fonte");
 
       if (modo === "todos") {
         boxes.vin.style.display = "block";
@@ -602,7 +1085,9 @@
         boxes.id3.style.display = ultimoPlotData.tem_d3 ? "block" : "none";
         boxes.i.style.display = "block";
         boxes.ig.style.display = (ultimoPlotData.tem_ig && (ultimoPlotData.is_onda_completa || ultimoPlotData.topologia === "tri_ponte_completa_r" || ultimoPlotData.topologia === "tri_ponte_controlado_r" || ultimoPlotData.is_inversor)) ? "block" : "none";
-        boxes.both.style.display = "block";
+        if (blockMeasureSection) blockMeasureSection.style.display = "flex";
+        if (blockMeasureCarga) blockMeasureCarga.style.display = "block";
+        if (blockMeasureFonte) blockMeasureFonte.style.display = "block";
       } else if (modo === "carga") {
         boxes.vin.style.display = "none";
         boxes.vlinha.style.display = "none";
@@ -614,7 +1099,9 @@
         boxes.id3.style.display = "none";
         boxes.i.style.display = "block";
         boxes.ig.style.display = "none";
-        boxes.both.style.display = "block";
+        if (blockMeasureSection) blockMeasureSection.style.display = "flex";
+        if (blockMeasureCarga) blockMeasureCarga.style.display = "block";
+        if (blockMeasureFonte) blockMeasureFonte.style.display = "none";
       } else if (modo === "semicondutores") {
         boxes.vin.style.display = "none";
         boxes.vlinha.style.display = "none";
@@ -626,7 +1113,7 @@
         boxes.id3.style.display = ultimoPlotData.tem_d3 ? "block" : "none";
         boxes.i.style.display = "none";
         boxes.ig.style.display = "none";
-        boxes.both.style.display = "none";
+        if (blockMeasureSection) blockMeasureSection.style.display = "none";
       } else if (modo === "fontes") {
         boxes.vin.style.display = "block";
         boxes.vlinha.style.display = ultimoPlotData.tem_vlinha ? "block" : "none";
@@ -638,7 +1125,9 @@
         boxes.id3.style.display = "none";
         boxes.i.style.display = "none";
         boxes.ig.style.display = (ultimoPlotData.tem_ig && (ultimoPlotData.is_onda_completa || ultimoPlotData.topologia === "tri_ponte_completa_r" || ultimoPlotData.topologia === "tri_ponte_controlado_r" || ultimoPlotData.is_inversor)) ? "block" : "none";
-        boxes.both.style.display = "none";
+        if (blockMeasureSection) blockMeasureSection.style.display = "flex";
+        if (blockMeasureCarga) blockMeasureCarga.style.display = "none";
+        if (blockMeasureFonte) blockMeasureFonte.style.display = "block";
       }
     }
 
@@ -710,7 +1199,8 @@
         { id: "box-chartID3", title: "Corrente no Semicondutor Fase C iD3(t) / iT3(t)" },
         { id: "box-chartI", title: "Corrente na Carga io(t)" },
         { id: "box-chartIg", title: ultimoPlotData.is_trifasico ? "Corrente na Fonte CA ia(t)" : "Corrente na Fonte CA ig(t)" },
-        { id: "box-chartBoth", title: "Formas de Onda Sobrepostas (Escala Dupla: vo e io)" }
+        { id: "box-chartMeasureCarga", title: "Formas de Onda na Carga: V_Carga e I_Carga" },
+        { id: "box-chartMeasureFonte", title: ultimoPlotData.is_inversor ? "Formas de Onda na Fonte CC: V_Fonte e I_Fonte" : "Formas de Onda na Fonte: V_Fonte e I_Fonte" }
       ];
 
       const visibleItems = [];
@@ -828,5 +1318,8 @@ export {
   atualizarGrafico,
   filtrarCanais,
   exportarCSV,
-  salvarOsciloscopioPNG
+  salvarOsciloscopioPNG,
+  calcularMedicoesPSIM,
+  renderizarTabelasMeasure,
+  toggleFormatoMeasure
 };
