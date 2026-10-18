@@ -1775,13 +1775,36 @@ import {
     }
 
     function atualizarSubmodelos() {
-      const cat = document.getElementById("select-categoria").value;
+      const catSelect = document.getElementById("select-categoria");
+      const cat = catSelect ? catSelect.value : "";
       const subSelect = document.getElementById("select-topologia");
+      const containerTopologia = document.getElementById("container-topologia");
+      const gridCircuito = document.getElementById("grid-circuito");
+      const cardResultados = document.getElementById("card-resultados");
+      const cardGrafico = document.getElementById("card-grafico");
       const msgDiv = document.getElementById("status-mensagem");
-      
+
+      if (!cat) {
+        if (containerTopologia) containerTopologia.style.display = "none";
+        if (gridCircuito) gridCircuito.style.display = "none";
+        if (cardResultados) cardResultados.style.display = "none";
+        if (cardGrafico) cardGrafico.style.display = "none";
+        if (subSelect) subSelect.innerHTML = "";
+        if (msgDiv) msgDiv.innerHTML = "";
+        return;
+      }
+
       subSelect.innerHTML = "";
+
+      const optPrompt = document.createElement("option");
+      optPrompt.value = "";
+      optPrompt.textContent = "-- Selecione a Topologia Específica --";
+      optPrompt.disabled = true;
+      optPrompt.selected = true;
+      subSelect.appendChild(optPrompt);
+
       const lista = topologiasPorCategoria[cat] || [];
-      
+
       const grupos = {};
       lista.forEach(item => {
         const g = item.grupo || "";
@@ -1810,8 +1833,11 @@ import {
         }
       }
 
-      msgDiv.innerHTML = "";
-      atualizarInterface();
+      if (containerTopologia) containerTopologia.style.display = "";
+      if (gridCircuito) gridCircuito.style.display = "none";
+      if (cardResultados) cardResultados.style.display = "none";
+      if (cardGrafico) cardGrafico.style.display = "none";
+      if (msgDiv) msgDiv.innerHTML = "";
     }
 
     function atualizarEsquematico(topologiaId) {
@@ -1827,6 +1853,19 @@ import {
     function atualizarInterface() {
       const cat = document.getElementById("select-categoria").value;
       const topologia = document.getElementById("select-topologia").value;
+      const gridCircuito = document.getElementById("grid-circuito");
+      const cardResultados = document.getElementById("card-resultados");
+      const cardGrafico = document.getElementById("card-grafico");
+
+      if (!topologia) {
+        if (gridCircuito) gridCircuito.style.display = "none";
+        if (cardResultados) cardResultados.style.display = "none";
+        if (cardGrafico) cardGrafico.style.display = "none";
+        return;
+      }
+
+      if (gridCircuito) gridCircuito.style.display = "";
+
       const container = document.getElementById("dynamic-inputs");
 
       // 1. ATUALIZA O ESQUEMÁTICO VISUAL INSTANTANEAMENTE
@@ -2350,16 +2389,8 @@ import {
           if (box) {
             box.style.display = this.checked ? "block" : "none";
           }
-          executarCalculo();
         });
       }
-
-      const allInputs = document.querySelectorAll("#dynamic-inputs input");
-      allInputs.forEach(input => {
-        input.addEventListener("input", function() {
-          executarCalculo();
-        });
-      });
     }
 
 // Expor handlers inline para o DOM

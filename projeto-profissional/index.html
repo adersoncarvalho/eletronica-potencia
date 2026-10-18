@@ -27,10 +27,11 @@
     <div class="card">
       <div class="card-title">1. Configuração do Conversor</div>
       <div class="grid-2">
-        <div class="form-group">
+        <div class="form-group" id="container-categoria">
           <label for="select-categoria">Categoria do Conversor (Menu Principal)</label>
-          <select id="select-categoria" onchange="atualizarSubmodelos()">
-            <option value="monofasicos_nao_controlados" selected>Retificadores Monofásicos não controlados</option>
+          <select id="select-categoria" autocomplete="off" onchange="atualizarSubmodelos()">
+            <option value="" disabled selected>-- Selecione a Categoria do Conversor --</option>
+            <option value="monofasicos_nao_controlados">Retificadores Monofásicos não controlados</option>
             <option value="monofasicos_controlados">Retificadores Monofásicos controlados</option>
             <option value="trifasicos_nao_controlados">Retificadores Trifásicos não controlados</option>
             <option value="trifasicos_controlados">Retificadores Trifásicos controlados</option>
@@ -38,9 +39,9 @@
           </select>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="container-topologia" style="display: none;">
           <label for="select-topologia">Topologia Específica (Menu Secundário)</label>
-          <select id="select-topologia" onchange="atualizarInterface()">
+          <select id="select-topologia" autocomplete="off" onchange="atualizarInterface()">
             <!-- Populado dinamicamente -->
           </select>
         </div>
@@ -50,7 +51,7 @@
     </div>
 
     <!-- SEÇÃO DUPLA: ESQUEMÁTICO + PARÂMETROS -->
-    <div class="grid-circuito">
+    <div class="grid-circuito" id="grid-circuito" style="display: none;">
       <!-- ESQUEMÁTICO DO CIRCUITO SELECIONADO -->
       <div class="card">
         <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">

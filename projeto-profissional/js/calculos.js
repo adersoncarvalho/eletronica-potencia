@@ -942,8 +942,9 @@ import { atualizarGrafico } from './graficos.js';
 
 
     function executarCalculo() {
-      const topologia = document.getElementById("select-topologia").value;
-      const cat = document.getElementById("select-categoria").value;
+      const topologia = document.getElementById("select-topologia")?.value;
+      const cat = document.getElementById("select-categoria")?.value;
+      if (!topologia || !cat) return;
 
       let V_rms = parseFloat(document.getElementById("input-vrms")?.value);
       let V_p = parseFloat(document.getElementById("input-vp")?.value);
