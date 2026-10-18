@@ -34,6 +34,7 @@
             <option value="monofasicos_controlados">Retificadores Monofásicos controlados</option>
             <option value="trifasicos_nao_controlados">Retificadores Trifásicos não controlados</option>
             <option value="trifasicos_controlados">Retificadores Trifásicos controlados</option>
+            <option value="conversores_cc_ca">Conversores CC-CA (Inversores de Tensão)</option>
           </select>
         </div>
 
@@ -148,6 +149,18 @@
             </div>
             <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #f0883e; border-radius: 4px;">
               <strong style="color: #f0f6fc;">21. Retificador Trifásico Controlado em Ponte Completa:</strong> Ponte de 6 tiristores acionados com atraso \(\alpha\) referenciado a \(60^\circ\). Condução contínua para \(\alpha \le 60^\circ\) (\(V_{o,méd} = 1{,}35 V_{L,ef}\cos\alpha\)) e descontínua para \(\alpha > 60^\circ\). Padrão da indústria para acionamento de máquinas CC e transmissão HVDC.
+            <div style="font-size: 0.8rem; font-weight: bold; color: #f0883e; margin-top: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Conversores CC-CA (Inversores de Tensão - Aula 7)</div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #58a6ff; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">22. Inversor Monofásico Meia Ponte com Carga R:</strong> Usa divisor capacitivo (\(V_{CC}/2\)) e 2 chaves comutando a \(180^\circ\). Tensão de saída em onda quadrada \(\pm V_{CC}/2\), valor eficaz \(V_o = V_{CC}/2\) e fundamental \(V_{o1,ef} = \frac{\sqrt{2}}{\pi} V_{CC} \approx 0{,}45 V_{CC}\).
+            </div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #2ea043; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">23. Inversor Monofásico Meia Ponte com Carga RL:</strong> A presença do indutor requer diodos de retorno de energia (\(D_1, D_2\)) em antiparalelo. A corrente é contínua e defasada por \(\phi\), com condução alternada entre transistores e diodos.
+            </div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #e3b341; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">24. Inversor Monofásico Ponte Completa com Carga R:</strong> Ponte H com 4 chaves operando aos pares em oposição (\(S_1-S_2\) e \(S_3-S_4\)). Tensão de saída alternada \(\pm V_{CC}\), dobrando o valor eficaz (\(V_o = V_{CC}\)) e fundamental \(V_{o1,ef} = \frac{2\sqrt{2}}{\pi} V_{CC} \approx 0{,}90 V_{CC}\).
+            </div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #a371f7; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">25. Inversor Monofásico Ponte Completa com Carga RL:</strong> Carga indutiva com 4 diodos de retorno. Regeneração de energia reativa para a fonte CC. THD de tensão \(48{,}34\%\) e espectro harmônico puramente ímpar (\(3^\circ, 5^\circ, 7^\circ\dots\)).
             </div>
           </div>
         </div>

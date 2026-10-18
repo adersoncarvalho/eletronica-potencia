@@ -386,7 +386,9 @@
       const badgeMode = document.getElementById("osc-badge-mode");
       if (badgeMode) {
         let modoStr = "Monofásico 1Φ";
-        if (plotData.is_trifasico) {
+        if (plotData.is_inversor) {
+          modoStr = "Inversor CC-CA Monofásico (Aula 7)";
+        } else if (plotData.is_trifasico) {
           modoStr = plotData.is_controlado ? "Trifásico 3Φ Controlado (SCR)" : "Trifásico 3Φ Não Controlado";
         } else if (plotData.is_controlado) {
           modoStr = "Monofásico 1Φ Controlado (SCR)";
@@ -424,6 +426,8 @@
           { label: "v1(t) - Secundário 1 (V)", data: plotData.v_in, color: "#58a6ff", borderWidth: 2 },
           { label: "v2(t) - Secundário 2 (V)", data: plotData.v_in.map(v => -v), color: "#da3633", borderWidth: 2 }
         ], "Tensão nos Enrolamentos (V)", false, plotData);
+      } else if (plotData.is_inversor) {
+        chartVinInst = criarSubplot("chartVin", "VCC - Barramento CC (V)", plotData.v_in, "Tensão VCC (V)", false, plotData, "#58a6ff");
       } else {
         chartVinInst = criarSubplot("chartVin", "vi(t)", plotData.v_in, "Tensão de entrada (V)", false, plotData, "#58a6ff");
       }
@@ -463,7 +467,10 @@
         boxVD.style.display = "block";
         let labelVD = "vD(t) - Tensão no Diodo Principal (V)";
         let titleVD = "Tensão vD (V)";
-        if (plotData.is_controlado) {
+        if (plotData.is_inversor) {
+          labelVD = "vS1(t) - Tensão no Interruptor S1 (V)";
+          titleVD = "Tensão vS1 (V)";
+        } else if (plotData.is_controlado) {
           labelVD = plotData.is_onda_completa ? "vT1(t) - Tensão no Tiristor T1 (V)" : "vT(t) - Tensão no Tiristor Principal (V)";
           titleVD = plotData.is_onda_completa ? "Tensão vT1 (V)" : "Tensão vT (V)";
         } else if (plotData.is_trifasico) {
@@ -486,7 +493,10 @@
         boxID1.style.display = "block";
         let labelD1 = "iD1(t) - Diodo Principal (A)";
         let titleD1 = "Corrente iD1 (A)";
-        if (plotData.is_controlado) {
+        if (plotData.is_inversor) {
+          labelD1 = plotData.topologia.includes("ponte_completa") ? "iS1,S2(t) - Chaves S1-S2 (A)" : "iS1(t) - Chave S1 (A)";
+          titleD1 = plotData.topologia.includes("ponte_completa") ? "Corrente iS1,S2 (A)" : "Corrente iS1 (A)";
+        } else if (plotData.is_controlado) {
           labelD1 = plotData.is_onda_completa ? "iT1,T4(t) - Tiristores T1-T4 (A)" : (plotData.is_trifasico ? "iT1(t) - Tiristor Fase A (A)" : "iT1(t) - Tiristor Principal (A)");
           titleD1 = plotData.is_onda_completa ? "Corrente iT1,T4 (A)" : (plotData.is_trifasico ? "Corrente iT1 (A)" : "Corrente iT1 (A)");
         } else if (plotData.is_trifasico) {
@@ -510,7 +520,10 @@
         boxID2.style.display = "block";
         let labelD2 = "iD2(t) - Diodo Roda Livre (A)";
         let titleD2 = "Corrente iD2 (A)";
-        if (plotData.is_controlado) {
+        if (plotData.is_inversor) {
+          labelD2 = plotData.topologia.includes("ponte_completa") ? "iD(t) - Diodos Retorno (Regeneração) (A)" : "iD1(t) - Diodo Retorno D1 (Regeneração) (A)";
+          titleD2 = "Corrente iD (A)";
+        } else if (plotData.is_controlado) {
           labelD2 = plotData.is_onda_completa ? "iT2,T3(t) - Tiristores T2-T3 (A)" : (plotData.is_trifasico ? "iT2(t) - Tiristor Fase B (A)" : "iD2(t) - Diodo Roda Livre (A)");
           titleD2 = plotData.is_onda_completa ? "Corrente iT2,T3 (A)" : (plotData.is_trifasico ? "Corrente iT2 (A)" : "Corrente iD2 (A)");
         } else if (plotData.is_trifasico) {
@@ -543,10 +556,11 @@
       chartIInst = criarSubplot("chartI", "i(t)", plotData.i_out, "Corrente na carga (A)", false, plotData, "#f0883e");
 
       const boxIg = document.getElementById("box-chartIg");
-      if (plotData.tem_ig && (plotData.is_onda_completa || plotData.topologia === "tri_ponte_completa_r" || plotData.topologia === "tri_ponte_controlado_r")) {
+      if (plotData.tem_ig && (plotData.is_onda_completa || plotData.topologia === "tri_ponte_completa_r" || plotData.topologia === "tri_ponte_controlado_r" || plotData.is_inversor)) {
         boxIg.style.display = "block";
-        const labelIg = plotData.is_trifasico ? "ia(t) - Corrente Fase A Fonte CA (A)" : "ig(t) - Corrente Fonte CA (A)";
-        chartIgInst = criarSubplot("chartIg", labelIg, plotData.i_fonte, "Corrente CA (A)", false, plotData, "#db61a2");
+        const labelIg = plotData.is_inversor ? "iCC(t) - Corrente Fonte CC (A)" : (plotData.is_trifasico ? "ia(t) - Corrente Fase A Fonte CA (A)" : "ig(t) - Corrente Fonte CA (A)");
+        const titleIg = plotData.is_inversor ? "Corrente iCC (A)" : "Corrente CA (A)";
+        chartIgInst = criarSubplot("chartIg", labelIg, plotData.i_fonte, titleIg, false, plotData, "#db61a2");
       } else {
         boxIg.style.display = "none";
       }
@@ -587,7 +601,7 @@
         boxes.id2.style.display = ultimoPlotData.tem_d2 ? "block" : "none";
         boxes.id3.style.display = ultimoPlotData.tem_d3 ? "block" : "none";
         boxes.i.style.display = "block";
-        boxes.ig.style.display = (ultimoPlotData.tem_ig && (ultimoPlotData.is_onda_completa || ultimoPlotData.topologia === "tri_ponte_completa_r" || ultimoPlotData.topologia === "tri_ponte_controlado_r")) ? "block" : "none";
+        boxes.ig.style.display = (ultimoPlotData.tem_ig && (ultimoPlotData.is_onda_completa || ultimoPlotData.topologia === "tri_ponte_completa_r" || ultimoPlotData.topologia === "tri_ponte_controlado_r" || ultimoPlotData.is_inversor)) ? "block" : "none";
         boxes.both.style.display = "block";
       } else if (modo === "carga") {
         boxes.vin.style.display = "none";
@@ -623,7 +637,7 @@
         boxes.id2.style.display = "none";
         boxes.id3.style.display = "none";
         boxes.i.style.display = "none";
-        boxes.ig.style.display = (ultimoPlotData.tem_ig && (ultimoPlotData.is_onda_completa || ultimoPlotData.topologia === "tri_ponte_completa_r" || ultimoPlotData.topologia === "tri_ponte_controlado_r")) ? "block" : "none";
+        boxes.ig.style.display = (ultimoPlotData.tem_ig && (ultimoPlotData.is_onda_completa || ultimoPlotData.topologia === "tri_ponte_completa_r" || ultimoPlotData.topologia === "tri_ponte_controlado_r" || ultimoPlotData.is_inversor)) ? "block" : "none";
         boxes.both.style.display = "none";
       }
     }

@@ -1,8 +1,1 @@
-{
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/projeto-profissional/$1"
-    }
-  ]
-}
+{"rewrites":[{"source":"/(.*)","destination":"/projeto-profissional/$1"}]}

@@ -2853,6 +2853,352 @@ import { atualizarGrafico } from './graficos.js';
             <div class="math-block">\\[ F_P = \\frac{P_R}{S_{3\\phi}} = \\frac{${P_R.toFixed(2)}\\text{ W}}{${S_3f.toFixed(2)}\\text{ VA}} = ${FP.toFixed(2)} \\]</div>
           </div>
         `;
+      } else if (topologia === "inversor_meia_ponte_r") {
+        const V_CC = V_rms;
+        const R = parseFloat(document.getElementById("input-r").value);
+        plotTitle = `Inversor Monofásico Meia Ponte com Carga R = ${R} Ω (Aula 7)`;
+
+        const V_o_ef = V_CC / 2;
+        const V_o1_ef = (Math.SQRT2 / Math.PI) * V_CC;
+        const V_o3_ef = V_o1_ef / 3;
+        const V_o5_ef = V_o1_ef / 5;
+        const V_o7_ef = V_o1_ef / 7;
+        const THD_v = Math.sqrt((Math.PI * Math.PI / 8) - 1) * 100;
+
+        const I_o_ef = V_o_ef / R;
+        const I_o1_ef = V_o1_ef / R;
+        const P_R = Math.pow(V_o_ef, 2) / R;
+        const P_o1 = Math.pow(V_o1_ef, 2) / R;
+
+        const I_S_med = V_CC / (4 * R);
+        const I_S_ef = V_CC / (2 * Math.SQRT2 * R);
+        const V_S_max = V_CC;
+
+        summaryHTML = `
+          <div class="stat-box"><div class="stat-label">Vo,ef (RMS Total)</div><div class="stat-value">${V_o_ef.toFixed(2)} V</div></div>
+          <div class="stat-box"><div class="stat-label">Vo1,ef (Fundamental)</div><div class="stat-value">${V_o1_ef.toFixed(2)} V</div></div>
+          <div class="stat-box"><div class="stat-label">Io,ef (RMS Carga)</div><div class="stat-value">${I_o_ef.toFixed(2)} A</div></div>
+          <div class="stat-box"><div class="stat-label">Po (Ativa Total)</div><div class="stat-value">${P_R.toFixed(2)} W</div></div>
+          <div class="stat-box"><div class="stat-label">THDv (Tensão)</div><div class="stat-value">${THD_v.toFixed(2)}%</div></div>
+        `;
+
+        stepsHTML = `
+          <div class="step-box">
+            <div class="step-title">Etapa 1: Tensão Eficaz Total (True RMS) na Carga</div>
+            <div class="step-desc">O inversor meia ponte opera com divisor de tensão capacitivo central, impondo \\(\\pm V_{CC}/2\\) sobre a carga resistiva a cada semiciclo de duração \\(T/2\\):</div>
+            <div class="math-block">\\[ v_o(t) = \\begin{cases} +\\frac{V_{CC}}{2}, & 0 \\le t < \\frac{T}{2} \\\\ -\\frac{V_{CC}}{2}, & \\frac{T}{2} \\le t < T \\end{cases} \\]</div>
+            <div class="step-desc">O valor médio é nulo pela simetria ímpar: \\(V_{o,méd} = 0\\text{ V}\\). A tensão eficaz total (RMS) é:</div>
+            <div class="math-block">\\[ V_{o,ef} = \\sqrt{ \\frac{1}{T} \\int_{0}^{T} [v_o(t)]^2 dt } = \\sqrt{ \\left(\\frac{V_{CC}}{2}\\right)^2 } = \\frac{V_{CC}}{2} = \\frac{${V_CC.toFixed(2)}}{2} = ${V_o_ef.toFixed(2)}\\text{ V} \\]</div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 2: Decomposição em Série de Fourier e Harmônicos</div>
+            <div class="step-desc">Pela simetria ímpar e de meia onda, não há harmônicos pares nem componente CC. A série de Fourier contém apenas harmônicos ímpares \\(n = 1, 3, 5, 7, \\dots\\):</div>
+            <div class="math-block">\\[ v_o(t) = \\sum_{n=1,3,5,\\dots}^{\\infty} \\frac{2 V_{CC}}{n \\pi} \\operatorname{sen}(n \\omega t) \\]</div>
+            <div class="step-desc">A amplitude e o valor eficaz da componente fundamental (\\(n=1\\)) são:</div>
+            <div class="math-block">\\[ V_{o1,p} = \\frac{2 V_{CC}}{\\pi} = \\frac{2 \\cdot ${V_CC.toFixed(2)}}{\\pi} = ${(2 * V_CC / Math.PI).toFixed(2)}\\text{ V} \\]</div>
+            <div class="math-block">\\[ V_{o1,ef} = \\frac{V_{o1,p}}{\\sqrt{2}} = \\frac{\\sqrt{2}}{\\pi} V_{CC} = \\frac{\\sqrt{2}}{\\pi} \\cdot ${V_CC.toFixed(2)} = ${V_o1_ef.toFixed(2)}\\text{ V} \\quad (\\approx 0{,}4502 V_{CC}) \\]</div>
+            <div class="step-desc">Valores eficazes dos harmônicos superiores (\\(V_{on,ef} = \\frac{V_{o1,ef}}{n}\\)):</div>
+            <div class="math-block">\\[ V_{o3,ef} = \\frac{${V_o1_ef.toFixed(2)}}{3} = ${V_o3_ef.toFixed(2)}\\text{ V}, \\quad V_{o5,ef} = \\frac{${V_o1_ef.toFixed(2)}}{5} = ${V_o5_ef.toFixed(2)}\\text{ V}, \\quad V_{o7,ef} = \\frac{${V_o1_ef.toFixed(2)}}{7} = ${V_o7_ef.toFixed(2)}\\text{ V} \\]</div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 3: Corrente na Carga, Potências e Distorção Harmônica Total (THDv)</div>
+            <div class="step-desc">Para carga puramente resistiva \\(R = ${R}\\,\\Omega\\):</div>
+            <div class="math-block">\\[ I_{o,ef} = \\frac{V_{o,ef}}{R} = \\frac{${V_o_ef.toFixed(2)}}{${R}} = ${I_o_ef.toFixed(2)}\\text{ A} \\qquad I_{o1,ef} = \\frac{V_{o1,ef}}{R} = \\frac{${V_o1_ef.toFixed(2)}}{${R}} = ${I_o1_ef.toFixed(2)}\\text{ A} \\]</div>
+            <div class="step-desc">Potência ativa total fornecida à carga e potência ativa na frequência fundamental:</div>
+            <div class="math-block">\\[ P_o = \\frac{(V_{o,ef})^2}{R} = \\frac{(${V_o_ef.toFixed(2)})^2}{${R}} = ${P_R.toFixed(2)}\\text{ W} \\]</div>
+            <div class="math-block">\\[ P_{o1} = \\frac{(V_{o1,ef})^2}{R} = \\frac{(${V_o1_ef.toFixed(2)})^2}{${R}} = ${P_o1.toFixed(2)}\\text{ W} \\quad \\left( \\frac{P_{o1}}{P_o} = \\frac{8}{\\pi^2} \\approx 81{,}06\\% \\right) \\]</div>
+            <div class="step-desc">A distorção harmônica total de tensão (\\(\\text{THD}_v\\)) é uma constante teórica intrínseca à onda quadrada de dois níveis:</div>
+            <div class="math-block">\\[ \\text{THD}_v = \\sqrt{ \\left(\\frac{V_{o,ef}}{V_{o1,ef}}\\right)^2 - 1 } = \\sqrt{ \\frac{\\pi^2}{8} - 1 } = ${THD_v.toFixed(2)}\\% \\]</div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 4: Dimensionamento e Esforço nos Semicondutores (S1 e S2)</div>
+            <div class="step-desc">Cada transistor bloqueia a tensão plena da fonte CC e conduz durante metade do ciclo com corrente \\(I_p = V_{CC}/(2R)\\):</div>
+            <div class="math-block">\\[ V_{S,max} = V_{CC} = ${V_S_max.toFixed(2)}\\text{ V} \\]</div>
+            <div class="math-block">\\[ I_{S,méd} = \\frac{V_{CC}}{4 R} = \\frac{${V_CC.toFixed(2)}}{4 \\cdot ${R}} = ${I_S_med.toFixed(2)}\\text{ A} \\qquad I_{S,ef} = \\frac{V_{CC}}{2\\sqrt{2} R} = \\frac{${V_CC.toFixed(2)}}{2\\sqrt{2} \\cdot ${R}} = ${I_S_ef.toFixed(2)}\\text{ A} \\]</div>
+          </div>
+        `;
+      } else if (topologia === "inversor_meia_ponte_rl") {
+        const V_CC = V_rms;
+        const R = parseFloat(document.getElementById("input-r").value);
+        const L = parseFloat(document.getElementById("input-l").value);
+        plotTitle = `Inversor Monofásico Meia Ponte com Carga RL: R = ${R} Ω, L = ${L} H (Aula 7)`;
+
+        const T_seg = 1 / freq;
+        const T_half = T_seg / 2;
+        const tau = L / R;
+        const V_step = V_CC / 2;
+
+        const exp_th = Math.exp(-T_half / tau);
+        const I_max = (V_step / R) * ((1 - exp_th) / (1 + exp_th));
+        const I_min = -I_max;
+
+        const t1 = tau * Math.log(1 + (2 * R * I_max / V_CC));
+        const t1_ms = t1 * 1000;
+        const theta1_deg = t1 * 360 * freq;
+
+        const V_o_ef = V_CC / 2;
+        const V_o1_ef = (Math.SQRT2 / Math.PI) * V_CC;
+
+        let sumI2 = 0;
+        let I_o1_ef = 0;
+        const harm_table = [];
+        [1, 3, 5, 7, 9, 11, 13, 15].forEach(n => {
+          const Von_ef = (Math.SQRT2 * V_CC) / (n * Math.PI);
+          const Zn = Math.sqrt(R * R + Math.pow(n * omega * L, 2));
+          const Ion_ef = Von_ef / Zn;
+          const Pn = R * Math.pow(Ion_ef, 2);
+          if (n === 1) I_o1_ef = Ion_ef;
+          sumI2 += Math.pow(Ion_ef, 2);
+          harm_table.push({ n, Von_ef, Zn, Ion_ef, Pn });
+        });
+
+        const I_o_ef = Math.sqrt(sumI2);
+        const P_R = R * Math.pow(I_o_ef, 2);
+        const THD_i = (Math.sqrt(Math.max(0, Math.pow(I_o_ef, 2) - Math.pow(I_o1_ef, 2))) / I_o1_ef) * 100;
+        const THD_v = Math.sqrt((Math.PI * Math.PI / 8) - 1) * 100;
+
+        summaryHTML = `
+          <div class="stat-box"><div class="stat-label">Vo,ef (RMS Tensão)</div><div class="stat-value">${V_o_ef.toFixed(2)} V</div></div>
+          <div class="stat-box"><div class="stat-label">Imax (Pico Corrente)</div><div class="stat-value">${I_max.toFixed(3)} A</div></div>
+          <div class="stat-box"><div class="stat-label">Io,ef (RMS Carga)</div><div class="stat-value">${I_o_ef.toFixed(3)} A</div></div>
+          <div class="stat-box"><div class="stat-label">Po (Ativa Total)</div><div class="stat-value">${P_R.toFixed(2)} W</div></div>
+          <div class="stat-box"><div class="stat-label">THDi (Corrente)</div><div class="stat-value">${THD_i.toFixed(2)}%</div></div>
+        `;
+
+        let harmHTML = harm_table.map(h => `
+          <tr>
+            <td style="padding: 4px;">n = ${h.n} (${(h.n * freq).toFixed(0)} Hz)</td>
+            <td style="padding: 4px;">${h.Von_ef.toFixed(2)} V</td>
+            <td style="padding: 4px;">${h.Zn.toFixed(2)} Ω</td>
+            <td style="padding: 4px;">${h.Ion_ef.toFixed(3)} A</td>
+            <td style="padding: 4px;">${h.Pn.toFixed(2)} W</td>
+          </tr>
+        `).join("");
+
+        stepsHTML = `
+          <div class="step-box">
+            <div class="step-title">Etapa 1: Resposta Transitória em Regime Permanente (Solução Diferencial)</div>
+            <div class="step-desc">No semiciclo positivo \\(0 \\le t < T/2\\), aplica-se \\(v_o = +V_{CC}/2 = ${V_step.toFixed(2)}\\text{ V}\\). A equação diferencial do circuito RL série é:</div>
+            <div class="math-block">\\[ L \\frac{di_o}{dt} + R i_o = \\frac{V_{CC}}{2} \\implies i_o(t) = \\frac{V_{CC}}{2R} + \\left( I_{min} - \\frac{V_{CC}}{2R} \\right) e^{-t/\\tau} \\]</div>
+            <div class="step-desc">Onde a constante de tempo é \\(\\tau = \\frac{L}{R} = \\frac{${L}}{${R}} = ${(tau*1000).toFixed(2)}\\text{ ms}\\) e o semiperíodo \\(\\frac{T}{2} = ${(T_half*1000).toFixed(2)}\\text{ ms}\\).</div>
+            <div class="step-desc">Pela simetria de regime permanente \\(i_o(T/2) = -i_o(0) = I_{max}\\):</div>
+            <div class="math-block">\\[ I_{max} = \\frac{V_{CC}}{2R} \\left( \\frac{1 - e^{-T/(2\\tau)}}{1 + e^{-T/(2\\tau)}} \\right) = \\frac{${V_CC.toFixed(2)}}{2 \\cdot ${R}} \\left( \\frac{1 - e^{-${(T_half/tau).toFixed(3)}}}{1 + e^{-${(T_half/tau).toFixed(3)}}} \\right) = ${I_max.toFixed(3)}\\text{ A} \\]</div>
+            <div class="math-block">\\[ I_{min} = -I_{max} = -${I_max.toFixed(3)}\\text{ A} \\]</div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 2: Intervalo de Condução dos Diodos de Retorno (Regeneração)</div>
+            <div class="step-desc">Como a corrente inicial \\(i_o(0) = -I_{max} < 0\\), o transistor \\(S_1\\) não pode conduzir corrente reversa. A corrente flui obrigatoriamente através do diodo em antiparalelo \\(D_1\\), regenerando energia magnética para o capacitor \\(C_1\\).</div>
+            <div class="step-desc">O instante \\(t_1\\) em que a corrente se anula (\\(i_o(t_1) = 0\\)) e \\(S_1\\) assume a condução direta é dado por:</div>
+            <div class="math-block">\\[ t_1 = \\tau \\ln\\left( 1 + \\frac{2 R I_{max}}{V_{CC}} \\right) = ${(tau*1000).toFixed(2)}\\text{ ms} \\cdot \\ln\\left( 1 + \\frac{2 \\cdot ${R} \\cdot ${I_max.toFixed(3)}}{${V_CC.toFixed(2)}} \\right) = ${t1_ms.toFixed(2)}\\text{ ms} \\quad (\\theta_1 = ${theta1_deg.toFixed(1)}^\\circ) \\]</div>
+            <div class="step-desc">
+              &bull; \\(0 \\le t < t_1\\): Condução de \\(D_1\\) (devolve corrente à fonte CC).<br>
+              &bull; \\(t_1 \\le t < T/2\\): Condução de \\(S_1\\) (fornece energia da fonte CC para a carga).<br>
+              &bull; \\(T/2 \\le t < T/2 + t_1\\): Condução de \\(D_2\\) (regeneração).<br>
+              &bull; \\(T/2 + t_1 \\le t < T\\): Condução de \\(S_2\\) (condução direta).
+            </div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 3: Análise Harmônica da Corrente na Carga RL</div>
+            <div class="step-desc">Para cada harmônico ímpar \\(n\\), a impedância indutiva \\(Z_n = \\sqrt{R^2 + (n\\omega L)^2}\\) atenua a corrente, agindo como um filtro passa-baixas:</div>
+            <div style="overflow-x: auto; margin: 12px 0;">
+              <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 0.85rem; background: #161b22; border-radius: 4px;">
+                <thead>
+                  <tr style="background: #21262d; color: #58a6ff;">
+                    <th style="padding: 6px;">Harmônico</th>
+                    <th style="padding: 6px;">Von,ef [V]</th>
+                    <th style="padding: 6px;">Zn [Ω]</th>
+                    <th style="padding: 6px;">Ion,ef [A]</th>
+                    <th style="padding: 6px;">Pn [W]</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${harmHTML}
+                </tbody>
+              </table>
+            </div>
+            <div class="step-desc">Corrente eficaz total resultante (True RMS) e potência ativa:</div>
+            <div class="math-block">\\[ I_{o,ef} \\approx \\sqrt{ \\sum_{n=1}^{15} (I_{on,ef})^2 } = ${I_o_ef.toFixed(3)}\\text{ A} \\qquad P_o = R \\cdot (I_{o,ef})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
+            <div class="step-desc">A distorção harmônica da corrente (\\(\\text{THD}_i\\)) é significativamente menor que a de tensão (\\(\\text{THD}_v = ${THD_v.toFixed(1)}\\%\\)) graças à filtragem indutiva do enrolamento:</div>
+            <div class="math-block">\\[ \\text{THD}_i = \\frac{\\sqrt{I_{o,ef}^2 - I_{o1,ef}^2}}{I_{o1,ef}} = \\frac{\\sqrt{${I_o_ef.toFixed(3)}^2 - ${I_o1_ef.toFixed(3)}^2}}{${I_o1_ef.toFixed(3)}} = ${THD_i.toFixed(2)}\\% \\]</div>
+          </div>
+        `;
+      } else if (topologia === "inversor_ponte_completa_r") {
+        const V_CC = V_rms;
+        const R = parseFloat(document.getElementById("input-r").value);
+        plotTitle = `Inversor Monofásico Ponte Completa (Ponte H) com Carga R = ${R} Ω (Aula 7)`;
+
+        const V_o_ef = V_CC;
+        const V_o1_ef = (2 * Math.SQRT2 / Math.PI) * V_CC;
+        const V_o3_ef = V_o1_ef / 3;
+        const V_o5_ef = V_o1_ef / 5;
+        const V_o7_ef = V_o1_ef / 7;
+        const THD_v = Math.sqrt((Math.PI * Math.PI / 8) - 1) * 100;
+
+        const I_o_ef = V_o_ef / R;
+        const I_o1_ef = V_o1_ef / R;
+        const P_R = Math.pow(V_o_ef, 2) / R;
+        const P_o1 = Math.pow(V_o1_ef, 2) / R;
+
+        const I_S_med = V_CC / (2 * R);
+        const I_S_ef = V_CC / (Math.SQRT2 * R);
+        const V_S_max = V_CC;
+
+        summaryHTML = `
+          <div class="stat-box"><div class="stat-label">Vo,ef (RMS Total)</div><div class="stat-value">${V_o_ef.toFixed(2)} V</div></div>
+          <div class="stat-box"><div class="stat-label">Vo1,ef (Fundamental)</div><div class="stat-value">${V_o1_ef.toFixed(2)} V</div></div>
+          <div class="stat-box"><div class="stat-label">Io,ef (RMS Carga)</div><div class="stat-value">${I_o_ef.toFixed(2)} A</div></div>
+          <div class="stat-box"><div class="stat-label">Po (Ativa Total)</div><div class="stat-value">${P_R.toFixed(2)} W</div></div>
+          <div class="stat-box"><div class="stat-label">THDv (Tensão)</div><div class="stat-value">${THD_v.toFixed(2)}%</div></div>
+        `;
+
+        stepsHTML = `
+          <div class="step-box">
+            <div class="step-title">Etapa 1: Tensão Eficaz Total (RMS) na Ponte Completa</div>
+            <div class="step-desc">A ponte H opera com 4 interruptores atuando aos pares em oposição: \\(S_1-S_2\\) fecham durante \\(0 \\le t < T/2\\), aplicando \\(+V_{CC}\\); e \\(S_3-S_4\\) fecham durante \\(T/2 \\le t < T\\), aplicando \\(-V_{CC}\\):</div>
+            <div class="math-block">\\[ v_o(t) = \\begin{cases} +V_{CC}, & 0 \\le t < \\frac{T}{2} \\\\ -V_{CC}, & \\frac{T}{2} \\le t < T \\end{cases} \\]</div>
+            <div class="step-desc">A tensão eficaz total é o dobro da meia ponte para o mesmo barramento \\(V_{CC}\\):</div>
+            <div class="math-block">\\[ V_{o,ef} = \\sqrt{\\frac{1}{T} \\int_{0}^{T} [v_o(t)]^2 dt} = V_{CC} = ${V_CC.toFixed(2)}\\text{ V} \\]</div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 2: Série de Fourier e Harmônicos de Tensão</div>
+            <div class="step-desc">A decomposição em série de Fourier da onda quadrada simétrica plena resulta em:</div>
+            <div class="math-block">\\[ v_o(t) = \\sum_{n=1,3,5,\\dots}^{\\infty} \\frac{4 V_{CC}}{n \\pi} \\operatorname{sen}(n \\omega t) \\]</div>
+            <div class="step-desc">A amplitude e o valor eficaz da componente fundamental (\\(n=1\\)) são:</div>
+            <div class="math-block">\\[ V_{o1,p} = \\frac{4 V_{CC}}{\\pi} = \\frac{4 \\cdot ${V_CC.toFixed(2)}}{\\pi} = ${(4 * V_CC / Math.PI).toFixed(2)}\\text{ V} \\]</div>
+            <div class="math-block">\\[ V_{o1,ef} = \\frac{V_{o1,p}}{\\sqrt{2}} = \\frac{2\\sqrt{2}}{\\pi} V_{CC} = \\frac{2\\sqrt{2}}{\\pi} \\cdot ${V_CC.toFixed(2)} = ${V_o1_ef.toFixed(2)}\\text{ V} \\quad (\\approx 0{,}9003 V_{CC}) \\]</div>
+            <div class="step-desc">Harmônicos ímpares:</div>
+            <div class="math-block">\\[ V_{o3,ef} = \\frac{${V_o1_ef.toFixed(2)}}{3} = ${V_o3_ef.toFixed(2)}\\text{ V}, \\quad V_{o5,ef} = \\frac{${V_o1_ef.toFixed(2)}}{5} = ${V_o5_ef.toFixed(2)}\\text{ V}, \\quad V_{o7,ef} = \\frac{${V_o1_ef.toFixed(2)}}{7} = ${V_o7_ef.toFixed(2)}\\text{ V} \\]</div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 3: Corrente na Carga e Comparativo de Potência</div>
+            <div class="step-desc">Para carga puramente resistiva \\(R = ${R}\\,\\Omega\\):</div>
+            <div class="math-block">\\[ I_{o,ef} = \\frac{V_{o,ef}}{R} = \\frac{${V_o_ef.toFixed(2)}}{${R}} = ${I_o_ef.toFixed(2)}\\text{ A} \\qquad I_{o1,ef} = \\frac{V_{o1,ef}}{R} = \\frac{${V_o1_ef.toFixed(2)}}{${R}} = ${I_o1_ef.toFixed(2)}\\text{ A} \\]</div>
+            <div class="step-desc">A potência ativa total e na fundamental são:</div>
+            <div class="math-block">\\[ P_o = \\frac{(V_{o,ef})^2}{R} = \\frac{(${V_o_ef.toFixed(2)})^2}{${R}} = ${P_R.toFixed(2)}\\text{ W} \\]</div>
+            <div class="math-block">\\[ P_{o1} = \\frac{(V_{o1,ef})^2}{R} = \\frac{(${V_o1_ef.toFixed(2)})^2}{${R}} = ${P_o1.toFixed(2)}\\text{ W} \\quad (81{,}06\\% \\text{ de } P_o) \\]</div>
+            <div class="step-desc">
+              <strong>Comparativo didático Meia Ponte vs Ponte Completa:</strong> Para o mesmo \\(V_{CC}\\), a ponte completa entrega <strong>o dobro da tensão eficaz</strong> (\\(V_{CC}\\) vs \\(V_{CC}/2\\)) e <strong>4 vezes mais potência ativa</strong> (\\(V_{CC}^2/R\\) vs \\(V_{CC}^2/(4R)\\)).
+            </div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 4: Dimensionamento das Chaves Semicondutoras (S1 a S4)</div>
+            <div class="step-desc">Cada transistor bloqueia a tensão plena da fonte CC e conduz durante metade do período:</div>
+            <div class="math-block">\\[ V_{S,max} = V_{CC} = ${V_S_max.toFixed(2)}\\text{ V} \\]</div>
+            <div class="math-block">\\[ I_{S,méd} = \\frac{V_{CC}}{2 R} = \\frac{${V_CC.toFixed(2)}}{2 \\cdot ${R}} = ${I_S_med.toFixed(2)}\\text{ A} \\qquad I_{S,ef} = \\frac{V_{CC}}{\\sqrt{2} R} = \\frac{${V_CC.toFixed(2)}}{\\sqrt{2} \\cdot ${R}} = ${I_S_ef.toFixed(2)}\\text{ A} \\]</div>
+          </div>
+        `;
+      } else if (topologia === "inversor_ponte_completa_rl") {
+        const V_CC = V_rms;
+        const R = parseFloat(document.getElementById("input-r").value);
+        const L = parseFloat(document.getElementById("input-l").value);
+        plotTitle = `Inversor Monofásico Ponte Completa com Carga RL: R = ${R} Ω, L = ${L} H (Aula 7)`;
+
+        const T_seg = 1 / freq;
+        const T_half = T_seg / 2;
+        const tau = L / R;
+
+        const exp_th = Math.exp(-T_half / tau);
+        const I_max = (V_CC / R) * ((1 - exp_th) / (1 + exp_th));
+        const I_min = -I_max;
+
+        const t1 = tau * Math.log(1 + (R * I_max / V_CC));
+        const t1_ms = t1 * 1000;
+        const theta1_deg = t1 * 360 * freq;
+
+        const V_o_ef = V_CC;
+        const V_o1_ef = (2 * Math.SQRT2 / Math.PI) * V_CC;
+
+        let sumI2 = 0;
+        let I_o1_ef = 0;
+        const harm_table = [];
+        [1, 3, 5, 7, 9, 11, 13, 15].forEach(n => {
+          const Von_ef = (2 * Math.SQRT2 * V_CC) / (n * Math.PI);
+          const Zn = Math.sqrt(R * R + Math.pow(n * omega * L, 2));
+          const Ion_ef = Von_ef / Zn;
+          const Pn = R * Math.pow(Ion_ef, 2);
+          if (n === 1) I_o1_ef = Ion_ef;
+          sumI2 += Math.pow(Ion_ef, 2);
+          harm_table.push({ n, Von_ef, Zn, Ion_ef, Pn });
+        });
+
+        const I_o_ef = Math.sqrt(sumI2);
+        const P_R = R * Math.pow(I_o_ef, 2);
+        const THD_i = (Math.sqrt(Math.max(0, Math.pow(I_o_ef, 2) - Math.pow(I_o1_ef, 2))) / I_o1_ef) * 100;
+        const THD_v = Math.sqrt((Math.PI * Math.PI / 8) - 1) * 100;
+
+        summaryHTML = `
+          <div class="stat-box"><div class="stat-label">Vo,ef (RMS Tensão)</div><div class="stat-value">${V_o_ef.toFixed(2)} V</div></div>
+          <div class="stat-box"><div class="stat-label">Imax (Pico Corrente)</div><div class="stat-value">${I_max.toFixed(3)} A</div></div>
+          <div class="stat-box"><div class="stat-label">Io,ef (RMS Carga)</div><div class="stat-value">${I_o_ef.toFixed(3)} A</div></div>
+          <div class="stat-box"><div class="stat-label">Po (Ativa Total)</div><div class="stat-value">${P_R.toFixed(2)} W</div></div>
+          <div class="stat-box"><div class="stat-label">THDi (Corrente)</div><div class="stat-value">${THD_i.toFixed(2)}%</div></div>
+        `;
+
+        let harmHTML = harm_table.map(h => `
+          <tr>
+            <td style="padding: 4px;">n = ${h.n} (${(h.n * freq).toFixed(0)} Hz)</td>
+            <td style="padding: 4px;">${h.Von_ef.toFixed(2)} V</td>
+            <td style="padding: 4px;">${h.Zn.toFixed(2)} Ω</td>
+            <td style="padding: 4px;">${h.Ion_ef.toFixed(3)} A</td>
+            <td style="padding: 4px;">${h.Pn.toFixed(2)} W</td>
+          </tr>
+        `).join("");
+
+        stepsHTML = `
+          <div class="step-box">
+            <div class="step-title">Etapa 1: Resposta no Tempo em Regime Permanente (Solução Exponencial)</div>
+            <div class="step-desc">Durante o semiciclo positivo \\(0 \\le t < T/2\\), \\(v_o = +V_{CC} = ${V_CC.toFixed(2)}\\text{ V}\\). A corrente satisfaz:</div>
+            <div class="math-block">\\[ i_o(t) = \\frac{V_{CC}}{R} + \\left( I_{min} - \\frac{V_{CC}}{R} \\right) e^{-t/\\tau} \\]</div>
+            <div class="step-desc">Pela condição de contorno cíclica \\(i_o(T/2) = -i_o(0) = I_{max}\\):</div>
+            <div class="math-block">\\[ I_{max} = \\frac{V_{CC}}{R} \\left( \\frac{1 - e^{-T/(2\\tau)}}{1 + e^{-T/(2\\tau)}} \\right) = \\frac{${V_CC.toFixed(2)}}{${R}} \\left( \\frac{1 - e^{-${(T_half/tau).toFixed(3)}}}{1 + e^{-${(T_half/tau).toFixed(3)}}} \\right) = ${I_max.toFixed(3)}\\text{ A} \\]</div>
+            <div class="math-block">\\[ I_{min} = -I_{max} = -${I_max.toFixed(3)}\\text{ A} \\]</div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 2: Comutação dos Diodos Antiparalelo (D1-D4) e Regeneração</div>
+            <div class="step-desc">No início do semiciclo positivo, a corrente é negativa (\\(-I_{max}\\)). Ela não pode passar pelas chaves \\(S_1\\) e \\(S_2\\), forçando a condução dos diodos \\(D_1\\) e \\(D_2\\), que devolvem a energia indutiva diretamente para a fonte \\(V_{CC}\\).</div>
+            <div class="step-desc">O tempo de condução dos diodos \\(t_1\\) até \\(i_o(t_1) = 0\\) é dado por:</div>
+            <div class="math-block">\\[ t_1 = \\tau \\ln\\left( 1 + \\frac{R I_{max}}{V_{CC}} \\right) = ${(tau*1000).toFixed(2)}\\text{ ms} \\cdot \\ln\\left( 1 + \\frac{${R} \\cdot ${I_max.toFixed(3)}}{${V_CC.toFixed(2)}} \\right) = ${t1_ms.toFixed(2)}\\text{ ms} \\quad (\\theta_1 = ${theta1_deg.toFixed(1)}^\\circ) \\]</div>
+            <div class="step-desc">
+              &bull; \\(0 \\le t < t_1\\): Condução de \\(D_1, D_2\\) (regeneração para \\(V_{CC}\\), \\(i_{fonte} < 0\\)).<br>
+              &bull; \\(t_1 \\le t < T/2\\): Condução de \\(S_1, S_2\\) (alimentação direta, \\(i_{fonte} > 0\\)).<br>
+              &bull; \\(T/2 \\le t < T/2 + t_1\\): Condução de \\(D_3, D_4\\) (regeneração).<br>
+              &bull; \\(T/2 + t_1 \\le t < T\\): Condução de \\(S_3, S_4\\) (alimentação direta).
+            </div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 3: Espectro Harmônico e Filtragem da Corrente</div>
+            <div class="step-desc">O indutor da carga atenua as componentes de alta frequência:</div>
+            <div style="overflow-x: auto; margin: 12px 0;">
+              <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 0.85rem; background: #161b22; border-radius: 4px;">
+                <thead>
+                  <tr style="background: #21262d; color: #58a6ff;">
+                    <th style="padding: 6px;">Harmônico</th>
+                    <th style="padding: 6px;">Von,ef [V]</th>
+                    <th style="padding: 6px;">Zn [Ω]</th>
+                    <th style="padding: 6px;">Ion,ef [A]</th>
+                    <th style="padding: 6px;">Pn [W]</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${harmHTML}
+                </tbody>
+              </table>
+            </div>
+            <div class="step-desc">Valores eficazes totais e distorção harmônica da corrente:</div>
+            <div class="math-block">\\[ I_{o,ef} \\approx \\sqrt{ \\sum_{n=1}^{15} (I_{on,ef})^2 } = ${I_o_ef.toFixed(3)}\\text{ A} \\qquad P_o = R \\cdot (I_{o,ef})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
+            <div class="math-block">\\[ \\text{THD}_i = \\frac{\\sqrt{I_{o,ef}^2 - I_{o1,ef}^2}}{I_{o1,ef}} = \\frac{\\sqrt{${I_o_ef.toFixed(3)}^2 - ${I_o1_ef.toFixed(3)}^2}}{${I_o1_ef.toFixed(3)}} = ${THD_i.toFixed(2)}\\% \\]</div>
+          </div>
+        `;
       }
 
       // Geração unificada de dados temporais para exatamente 2 PERÍODOS (t em ms)
@@ -2869,19 +3215,22 @@ import { atualizarGrafico } from './graficos.js';
       const isOndaCompleta = topologia.includes("_onda_completa_") || topologia.includes("_ponte_");
       const isControlado = topologia.includes("_controlado");
       const isTrifasico = topologia.startsWith("tri_");
-      const temDiodos = (isOndaCompleta || isTrifasico || isControlado || topologia === "mono_meia_onda_rl_roda_livre" || topologia === "mono_meia_onda_rc");
-      const temD2 = (isOndaCompleta || isTrifasico || topologia === "mono_meia_onda_rl_roda_livre" || topologia === "mono_meia_onda_controlado_rl_roda_livre");
+      const isInversor = topologia.startsWith("inversor_");
+      const temDiodos = (isOndaCompleta || isTrifasico || isControlado || topologia === "mono_meia_onda_rl_roda_livre" || topologia === "mono_meia_onda_rc" || isInversor);
+      const temD2 = (isOndaCompleta || isTrifasico || topologia === "mono_meia_onda_rl_roda_livre" || topologia === "mono_meia_onda_controlado_rl_roda_livre" || (isInversor && topologia.endsWith("_rl")));
       const temD3 = isTrifasico;
       const temVlinha = (topologia === "tri_ponte_completa_r" || topologia === "tri_ponte_controlado_r");
       const temGate = isControlado;
       const temVD = true;
-      const temIg = (isOndaCompleta || isTrifasico);
+      const temIg = (isOndaCompleta || isTrifasico || isInversor);
 
       const plotData = {
         topologia: topologia,
         freq: freq,
         title: plotTitle,
-        caption: `Fonte: ${V_rms.toFixed(1)} Vef (${V_p.toFixed(1)} Vp), ${freq.toFixed(1)} Hz (ω = ${omega.toFixed(1)} rad/s) • ${diodeCaption}`,
+        caption: isInversor
+          ? `Alimentação CC: ${V_rms.toFixed(1)} Vcc, Frequência de Saída: ${freq.toFixed(1)} Hz (ω = ${omega.toFixed(1)} rad/s) • Chaveamento Bipolar 180°`
+          : `Fonte: ${V_rms.toFixed(1)} Vef (${V_p.toFixed(1)} Vp), ${freq.toFixed(1)} Hz (ω = ${omega.toFixed(1)} rad/s) • ${diodeCaption}`,
         t: [],
         v_in: [],
         v_a: [],
@@ -2909,7 +3258,8 @@ import { atualizarGrafico } from './graficos.js';
         tem_ig: temIg,
         is_onda_completa: isOndaCompleta,
         is_controlado: isControlado,
-        is_trifasico: isTrifasico
+        is_trifasico: isTrifasico,
+        is_inversor: isInversor
       };
 
       for (let k = 0; k <= numPontos; k++) {
@@ -2918,7 +3268,7 @@ import { atualizarGrafico } from './graficos.js';
         const theta = omega_t % (2 * Math.PI); // Ângulo no ciclo atual [0, 2pi)
         const theta_deg = (theta * 180) / Math.PI;
 
-        const v_in_val = V_p * Math.sin(omega_t);
+        const v_in_val = isInversor ? V_rms : (V_p * Math.sin(omega_t));
         let v_out_val = 0;
         let i_out_val = 0;
         let i_d1_val = 0;
@@ -3454,9 +3804,98 @@ import { atualizarGrafico } from './graficos.js';
           v_d_val = va - ((seg === 0 || seg === 1) ? v_out_val : (vab > 0 ? vab : 0));
           gate_val = (th_in_seg <= (8 * Math.PI / 180)) ? 5 : 0;
           i_fonte_val = (seg === 0 || seg === 1) ? i_out_val : ((seg === 3 || seg === 4) ? -i_out_val : 0);
+        } else if (topologia === "inversor_meia_ponte_r") {
+          const V_CC = V_rms;
+          const R = parseFloat(document.getElementById("input-r").value);
+          const isPos = (theta < Math.PI);
+          v_out_val = isPos ? (V_CC / 2) : (-V_CC / 2);
+          i_out_val = v_out_val / R;
+          i_d1_val = isPos ? i_out_val : 0;
+          i_d2_val = !isPos ? -i_out_val : 0;
+          v_d_val = isPos ? 0 : V_CC;
+          i_fonte_val = isPos ? i_out_val : 0;
+        } else if (topologia === "inversor_meia_ponte_rl") {
+          const V_CC = V_rms;
+          const R = parseFloat(document.getElementById("input-r").value);
+          const L = parseFloat(document.getElementById("input-l").value);
+          const tau = L / R;
+          const T_s = 1 / freq;
+          const T_half = T_s / 2;
+          const I_max = (V_CC / (2 * R)) * ((1 - Math.exp(-T_half / tau)) / (1 + Math.exp(-T_half / tau)));
+          const isPos = (theta < Math.PI);
+          v_out_val = isPos ? (V_CC / 2) : (-V_CC / 2);
+
+          const t_rel = isPos ? (theta / (2 * Math.PI * freq)) : ((theta - Math.PI) / (2 * Math.PI * freq));
+          if (isPos) {
+            i_out_val = (V_CC / (2 * R)) + (-I_max - (V_CC / (2 * R))) * Math.exp(-t_rel / tau);
+            if (i_out_val < 0) {
+              i_d1_val = 0;
+              i_d2_val = -i_out_val;
+            } else {
+              i_d1_val = i_out_val;
+              i_d2_val = 0;
+            }
+          } else {
+            i_out_val = -(V_CC / (2 * R)) + (I_max + (V_CC / (2 * R))) * Math.exp(-t_rel / tau);
+            if (i_out_val > 0) {
+              i_d1_val = 0;
+              i_d2_val = i_out_val;
+            } else {
+              i_d1_val = 0;
+              i_d2_val = 0;
+            }
+          }
+          v_d_val = isPos ? 0 : V_CC;
+          i_fonte_val = isPos ? i_out_val : 0;
+        } else if (topologia === "inversor_ponte_completa_r") {
+          const V_CC = V_rms;
+          const R = parseFloat(document.getElementById("input-r").value);
+          const isPos = (theta < Math.PI);
+          v_out_val = isPos ? V_CC : -V_CC;
+          i_out_val = v_out_val / R;
+          i_d1_val = isPos ? i_out_val : 0;
+          i_d2_val = !isPos ? -i_out_val : 0;
+          v_d_val = isPos ? 0 : V_CC;
+          i_fonte_val = Math.abs(i_out_val);
+        } else if (topologia === "inversor_ponte_completa_rl") {
+          const V_CC = V_rms;
+          const R = parseFloat(document.getElementById("input-r").value);
+          const L = parseFloat(document.getElementById("input-l").value);
+          const tau = L / R;
+          const T_s = 1 / freq;
+          const T_half = T_s / 2;
+          const I_max = (V_CC / R) * ((1 - Math.exp(-T_half / tau)) / (1 + Math.exp(-T_half / tau)));
+          const isPos = (theta < Math.PI);
+          v_out_val = isPos ? V_CC : -V_CC;
+
+          const t_rel = isPos ? (theta / (2 * Math.PI * freq)) : ((theta - Math.PI) / (2 * Math.PI * freq));
+          if (isPos) {
+            i_out_val = (V_CC / R) + (-I_max - (V_CC / R)) * Math.exp(-t_rel / tau);
+            if (i_out_val < 0) {
+              i_d1_val = 0;
+              i_d2_val = -i_out_val;
+              i_fonte_val = i_out_val;
+            } else {
+              i_d1_val = i_out_val;
+              i_d2_val = 0;
+              i_fonte_val = i_out_val;
+            }
+          } else {
+            i_out_val = -(V_CC / R) + (I_max + (V_CC / R)) * Math.exp(-t_rel / tau);
+            if (i_out_val > 0) {
+              i_d1_val = 0;
+              i_d2_val = i_out_val;
+              i_fonte_val = -i_out_val;
+            } else {
+              i_d1_val = -i_out_val;
+              i_d2_val = 0;
+              i_fonte_val = -i_out_val;
+            }
+          }
+          v_d_val = isPos ? 0 : V_CC;
         }
 
-        if (!isTrifasico) {
+        if (!isTrifasico && !isInversor) {
           if (isControlado) {
             if (isOndaCompleta) {
               if (topologia === "mono_onda_completa_controlado_r" || topologia === "mono_onda_completa_controlado_rl" || topologia === "mono_onda_completa_controlado_rle") {

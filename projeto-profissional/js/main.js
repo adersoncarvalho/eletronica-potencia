@@ -76,6 +76,12 @@ import {
       trifasicos_controlados: [
         { id: "tri_meia_onda_controlado_r", nome: "Retificador Controlado de 3 Pulsos com Carga R", grupo: "Retificadores Trifásicos Controlados" },
         { id: "tri_ponte_controlado_r", nome: "Retificador Trifásico Controlado em Ponte Completa", grupo: "Retificadores Trifásicos Controlados" }
+      ],
+      conversores_cc_ca: [
+        { id: "inversor_meia_ponte_r", nome: "Inversor Monofásico Meia Ponte com Carga R", grupo: "Inversores Monofásicos de Tensão (Aula 7)" },
+        { id: "inversor_meia_ponte_rl", nome: "Inversor Monofásico Meia Ponte com Carga RL", grupo: "Inversores Monofásicos de Tensão (Aula 7)" },
+        { id: "inversor_ponte_completa_r", nome: "Inversor Monofásico Ponte Completa (Ponte H) com Carga R", grupo: "Inversores Monofásicos de Tensão (Aula 7)" },
+        { id: "inversor_ponte_completa_rl", nome: "Inversor Monofásico Ponte Completa (Ponte H) com Carga RL", grupo: "Inversores Monofásicos de Tensão (Aula 7)" }
       ]
     };
 
@@ -1265,6 +1271,225 @@ import {
           <polygon points="415,13 423,16 415,19" fill="#f0883e" />
           <text x="395" y="10" fill="#f0883e" font-size="11" font-weight="bold" text-anchor="middle">io(t)</text>
         </svg>
+      `,
+      inversor_meia_ponte_r: `
+        <svg viewBox="0 0 460 220" xmlns="http://www.w3.org/2000/svg">
+          <!-- Fonte CC Bipolar com Ponto Médio / Divisor Capacitivo C1 e C2 -->
+          <line x1="60" y1="35" x2="60" y2="70" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="45" y1="70" x2="75" y2="70" stroke="#58a6ff" stroke-width="3" />
+          <line x1="45" y1="78" x2="75" y2="78" stroke="#58a6ff" stroke-width="3" />
+          <text x="25" y="77" fill="#8b949e" font-size="12" font-weight="bold">C1</text>
+          <text x="90" y="65" fill="#f0f6fc" font-size="11">Vcc/2</text>
+          <line x1="60" y1="78" x2="60" y2="142" stroke="#58a6ff" stroke-width="2.5" />
+          <circle cx="60" cy="110" r="3.5" fill="#58a6ff" />
+          <line x1="60" y1="110" x2="260" y2="110" stroke="#8b949e" stroke-dasharray="4,3" stroke-width="2" />
+          <text x="32" y="114" fill="#58a6ff" font-size="12" font-weight="bold">0V</text>
+          <line x1="45" y1="142" x2="75" y2="142" stroke="#58a6ff" stroke-width="3" />
+          <line x1="45" y1="150" x2="75" y2="150" stroke="#58a6ff" stroke-width="3" />
+          <text x="25" y="149" fill="#8b949e" font-size="12" font-weight="bold">C2</text>
+          <text x="90" y="165" fill="#f0f6fc" font-size="11">Vcc/2</text>
+          <line x1="60" y1="150" x2="60" y2="185" stroke="#58a6ff" stroke-width="2.5" />
+
+          <!-- Barramentos VCC (+) e VCC (-) -->
+          <line x1="60" y1="35" x2="180" y2="35" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="60" y1="185" x2="180" y2="185" stroke="#58a6ff" stroke-width="2.5" />
+
+          <!-- Braço Inversor: S1 (Superior) e S2 (Inferior) -->
+          <line x1="180" y1="35" x2="180" y2="60" stroke="#58a6ff" stroke-width="2.5" />
+          <rect x="165" y="60" width="30" height="28" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="4" />
+          <text x="180" y="78" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="middle">S1</text>
+          <line x1="180" y1="88" x2="180" y2="132" stroke="#58a6ff" stroke-width="2.5" />
+          <rect x="165" y="132" width="30" height="28" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="4" />
+          <text x="180" y="150" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="middle">S2</text>
+          <line x1="180" y1="160" x2="180" y2="185" stroke="#58a6ff" stroke-width="2.5" />
+
+          <!-- Ponto Médio do Inversor (Saída 'a') -->
+          <circle cx="180" cy="110" r="3.5" fill="#58a6ff" />
+          <line x1="180" y1="110" x2="340" y2="110" stroke="#58a6ff" stroke-width="2.5" />
+
+          <!-- Carga R conectada entre o braço (180, 110) e neutro capacitivo (260, 110) -->
+          <path d="M 340 110 L 340 90 L 350 82 L 330 70 L 350 58 L 330 46 L 340 38 L 340 20 L 260 20 L 260 110" stroke="#e3b341" stroke-width="2.5" fill="none" />
+          <text x="365" y="65" fill="#e3b341" font-size="14" font-weight="bold">R</text>
+
+          <!-- Tensão vo(t) e Corrente io(t) -->
+          <text x="320" y="132" fill="#58a6ff" font-size="13" font-weight="bold">vo(t)</text>
+          <text x="345" y="128" fill="#58a6ff" font-size="14" font-weight="bold">+</text>
+          <text x="250" y="128" fill="#58a6ff" font-size="16" font-weight="bold">-</text>
+          <line x1="210" y1="102" x2="245" y2="102" stroke="#f0883e" stroke-width="2" />
+          <polygon points="245,99 253,102 245,105" fill="#f0883e" />
+          <text x="228" y="96" fill="#f0883e" font-size="11" font-weight="bold" text-anchor="middle">io(t)</text>
+        </svg>
+      `,
+      inversor_meia_ponte_rl: `
+        <svg viewBox="0 0 460 220" xmlns="http://www.w3.org/2000/svg">
+          <!-- Divisor Capacitivo C1 e C2 -->
+          <line x1="50" y1="35" x2="50" y2="70" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="35" y1="70" x2="65" y2="70" stroke="#58a6ff" stroke-width="3" />
+          <line x1="35" y1="78" x2="65" y2="78" stroke="#58a6ff" stroke-width="3" />
+          <text x="18" y="77" fill="#8b949e" font-size="11" font-weight="bold">C1</text>
+          <line x1="50" y1="78" x2="50" y2="142" stroke="#58a6ff" stroke-width="2.5" />
+          <circle cx="50" cy="110" r="3.5" fill="#58a6ff" />
+          <line x1="50" y1="110" x2="250" y2="110" stroke="#8b949e" stroke-dasharray="4,3" stroke-width="2" />
+          <line x1="35" y1="142" x2="65" y2="142" stroke="#58a6ff" stroke-width="3" />
+          <line x1="35" y1="150" x2="65" y2="150" stroke="#58a6ff" stroke-width="3" />
+          <text x="18" y="149" fill="#8b949e" font-size="11" font-weight="bold">C2</text>
+          <line x1="50" y1="150" x2="50" y2="185" stroke="#58a6ff" stroke-width="2.5" />
+
+          <!-- Barramentos Vcc e -Vcc -->
+          <line x1="50" y1="35" x2="160" y2="35" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="50" y1="185" x2="160" y2="185" stroke="#58a6ff" stroke-width="2.5" />
+
+          <!-- Braço S1 e Diodo Antiparalelo D1 -->
+          <rect x="125" y="60" width="28" height="26" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="4" />
+          <text x="139" y="77" fill="#2ea043" font-size="11" font-weight="bold" text-anchor="middle">S1</text>
+          <polygon points="175,82 195,82 185,62" fill="#238636" stroke="#238636" stroke-width="1.5" />
+          <line x1="175" y1="62" x2="195" y2="62" stroke="#238636" stroke-width="2" />
+          <text x="204" y="75" fill="#238636" font-size="11" font-weight="bold">D1</text>
+          <line x1="160" y1="35" x2="160" y2="60" stroke="#58a6ff" stroke-width="2" />
+          <line x1="139" y1="48" x2="185" y2="48" stroke="#58a6ff" stroke-width="2" />
+          <line x1="139" y1="48" x2="139" y2="60" stroke="#58a6ff" stroke-width="2" />
+          <line x1="185" y1="48" x2="185" y2="62" stroke="#58a6ff" stroke-width="2" />
+
+          <!-- Braço S2 e Diodo Antiparalelo D2 -->
+          <rect x="125" y="134" width="28" height="26" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="4" />
+          <text x="139" y="151" fill="#2ea043" font-size="11" font-weight="bold" text-anchor="middle">S2</text>
+          <polygon points="175,156 195,156 185,136" fill="#238636" stroke="#238636" stroke-width="1.5" />
+          <line x1="175" y1="136" x2="195" y2="136" stroke="#238636" stroke-width="2" />
+          <text x="204" y="149" fill="#238636" font-size="11" font-weight="bold">D2</text>
+          <line x1="160" y1="185" x2="160" y2="160" stroke="#58a6ff" stroke-width="2" />
+          <line x1="139" y1="172" x2="185" y2="172" stroke="#58a6ff" stroke-width="2" />
+          <line x1="139" y1="160" x2="139" y2="172" stroke="#58a6ff" stroke-width="2" />
+          <line x1="185" y1="156" x2="185" y2="172" stroke="#58a6ff" stroke-width="2" />
+
+          <!-- Conexão de Saída Central -->
+          <line x1="139" y1="86" x2="139" y2="134" stroke="#58a6ff" stroke-width="2" />
+          <line x1="185" y1="82" x2="185" y2="136" stroke="#58a6ff" stroke-width="2" />
+          <line x1="139" y1="110" x2="185" y2="110" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="160" cy="110" r="3.5" fill="#58a6ff" />
+          <line x1="160" y1="110" x2="330" y2="110" stroke="#58a6ff" stroke-width="2.5" />
+
+          <!-- Carga RL Série: R + L -->
+          <path d="M 330 110 L 330 90 L 338 84 L 322 74 L 338 64 L 322 54 L 330 46 L 330 35" stroke="#e3b341" stroke-width="2.5" fill="none" />
+          <text x="345" y="72" fill="#e3b341" font-size="12" font-weight="bold">R</text>
+          <!-- Indutor L com arcos -->
+          <path d="M 330 35 A 8 8 0 0 0 314 35 A 8 8 0 0 0 298 35 A 8 8 0 0 0 282 35 A 8 8 0 0 0 266 35" stroke="#a371f7" stroke-width="2.5" fill="none" />
+          <line x1="266" y1="35" x2="250" y2="35" stroke="#58a6ff" stroke-width="2" />
+          <line x1="250" y1="35" x2="250" y2="110" stroke="#58a6ff" stroke-width="2" />
+          <text x="295" y="20" fill="#a371f7" font-size="12" font-weight="bold">L</text>
+          <text x="305" y="128" fill="#58a6ff" font-size="13" font-weight="bold">vo(t)</text>
+        </svg>
+      `,
+      inversor_ponte_completa_r: `
+        <svg viewBox="0 0 460 220" xmlns="http://www.w3.org/2000/svg">
+          <!-- Barramentos VCC (+) e GND/VCC (-) -->
+          <line x1="50" y1="30" x2="310" y2="30" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="50" y1="190" x2="310" y2="190" stroke="#58a6ff" stroke-width="2.5" />
+
+          <!-- Fonte CC VCC -->
+          <circle cx="50" cy="110" r="20" fill="#161b22" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="50" y1="30" x2="50" y2="90" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="50" y1="130" x2="50" y2="190" stroke="#58a6ff" stroke-width="2.5" />
+          <text x="50" y="103" fill="#f0f6fc" font-size="13" font-weight="bold" text-anchor="middle">+</text>
+          <text x="50" y="124" fill="#f0f6fc" font-size="15" font-weight="bold" text-anchor="middle">-</text>
+          <text x="20" y="114" fill="#58a6ff" font-size="13" font-weight="bold">VCC</text>
+
+          <!-- Perna 1: S1 (Superior) e S4 (Inferior) -->
+          <line x1="140" y1="30" x2="140" y2="55" stroke="#58a6ff" stroke-width="2.5" />
+          <rect x="125" y="55" width="30" height="26" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="4" />
+          <text x="140" y="73" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="middle">S1</text>
+          <line x1="140" y1="81" x2="140" y2="139" stroke="#58a6ff" stroke-width="2.5" />
+          <circle cx="140" cy="110" r="3.5" fill="#58a6ff" />
+          <rect x="125" y="139" width="30" height="26" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="4" />
+          <text x="140" y="157" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="middle">S4</text>
+          <line x1="140" y1="165" x2="140" y2="190" stroke="#58a6ff" stroke-width="2.5" />
+
+          <!-- Perna 2: S3 (Superior) e S2 (Inferior) -->
+          <line x1="280" y1="30" x2="280" y2="55" stroke="#58a6ff" stroke-width="2.5" />
+          <rect x="265" y="55" width="30" height="26" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="4" />
+          <text x="280" y="73" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="middle">S3</text>
+          <line x1="280" y1="81" x2="280" y2="139" stroke="#58a6ff" stroke-width="2.5" />
+          <circle cx="280" cy="110" r="3.5" fill="#58a6ff" />
+          <rect x="265" y="139" width="30" height="26" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="4" />
+          <text x="280" y="157" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="middle">S2</text>
+          <line x1="280" y1="165" x2="280" y2="190" stroke="#58a6ff" stroke-width="2.5" />
+
+          <!-- Carga R central na horizontal -->
+          <line x1="140" y1="110" x2="185" y2="110" stroke="#58a6ff" stroke-width="2.5" />
+          <path d="M 185 110 L 190 110 L 195 120 L 205 100 L 215 120 L 225 100 L 230 110 L 235 110" stroke="#e3b341" stroke-width="2.5" fill="none" />
+          <line x1="235" y1="110" x2="280" y2="110" stroke="#58a6ff" stroke-width="2.5" />
+          <text x="210" y="90" fill="#e3b341" font-size="14" font-weight="bold" text-anchor="middle">R</text>
+
+          <!-- Tensão vo(t) e Corrente io(t) -->
+          <text x="150" y="103" fill="#58a6ff" font-size="14" font-weight="bold">+</text>
+          <text x="268" y="103" fill="#58a6ff" font-size="16" font-weight="bold">-</text>
+          <text x="210" y="140" fill="#58a6ff" font-size="13" font-weight="bold" text-anchor="middle">vo(t)</text>
+          <line x1="155" y1="95" x2="180" y2="95" stroke="#f0883e" stroke-width="2" />
+          <polygon points="180,92 188,95 180,98" fill="#f0883e" />
+          <text x="167" y="88" fill="#f0883e" font-size="11" font-weight="bold" text-anchor="middle">io(t)</text>
+        </svg>
+      `,
+      inversor_ponte_completa_rl: `
+        <svg viewBox="0 0 460 220" xmlns="http://www.w3.org/2000/svg">
+          <!-- Barramentos VCC e GND -->
+          <line x1="45" y1="30" x2="340" y2="30" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="45" y1="190" x2="340" y2="190" stroke="#58a6ff" stroke-width="2.5" />
+
+          <!-- Fonte CC VCC -->
+          <circle cx="45" cy="110" r="18" fill="#161b22" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="45" y1="30" x2="45" y2="92" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="45" y1="128" x2="45" y2="190" stroke="#58a6ff" stroke-width="2.5" />
+          <text x="45" y="104" fill="#f0f6fc" font-size="12" font-weight="bold" text-anchor="middle">+</text>
+          <text x="45" y="123" fill="#f0f6fc" font-size="14" font-weight="bold" text-anchor="middle">-</text>
+          <text x="18" y="114" fill="#58a6ff" font-size="12" font-weight="bold">VCC</text>
+
+          <!-- Perna 1: S1/D1 e S4/D4 -->
+          <rect x="105" y="50" width="26" height="24" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="3" />
+          <text x="118" y="66" fill="#2ea043" font-size="11" font-weight="bold" text-anchor="middle">S1</text>
+          <polygon points="145,72 163,72 154,54" fill="#238636" stroke="#238636" stroke-width="1.5" />
+          <line x1="145" y1="54" x2="163" y2="54" stroke="#238636" stroke-width="2" />
+          <text x="170" y="65" fill="#238636" font-size="10" font-weight="bold">D1</text>
+
+          <rect x="105" y="146" width="26" height="24" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="3" />
+          <text x="118" y="162" fill="#2ea043" font-size="11" font-weight="bold" text-anchor="middle">S4</text>
+          <polygon points="145,168 163,168 154,150" fill="#238636" stroke="#238636" stroke-width="1.5" />
+          <line x1="145" y1="150" x2="163" y2="150" stroke="#238636" stroke-width="2" />
+          <text x="170" y="161" fill="#238636" font-size="10" font-weight="bold">D4</text>
+
+          <line x1="135" y1="30" x2="135" y2="50" stroke="#58a6ff" stroke-width="2" />
+          <line x1="135" y1="74" x2="135" y2="146" stroke="#58a6ff" stroke-width="2" />
+          <line x1="135" y1="170" x2="135" y2="190" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="135" cy="110" r="3.5" fill="#58a6ff" />
+
+          <!-- Perna 2: S3/D3 e S2/D2 -->
+          <rect x="255" y="50" width="26" height="24" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="3" />
+          <text x="268" y="66" fill="#2ea043" font-size="11" font-weight="bold" text-anchor="middle">S3</text>
+          <polygon points="295,72 313,72 304,54" fill="#238636" stroke="#238636" stroke-width="1.5" />
+          <line x1="295" y1="54" x2="313" y2="54" stroke="#238636" stroke-width="2" />
+          <text x="320" y="65" fill="#238636" font-size="10" font-weight="bold">D3</text>
+
+          <rect x="255" y="146" width="26" height="24" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="3" />
+          <text x="268" y="162" fill="#2ea043" font-size="11" font-weight="bold" text-anchor="middle">S2</text>
+          <polygon points="295,168 313,168 304,150" fill="#238636" stroke="#238636" stroke-width="1.5" />
+          <line x1="295" y1="150" x2="313" y2="150" stroke="#238636" stroke-width="2" />
+          <text x="320" y="161" fill="#238636" font-size="10" font-weight="bold">D2</text>
+
+          <line x1="285" y1="30" x2="285" y2="50" stroke="#58a6ff" stroke-width="2" />
+          <line x1="285" y1="74" x2="285" y2="146" stroke="#58a6ff" stroke-width="2" />
+          <line x1="285" y1="170" x2="285" y2="190" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="285" cy="110" r="3.5" fill="#58a6ff" />
+
+          <!-- Carga RL Série entre braços (135,110) e (285,110) -->
+          <line x1="135" y1="110" x2="165" y2="110" stroke="#58a6ff" stroke-width="2.5" />
+          <path d="M 165 110 L 170 110 L 175 118 L 183 102 L 191 118 L 199 102 L 205 110 L 210 110" stroke="#e3b341" stroke-width="2" fill="none" />
+          <text x="188" y="94" fill="#e3b341" font-size="12" font-weight="bold" text-anchor="middle">R</text>
+          <path d="M 210 110 A 6 6 0 0 1 222 110 A 6 6 0 0 1 234 110 A 6 6 0 0 1 246 110" stroke="#a371f7" stroke-width="2" fill="none" />
+          <text x="228" y="94" fill="#a371f7" font-size="12" font-weight="bold" text-anchor="middle">L</text>
+          <line x1="246" y1="110" x2="285" y2="110" stroke="#58a6ff" stroke-width="2.5" />
+
+          <text x="145" y="102" fill="#58a6ff" font-size="13" font-weight="bold">+</text>
+          <text x="272" y="102" fill="#58a6ff" font-size="15" font-weight="bold">-</text>
+          <text x="210" y="138" fill="#58a6ff" font-size="12" font-weight="bold" text-anchor="middle">vo(t)</text>
+        </svg>
       `
     };
 
@@ -1354,6 +1579,22 @@ import {
       tri_ponte_controlado_r: `
         <div style="font-weight: 600; color: #58a6ff; margin-bottom: 4px;">Funcionamento &bull; Retificador Trifásico Controlado em Ponte Completa</div>
         <div>Ponte de Graetz com 6 tiristores. Disparo comutado em pares a cada \\(60^\\circ\\). A condução é contínua para \\(0 \\le \\alpha \\le 60^\\circ\\), com \\(V_{o,méd} = \\frac{3\\sqrt{2}}{\\pi}V_{L,ef}\\cos\\alpha \\approx 1{,}35 V_{L,ef}\\cos\\alpha\\), e descontínua para \\(60^\\circ < \\alpha \\le 120^\\circ\\). Padrão da indústria para acionamentos CC de alta potência.</div>
+      `,
+      inversor_meia_ponte_r: `
+        <div style="font-weight: 600; color: #58a6ff; margin-bottom: 4px;">Funcionamento &bull; Inversor Monofásico Meia Ponte com Carga Resistiva (Aula 7)</div>
+        <div>Converte tensão contínua \\(V_{CC}\\) em corrente alternada através de duas chaves semicondutoras ativas (\\(S_1\\) e \\(S_2\\)) e divisor capacitivo central com capacitores idênticos \\(C_1 = C_2\\). No semiciclo positivo \\(S_1\\) conduz e aplica \\(+V_{CC}/2\\) à carga; no semiciclo negativo \\(S_2\\) conduz e aplica \\(-V_{CC}/2\\). Produz onda quadrada pura de valor eficaz \\(V_{o,ef} = V_{CC}/2\\) e fundamental \\(V_{o1,ef} = \\frac{\\sqrt{2}}{\\pi}V_{CC} \\approx 0{,}45 V_{CC}\\).</div>
+      `,
+      inversor_meia_ponte_rl: `
+        <div style="font-weight: 600; color: #58a6ff; margin-bottom: 4px;">Funcionamento &bull; Inversor Monofásico Meia Ponte com Carga Indutiva RL (Aula 7)</div>
+        <div>A presença de indutância na carga impede descontinuidade brusca de corrente. Diodos em antiparalelo (\\(D_1\\) e \\(D_2\\)) fornecem caminho de roda livre e regeneração de energia para a fonte CC quando os transistores bloqueiam. A corrente \\(i_o(t)\\) possui forma exponencial suave defasada de \\(\\phi\\) radianos em relação à tensão de onda quadrada.</div>
+      `,
+      inversor_ponte_completa_r: `
+        <div style="font-weight: 600; color: #58a6ff; margin-bottom: 4px;">Funcionamento &bull; Inversor Monofásico Ponte Completa (Ponte H) com Carga R (Aula 7)</div>
+        <div>Circuito clássico com 4 interruptores semicondutores. No primeiro semiciclo, fecham-se \\(S_1\\) e \\(S_2\\), aplicando \\(+V_{CC}\\) diretamente sobre a carga; no semiciclo seguinte fecham-se \\(S_3\\) e \\(S_4\\), invertendo o fluxo com \\(-V_{CC}\\). Dobra a tensão e quadruplica a potência em relação à meia ponte: \\(V_{o,ef} = V_{CC}\\) e fundamental \\(V_{o1,ef} = \\frac{2\\sqrt{2}}{\\pi}V_{CC} \\approx 0{,}90 V_{CC}\\).</div>
+      `,
+      inversor_ponte_completa_rl: `
+        <div style="font-weight: 600; color: #58a6ff; margin-bottom: 4px;">Funcionamento &bull; Inversor Monofásico Ponte Completa com Carga RL (Aula 7)</div>
+        <div>Ponte H completa com diodos antiparalelo \\(D_1-D_4\\). Ao comutar as chaves, a energia reativa armazenada no campo magnético do indutor \\(L\\) é devolvida à fonte CC através dos diodos, antes dos novos transistores assumirem a condução direta. THD harmônica de tensão de \\(48{,}34\\%\\) composta estritamente de harmônicos ímpares (\\(3^o, 5^o, 7^o, 9^o\\dots\\)).</div>
       `
     };
 
@@ -1530,6 +1771,25 @@ import {
           </div>
         </div>
       `;
+
+      if (cat === "conversores_cc_ca") {
+        inputsHTML = `
+          <div class="form-group">
+            <label for="input-vrms">Tensão CC de Alimentação V<sub>CC</sub> [V]</label>
+            <input type="number" id="input-vrms" step="any" value="100" required>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="input-freq">Frequência de Saída f [Hz]</label>
+              <input type="number" id="input-freq" step="any" value="${def_freq}" required>
+            </div>
+            <div class="form-group">
+              <label for="input-omega">Freq. Angular ω [rad/s]</label>
+              <input type="number" id="input-omega" step="any" value="${def_omega}" required>
+            </div>
+          </div>
+        `;
+      }
 
       if (topologia === "mono_meia_onda_r") {
         inputsHTML += `
@@ -1822,6 +2082,26 @@ import {
             <div class="form-group">
               <label for="input-alpha">Ângulo de Disparo α [°]</label>
               <input type="number" id="input-alpha" step="any" value="${def_alpha}" min="0" max="120" required>
+            </div>
+          </div>
+        `;
+      } else if (topologia === "inversor_meia_ponte_r" || topologia === "inversor_ponte_completa_r") {
+        inputsHTML += `
+          <div class="form-group">
+            <label for="input-r">Resistência de Carga R [Ω]</label>
+            <input type="number" id="input-r" step="any" value="10" required>
+          </div>
+        `;
+      } else if (topologia === "inversor_meia_ponte_rl" || topologia === "inversor_ponte_completa_rl") {
+        inputsHTML += `
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="input-r">Resistência de Carga R [Ω]</label>
+              <input type="number" id="input-r" step="any" value="10" required>
+            </div>
+            <div class="form-group">
+              <label for="input-l">Indutância de Carga L [H]</label>
+              <input type="number" id="input-l" step="any" value="0.025" required>
             </div>
           </div>
         `;
