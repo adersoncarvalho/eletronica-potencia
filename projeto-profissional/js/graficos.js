@@ -521,7 +521,7 @@
         let labelD2 = "iD2(t) - Diodo Roda Livre (A)";
         let titleD2 = "Corrente iD2 (A)";
         if (plotData.is_inversor) {
-          labelD2 = plotData.topologia.includes("ponte_completa") ? "iD(t) - Diodos Retorno (Regeneração) (A)" : "iD1(t) - Diodo Retorno D1 (Regeneração) (A)";
+          labelD2 = "iD(t) - Diodos de Retorno (Regeneração) (A)";
           titleD2 = "Corrente iD (A)";
         } else if (plotData.is_controlado) {
           labelD2 = plotData.is_onda_completa ? "iT2,T3(t) - Tiristores T2-T3 (A)" : (plotData.is_trifasico ? "iT2(t) - Tiristor Fase B (A)" : "iD2(t) - Diodo Roda Livre (A)");

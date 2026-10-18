@@ -3887,7 +3887,7 @@ import { atualizarGrafico } from './graficos.js';
               i_d2_val = i_out_val;
               i_fonte_val = -i_out_val;
             } else {
-              i_d1_val = -i_out_val;
+              i_d1_val = 0;
               i_d2_val = 0;
               i_fonte_val = -i_out_val;
             }
