@@ -387,7 +387,7 @@
       if (badgeMode) {
         let modoStr = "Monofásico 1Φ";
         if (plotData.is_inversor) {
-          modoStr = "Inversor CC-CA Monofásico (Aula 7)";
+          modoStr = "Inversor CC-CA Monofásico";
         } else if (plotData.is_trifasico) {
           modoStr = plotData.is_controlado ? "Trifásico 3Φ Controlado (SCR)" : "Trifásico 3Φ Não Controlado";
         } else if (plotData.is_controlado) {

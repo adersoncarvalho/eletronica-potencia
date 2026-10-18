@@ -896,7 +896,7 @@ import { atualizarGrafico } from './graficos.js';
           </div>
           <div style="margin-top: 8px; font-size: 0.78rem;">
             <a href="img/abaco_puchlowski_completo_tracado.png" target="_blank" style="color: #58a6ff; text-decoration: underline;">
-              📄 Ver Folha Completa da Aula (com os 4 Ábacos de a = 0 até a = 0,6 e Fórmulas)
+              📄 Ver Folha Completa (com os 4 Ábacos de a = 0 até a = 0,6 e Fórmulas)
             </a>
           </div>
         </div>
@@ -2220,7 +2220,7 @@ import { atualizarGrafico } from './graficos.js';
             <!-- Método 1: Ábaco Parametrizado -->
             <div style="background: rgba(56, 139, 253, 0.08); border-left: 3px solid #388bfd; padding: 10px 14px; border-radius: 0 6px 6px 0; margin-bottom: 12px;">
               <div style="font-weight: 700; color: #58a6ff; font-size: 0.9rem; margin-bottom: 4px;">
-                🔹 Método 1: Ábaco de Corrente Eficaz Parametrizada (\(I_{efp}\)) — Procedimento de Aula
+                🔹 Método 1: Ábaco de Corrente Eficaz Parametrizada (\(I_{efp}\)) 
               </div>
               <div class="step-desc">
                 Com os parâmetros adimensionais \(a = \frac{E}{\sqrt{2}V_{ef}} = ${fator_a.toFixed(2)}\), \(\cos\phi = \frac{R}{Z} = ${cos_phi.toFixed(2)}\) e \(\alpha = ${alpha}^\circ\), faz-se a leitura da corrente normalizada no ábaco:
@@ -2856,7 +2856,7 @@ import { atualizarGrafico } from './graficos.js';
       } else if (topologia === "inversor_meia_ponte_r") {
         const V_CC = V_rms;
         const R = parseFloat(document.getElementById("input-r").value);
-        plotTitle = `Inversor Monofásico Meia Ponte com Carga R = ${R} Ω (Aula 7)`;
+        plotTitle = `Inversor Monofásico Meia Ponte com Carga R = ${R} Ω`;
 
         const V_o_ef = V_CC / 2;
         const V_o1_ef = (Math.SQRT2 / Math.PI) * V_CC;
@@ -2924,7 +2924,7 @@ import { atualizarGrafico } from './graficos.js';
         const V_CC = V_rms;
         const R = parseFloat(document.getElementById("input-r").value);
         const L = parseFloat(document.getElementById("input-l").value);
-        plotTitle = `Inversor Monofásico Meia Ponte com Carga RL: R = ${R} Ω, L = ${L} H (Aula 7)`;
+        plotTitle = `Inversor Monofásico Meia Ponte com Carga RL: R = ${R} Ω, L = ${L} H`;
 
         const T_seg = 1 / freq;
         const T_half = T_seg / 2;
@@ -3030,7 +3030,7 @@ import { atualizarGrafico } from './graficos.js';
       } else if (topologia === "inversor_ponte_completa_r") {
         const V_CC = V_rms;
         const R = parseFloat(document.getElementById("input-r").value);
-        plotTitle = `Inversor Monofásico Ponte Completa (Ponte H) com Carga R = ${R} Ω (Aula 7)`;
+        plotTitle = `Inversor Monofásico Ponte Completa (Ponte H) com Carga R = ${R} Ω`;
 
         const V_o_ef = V_CC;
         const V_o1_ef = (2 * Math.SQRT2 / Math.PI) * V_CC;
@@ -3099,7 +3099,7 @@ import { atualizarGrafico } from './graficos.js';
         const V_CC = V_rms;
         const R = parseFloat(document.getElementById("input-r").value);
         const L = parseFloat(document.getElementById("input-l").value);
-        plotTitle = `Inversor Monofásico Ponte Completa com Carga RL: R = ${R} Ω, L = ${L} H (Aula 7)`;
+        plotTitle = `Inversor Monofásico Ponte Completa com Carga RL: R = ${R} Ω, L = ${L} H`;
 
         const T_seg = 1 / freq;
         const T_half = T_seg / 2;

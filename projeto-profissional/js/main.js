@@ -78,10 +78,10 @@ import {
         { id: "tri_ponte_controlado_r", nome: "Retificador Trifásico Controlado em Ponte Completa", grupo: "Retificadores Trifásicos Controlados" }
       ],
       conversores_cc_ca: [
-        { id: "inversor_meia_ponte_r", nome: "Inversor Monofásico Meia Ponte com Carga R", grupo: "Inversores Monofásicos de Tensão (Aula 7)" },
-        { id: "inversor_meia_ponte_rl", nome: "Inversor Monofásico Meia Ponte com Carga RL", grupo: "Inversores Monofásicos de Tensão (Aula 7)" },
-        { id: "inversor_ponte_completa_r", nome: "Inversor Monofásico Ponte Completa (Ponte H) com Carga R", grupo: "Inversores Monofásicos de Tensão (Aula 7)" },
-        { id: "inversor_ponte_completa_rl", nome: "Inversor Monofásico Ponte Completa (Ponte H) com Carga RL", grupo: "Inversores Monofásicos de Tensão (Aula 7)" }
+        { id: "inversor_meia_ponte_r", nome: "Inversor Monofásico Meia Ponte com Carga R", grupo: "Inversores Monofásicos de Tensão" },
+        { id: "inversor_meia_ponte_rl", nome: "Inversor Monofásico Meia Ponte com Carga RL", grupo: "Inversores Monofásicos de Tensão" },
+        { id: "inversor_ponte_completa_r", nome: "Inversor Monofásico Ponte Completa (Ponte H) com Carga R", grupo: "Inversores Monofásicos de Tensão" },
+        { id: "inversor_ponte_completa_rl", nome: "Inversor Monofásico Ponte Completa (Ponte H) com Carga RL", grupo: "Inversores Monofásicos de Tensão" }
       ]
     };
 
@@ -635,7 +635,7 @@ import {
           <polygon points="295,23 303,26 295,29" fill="#f0883e" />
           <text x="278" y="18" fill="#f0883e" font-size="12" font-weight="bold" text-anchor="middle">io(t)</text>
 
-          <!-- Carga RL Serie (X = 350) - Conforme Referencia de Aula -->
+          <!-- Carga RL Serie (X = 350) -->
           <!-- Indutor L com 4 espiras -->
           <line x1="350" y1="35" x2="350" y2="48" stroke="#58a6ff" stroke-width="2.5" />
           <path d="M 350 48 C 368 48 368 61 350 61 C 368 61 368 74 350 74 C 368 74 368 87 350 87 C 368 87 368 100 350 100" stroke="#388bfd" stroke-width="2.5" fill="none" />
@@ -1274,221 +1274,381 @@ import {
       `,
       inversor_meia_ponte_r: `
         <svg viewBox="0 0 460 220" xmlns="http://www.w3.org/2000/svg">
-          <!-- Fonte CC Bipolar com Ponto Médio / Divisor Capacitivo C1 e C2 -->
-          <line x1="60" y1="35" x2="60" y2="70" stroke="#58a6ff" stroke-width="2.5" />
-          <line x1="45" y1="70" x2="75" y2="70" stroke="#58a6ff" stroke-width="3" />
-          <line x1="45" y1="78" x2="75" y2="78" stroke="#58a6ff" stroke-width="3" />
-          <text x="25" y="77" fill="#8b949e" font-size="12" font-weight="bold">C1</text>
-          <text x="90" y="65" fill="#f0f6fc" font-size="11">Vcc/2</text>
-          <line x1="60" y1="78" x2="60" y2="142" stroke="#58a6ff" stroke-width="2.5" />
-          <circle cx="60" cy="110" r="3.5" fill="#58a6ff" />
-          <line x1="60" y1="110" x2="260" y2="110" stroke="#8b949e" stroke-dasharray="4,3" stroke-width="2" />
-          <text x="32" y="114" fill="#58a6ff" font-size="12" font-weight="bold">0V</text>
-          <line x1="45" y1="142" x2="75" y2="142" stroke="#58a6ff" stroke-width="3" />
-          <line x1="45" y1="150" x2="75" y2="150" stroke="#58a6ff" stroke-width="3" />
-          <text x="25" y="149" fill="#8b949e" font-size="12" font-weight="bold">C2</text>
-          <text x="90" y="165" fill="#f0f6fc" font-size="11">Vcc/2</text>
-          <line x1="60" y1="150" x2="60" y2="185" stroke="#58a6ff" stroke-width="2.5" />
+          <!-- Barramentos Superior (+) e Inferior (-) -->
+          <line x1="90" y1="30" x2="340" y2="30" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="90" y1="190" x2="340" y2="190" stroke="#58a6ff" stroke-width="2.5" />
 
-          <!-- Barramentos VCC (+) e VCC (-) -->
-          <line x1="60" y1="35" x2="180" y2="35" stroke="#58a6ff" stroke-width="2.5" />
-          <line x1="60" y1="185" x2="180" y2="185" stroke="#58a6ff" stroke-width="2.5" />
+          <!-- Fontes CC em Série Vcc/2 com Ponto Médio 0 -->
+          <line x1="90" y1="30" x2="90" y2="58" stroke="#58a6ff" stroke-width="2.5" />
+          <!-- Fonte Superior Vcc/2: Placa Longa (+) e Placa Curta (-) -->
+          <line x1="72" y1="58" x2="108" y2="58" stroke="#58a6ff" stroke-width="3" />
+          <line x1="80" y1="68" x2="100" y2="68" stroke="#58a6ff" stroke-width="4.5" />
+          <text x="62" y="66" fill="#f0f6fc" font-size="12" font-weight="bold" text-anchor="end">Vcc / 2</text>
 
-          <!-- Braço Inversor: S1 (Superior) e S2 (Inferior) -->
-          <line x1="180" y1="35" x2="180" y2="60" stroke="#58a6ff" stroke-width="2.5" />
-          <rect x="165" y="60" width="30" height="28" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="4" />
-          <text x="180" y="78" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="middle">S1</text>
-          <line x1="180" y1="88" x2="180" y2="132" stroke="#58a6ff" stroke-width="2.5" />
-          <rect x="165" y="132" width="30" height="28" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="4" />
-          <text x="180" y="150" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="middle">S2</text>
-          <line x1="180" y1="160" x2="180" y2="185" stroke="#58a6ff" stroke-width="2.5" />
+          <!-- Ponto Médio 0 entre as duas fontes -->
+          <line x1="90" y1="68" x2="90" y2="152" stroke="#58a6ff" stroke-width="2.5" />
+          <circle cx="90" cy="110" r="3.5" fill="#58a6ff" />
+          <text x="75" y="114" fill="#58a6ff" font-size="13" font-weight="bold" text-anchor="end">0</text>
 
-          <!-- Ponto Médio do Inversor (Saída 'a') -->
-          <circle cx="180" cy="110" r="3.5" fill="#58a6ff" />
-          <line x1="180" y1="110" x2="340" y2="110" stroke="#58a6ff" stroke-width="2.5" />
+          <!-- Fonte Inferior Vcc/2: Placa Longa (+) e Placa Curta (-) -->
+          <line x1="72" y1="152" x2="108" y2="152" stroke="#58a6ff" stroke-width="3" />
+          <line x1="80" y1="162" x2="100" y2="162" stroke="#58a6ff" stroke-width="4.5" />
+          <text x="62" y="160" fill="#f0f6fc" font-size="12" font-weight="bold" text-anchor="end">Vcc / 2</text>
+          <line x1="90" y1="162" x2="90" y2="190" stroke="#58a6ff" stroke-width="2.5" />
 
-          <!-- Carga R conectada entre o braço (180, 110) e neutro capacitivo (260, 110) -->
-          <path d="M 340 110 L 340 90 L 350 82 L 330 70 L 350 58 L 330 46 L 340 38 L 340 20 L 260 20 L 260 110" stroke="#e3b341" stroke-width="2.5" fill="none" />
-          <text x="365" y="65" fill="#e3b341" font-size="14" font-weight="bold">R</text>
+          <!-- Carga Resistiva R Central na Horizontal entre nó 0 e nó a -->
+          <line x1="90" y1="110" x2="180" y2="110" stroke="#58a6ff" stroke-width="2.5" />
+          <path d="M 180 110 L 185 110 L 192 98 L 204 122 L 216 98 L 228 122 L 238 98 L 244 110 L 250 110" stroke="#e3b341" stroke-width="2.5" fill="none" />
+          <line x1="250" y1="110" x2="340" y2="110" stroke="#58a6ff" stroke-width="2.5" />
+          <text x="215" y="88" fill="#e3b341" font-size="14" font-weight="bold" text-anchor="middle">R</text>
 
-          <!-- Tensão vo(t) e Corrente io(t) -->
-          <text x="320" y="132" fill="#58a6ff" font-size="13" font-weight="bold">vo(t)</text>
-          <text x="345" y="128" fill="#58a6ff" font-size="14" font-weight="bold">+</text>
-          <text x="250" y="128" fill="#58a6ff" font-size="16" font-weight="bold">-</text>
-          <line x1="210" y1="102" x2="245" y2="102" stroke="#f0883e" stroke-width="2" />
-          <polygon points="245,99 253,102 245,105" fill="#f0883e" />
-          <text x="228" y="96" fill="#f0883e" font-size="11" font-weight="bold" text-anchor="middle">io(t)</text>
+          <!-- Seta de Corrente iR apontando para a esquerda (Conforme Modelo do Professor) -->
+          <line x1="230" y1="128" x2="202" y2="128" stroke="#f0883e" stroke-width="1.8" />
+          <polygon points="202,125 194,128 202,131" fill="#f0883e" />
+          <text x="215" y="144" fill="#f0883e" font-size="11" font-weight="bold" text-anchor="middle">iR</text>
+
+          <!-- Nó a de Saída do Inversor -->
+          <circle cx="340" cy="110" r="3.5" fill="#58a6ff" />
+          <text x="352" y="114" fill="#58a6ff" font-size="13" font-weight="bold">a</text>
+
+          <!-- Braço Superior: Transistor S1 e Diodo Antiparalelo D1 -->
+          <!-- Transistor S1 (Coletor para cima, Emissor para baixo) -->
+          <line x1="340" y1="30" x2="340" y2="48" stroke="#58a6ff" stroke-width="2" />
+          <line x1="340" y1="48" x2="328" y2="58" stroke="#58a6ff" stroke-width="2" />
+          <line x1="328" y1="56" x2="328" y2="84" stroke="#f0f6fc" stroke-width="2.5" />
+          <line x1="322" y1="60" x2="322" y2="80" stroke="#f0f6fc" stroke-width="2" />
+          <line x1="328" y1="82" x2="340" y2="92" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="338,87 342,93 335,93" fill="#58a6ff" />
+          <line x1="340" y1="92" x2="340" y2="110" stroke="#58a6ff" stroke-width="2" />
+          <text x="312" y="74" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="end">S1</text>
+
+          <!-- Diodo Antiparalelo D1 (Apontando para CIMA) -->
+          <line x1="340" y1="45" x2="368" y2="45" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="368" y1="45" x2="368" y2="55" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="359" y1="55" x2="377" y2="55" stroke="#238636" stroke-width="2.5" />
+          <polygon points="359,75 377,75 368,55" fill="#238636" stroke="#238636" stroke-width="1.8" />
+          <line x1="368" y1="75" x2="368" y2="95" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="368" y1="95" x2="340" y2="95" stroke="#58a6ff" stroke-width="1.8" />
+          <text x="382" y="69" fill="#238636" font-size="11" font-weight="bold">D1</text>
+
+          <!-- Braço Inferior: Transistor S2 e Diodo Antiparalelo D2 -->
+          <!-- Transistor S2 (Coletor para cima, Emissor para baixo) -->
+          <line x1="340" y1="110" x2="340" y2="128" stroke="#58a6ff" stroke-width="2" />
+          <line x1="340" y1="128" x2="328" y2="138" stroke="#58a6ff" stroke-width="2" />
+          <line x1="328" y1="136" x2="328" y2="164" stroke="#f0f6fc" stroke-width="2.5" />
+          <line x1="322" y1="140" x2="322" y2="160" stroke="#f0f6fc" stroke-width="2" />
+          <line x1="328" y1="162" x2="340" y2="172" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="338,167 342,173 335,173" fill="#58a6ff" />
+          <line x1="340" y1="172" x2="340" y2="190" stroke="#58a6ff" stroke-width="2" />
+          <text x="312" y="154" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="end">S2</text>
+
+          <!-- Diodo Antiparalelo D2 (Apontando para CIMA) -->
+          <line x1="340" y1="125" x2="368" y2="125" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="368" y1="125" x2="368" y2="135" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="359" y1="135" x2="377" y2="135" stroke="#238636" stroke-width="2.5" />
+          <polygon points="359,155 377,155 368,135" fill="#238636" stroke="#238636" stroke-width="1.8" />
+          <line x1="368" y1="155" x2="368" y2="175" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="368" y1="175" x2="340" y2="175" stroke="#58a6ff" stroke-width="1.8" />
+          <text x="382" y="149" fill="#238636" font-size="11" font-weight="bold">D2</text>
         </svg>
       `,
       inversor_meia_ponte_rl: `
         <svg viewBox="0 0 460 220" xmlns="http://www.w3.org/2000/svg">
-          <!-- Divisor Capacitivo C1 e C2 -->
-          <line x1="50" y1="35" x2="50" y2="70" stroke="#58a6ff" stroke-width="2.5" />
-          <line x1="35" y1="70" x2="65" y2="70" stroke="#58a6ff" stroke-width="3" />
-          <line x1="35" y1="78" x2="65" y2="78" stroke="#58a6ff" stroke-width="3" />
-          <text x="18" y="77" fill="#8b949e" font-size="11" font-weight="bold">C1</text>
-          <line x1="50" y1="78" x2="50" y2="142" stroke="#58a6ff" stroke-width="2.5" />
-          <circle cx="50" cy="110" r="3.5" fill="#58a6ff" />
-          <line x1="50" y1="110" x2="250" y2="110" stroke="#8b949e" stroke-dasharray="4,3" stroke-width="2" />
-          <line x1="35" y1="142" x2="65" y2="142" stroke="#58a6ff" stroke-width="3" />
-          <line x1="35" y1="150" x2="65" y2="150" stroke="#58a6ff" stroke-width="3" />
-          <text x="18" y="149" fill="#8b949e" font-size="11" font-weight="bold">C2</text>
-          <line x1="50" y1="150" x2="50" y2="185" stroke="#58a6ff" stroke-width="2.5" />
+          <!-- Barramentos Superior (+) e Inferior (-) -->
+          <line x1="90" y1="30" x2="340" y2="30" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="90" y1="190" x2="340" y2="190" stroke="#58a6ff" stroke-width="2.5" />
 
-          <!-- Barramentos Vcc e -Vcc -->
-          <line x1="50" y1="35" x2="160" y2="35" stroke="#58a6ff" stroke-width="2.5" />
-          <line x1="50" y1="185" x2="160" y2="185" stroke="#58a6ff" stroke-width="2.5" />
+          <!-- Fontes CC em Série Vcc/2 com Ponto Médio 0 -->
+          <line x1="90" y1="30" x2="90" y2="58" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="72" y1="58" x2="108" y2="58" stroke="#58a6ff" stroke-width="3" />
+          <line x1="80" y1="68" x2="100" y2="68" stroke="#58a6ff" stroke-width="4.5" />
+          <text x="62" y="66" fill="#f0f6fc" font-size="12" font-weight="bold" text-anchor="end">Vcc / 2</text>
 
-          <!-- Braço S1 e Diodo Antiparalelo D1 -->
-          <rect x="125" y="60" width="28" height="26" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="4" />
-          <text x="139" y="77" fill="#2ea043" font-size="11" font-weight="bold" text-anchor="middle">S1</text>
-          <polygon points="175,82 195,82 185,62" fill="#238636" stroke="#238636" stroke-width="1.5" />
-          <line x1="175" y1="62" x2="195" y2="62" stroke="#238636" stroke-width="2" />
-          <text x="204" y="75" fill="#238636" font-size="11" font-weight="bold">D1</text>
-          <line x1="160" y1="35" x2="160" y2="60" stroke="#58a6ff" stroke-width="2" />
-          <line x1="139" y1="48" x2="185" y2="48" stroke="#58a6ff" stroke-width="2" />
-          <line x1="139" y1="48" x2="139" y2="60" stroke="#58a6ff" stroke-width="2" />
-          <line x1="185" y1="48" x2="185" y2="62" stroke="#58a6ff" stroke-width="2" />
+          <line x1="90" y1="68" x2="90" y2="152" stroke="#58a6ff" stroke-width="2.5" />
+          <circle cx="90" cy="110" r="3.5" fill="#58a6ff" />
+          <text x="75" y="114" fill="#58a6ff" font-size="13" font-weight="bold" text-anchor="end">0</text>
 
-          <!-- Braço S2 e Diodo Antiparalelo D2 -->
-          <rect x="125" y="134" width="28" height="26" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="4" />
-          <text x="139" y="151" fill="#2ea043" font-size="11" font-weight="bold" text-anchor="middle">S2</text>
-          <polygon points="175,156 195,156 185,136" fill="#238636" stroke="#238636" stroke-width="1.5" />
-          <line x1="175" y1="136" x2="195" y2="136" stroke="#238636" stroke-width="2" />
-          <text x="204" y="149" fill="#238636" font-size="11" font-weight="bold">D2</text>
-          <line x1="160" y1="185" x2="160" y2="160" stroke="#58a6ff" stroke-width="2" />
-          <line x1="139" y1="172" x2="185" y2="172" stroke="#58a6ff" stroke-width="2" />
-          <line x1="139" y1="160" x2="139" y2="172" stroke="#58a6ff" stroke-width="2" />
-          <line x1="185" y1="156" x2="185" y2="172" stroke="#58a6ff" stroke-width="2" />
+          <line x1="72" y1="152" x2="108" y2="152" stroke="#58a6ff" stroke-width="3" />
+          <line x1="80" y1="162" x2="100" y2="162" stroke="#58a6ff" stroke-width="4.5" />
+          <text x="62" y="160" fill="#f0f6fc" font-size="12" font-weight="bold" text-anchor="end">Vcc / 2</text>
+          <line x1="90" y1="162" x2="90" y2="190" stroke="#58a6ff" stroke-width="2.5" />
 
-          <!-- Conexão de Saída Central -->
-          <line x1="139" y1="86" x2="139" y2="134" stroke="#58a6ff" stroke-width="2" />
-          <line x1="185" y1="82" x2="185" y2="136" stroke="#58a6ff" stroke-width="2" />
-          <line x1="139" y1="110" x2="185" y2="110" stroke="#58a6ff" stroke-width="2" />
-          <circle cx="160" cy="110" r="3.5" fill="#58a6ff" />
-          <line x1="160" y1="110" x2="330" y2="110" stroke="#58a6ff" stroke-width="2.5" />
+          <!-- Carga RL Série Central na Horizontal entre nó 0 e nó a -->
+          <line x1="90" y1="110" x2="155" y2="110" stroke="#58a6ff" stroke-width="2.5" />
+          <path d="M 155 110 L 160 110 L 167 98 L 179 122 L 191 98 L 203 122 L 210 110 L 215 110" stroke="#e3b341" stroke-width="2.5" fill="none" />
+          <text x="185" y="88" fill="#e3b341" font-size="13" font-weight="bold" text-anchor="middle">R</text>
 
-          <!-- Carga RL Série: R + L -->
-          <path d="M 330 110 L 330 90 L 338 84 L 322 74 L 338 64 L 322 54 L 330 46 L 330 35" stroke="#e3b341" stroke-width="2.5" fill="none" />
-          <text x="345" y="72" fill="#e3b341" font-size="12" font-weight="bold">R</text>
-          <!-- Indutor L com arcos -->
-          <path d="M 330 35 A 8 8 0 0 0 314 35 A 8 8 0 0 0 298 35 A 8 8 0 0 0 282 35 A 8 8 0 0 0 266 35" stroke="#a371f7" stroke-width="2.5" fill="none" />
-          <line x1="266" y1="35" x2="250" y2="35" stroke="#58a6ff" stroke-width="2" />
-          <line x1="250" y1="35" x2="250" y2="110" stroke="#58a6ff" stroke-width="2" />
-          <text x="295" y="20" fill="#a371f7" font-size="12" font-weight="bold">L</text>
-          <text x="305" y="128" fill="#58a6ff" font-size="13" font-weight="bold">vo(t)</text>
+          <path d="M 215 110 A 7.5 7.5 0 0 1 230 110 A 7.5 7.5 0 0 1 245 110 A 7.5 7.5 0 0 1 260 110 A 7.5 7.5 0 0 1 275 110" stroke="#a371f7" stroke-width="2.5" fill="none" />
+          <text x="245" y="88" fill="#a371f7" font-size="13" font-weight="bold" text-anchor="middle">L</text>
+          <line x1="275" y1="110" x2="340" y2="110" stroke="#58a6ff" stroke-width="2.5" />
+
+          <!-- Seta de Corrente iR apontando para a esquerda -->
+          <line x1="230" y1="128" x2="202" y2="128" stroke="#f0883e" stroke-width="1.8" />
+          <polygon points="202,125 194,128 202,131" fill="#f0883e" />
+          <text x="215" y="144" fill="#f0883e" font-size="11" font-weight="bold" text-anchor="middle">io(t)</text>
+
+          <!-- Nó a de Saída do Inversor -->
+          <circle cx="340" cy="110" r="3.5" fill="#58a6ff" />
+          <text x="352" y="114" fill="#58a6ff" font-size="13" font-weight="bold">a</text>
+
+          <!-- Braço Superior: Transistor S1 e Diodo Antiparalelo D1 -->
+          <line x1="340" y1="30" x2="340" y2="48" stroke="#58a6ff" stroke-width="2" />
+          <line x1="340" y1="48" x2="328" y2="58" stroke="#58a6ff" stroke-width="2" />
+          <line x1="328" y1="56" x2="328" y2="84" stroke="#f0f6fc" stroke-width="2.5" />
+          <line x1="322" y1="60" x2="322" y2="80" stroke="#f0f6fc" stroke-width="2" />
+          <line x1="328" y1="82" x2="340" y2="92" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="338,87 342,93 335,93" fill="#58a6ff" />
+          <line x1="340" y1="92" x2="340" y2="110" stroke="#58a6ff" stroke-width="2" />
+          <text x="312" y="74" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="end">S1</text>
+
+          <line x1="340" y1="45" x2="368" y2="45" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="368" y1="45" x2="368" y2="55" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="359" y1="55" x2="377" y2="55" stroke="#238636" stroke-width="2.5" />
+          <polygon points="359,75 377,75 368,55" fill="#238636" stroke="#238636" stroke-width="1.8" />
+          <line x1="368" y1="75" x2="368" y2="95" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="368" y1="95" x2="340" y2="95" stroke="#58a6ff" stroke-width="1.8" />
+          <text x="382" y="69" fill="#238636" font-size="11" font-weight="bold">D1</text>
+
+          <!-- Braço Inferior: Transistor S2 e Diodo Antiparalelo D2 -->
+          <line x1="340" y1="110" x2="340" y2="128" stroke="#58a6ff" stroke-width="2" />
+          <line x1="340" y1="128" x2="328" y2="138" stroke="#58a6ff" stroke-width="2" />
+          <line x1="328" y1="136" x2="328" y2="164" stroke="#f0f6fc" stroke-width="2.5" />
+          <line x1="322" y1="140" x2="322" y2="160" stroke="#f0f6fc" stroke-width="2" />
+          <line x1="328" y1="162" x2="340" y2="172" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="338,167 342,173 335,173" fill="#58a6ff" />
+          <line x1="340" y1="172" x2="340" y2="190" stroke="#58a6ff" stroke-width="2" />
+          <text x="312" y="154" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="end">S2</text>
+
+          <line x1="340" y1="125" x2="368" y2="125" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="368" y1="125" x2="368" y2="135" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="359" y1="135" x2="377" y2="135" stroke="#238636" stroke-width="2.5" />
+          <polygon points="359,155 377,155 368,135" fill="#238636" stroke="#238636" stroke-width="1.8" />
+          <line x1="368" y1="155" x2="368" y2="175" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="368" y1="175" x2="340" y2="175" stroke="#58a6ff" stroke-width="1.8" />
+          <text x="382" y="149" fill="#238636" font-size="11" font-weight="bold">D2</text>
         </svg>
       `,
       inversor_ponte_completa_r: `
         <svg viewBox="0 0 460 220" xmlns="http://www.w3.org/2000/svg">
-          <!-- Barramentos VCC (+) e GND/VCC (-) -->
-          <line x1="50" y1="30" x2="310" y2="30" stroke="#58a6ff" stroke-width="2.5" />
-          <line x1="50" y1="190" x2="310" y2="190" stroke="#58a6ff" stroke-width="2.5" />
+          <!-- Barramentos Vcc (+) e GND (-) -->
+          <line x1="55" y1="30" x2="365" y2="30" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="55" y1="190" x2="365" y2="190" stroke="#58a6ff" stroke-width="2.5" />
 
-          <!-- Fonte CC VCC -->
-          <circle cx="50" cy="110" r="20" fill="#161b22" stroke="#58a6ff" stroke-width="2.5" />
-          <line x1="50" y1="30" x2="50" y2="90" stroke="#58a6ff" stroke-width="2.5" />
-          <line x1="50" y1="130" x2="50" y2="190" stroke="#58a6ff" stroke-width="2.5" />
-          <text x="50" y="103" fill="#f0f6fc" font-size="13" font-weight="bold" text-anchor="middle">+</text>
-          <text x="50" y="124" fill="#f0f6fc" font-size="15" font-weight="bold" text-anchor="middle">-</text>
-          <text x="20" y="114" fill="#58a6ff" font-size="13" font-weight="bold">VCC</text>
+          <!-- Fonte CC Vcc à Esquerda -->
+          <line x1="55" y1="30" x2="55" y2="105" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="38" y1="105" x2="72" y2="105" stroke="#58a6ff" stroke-width="3" />
+          <line x1="45" y1="115" x2="65" y2="115" stroke="#58a6ff" stroke-width="4.5" />
+          <line x1="55" y1="115" x2="55" y2="190" stroke="#58a6ff" stroke-width="2.5" />
+          <text x="28" y="114" fill="#f0f6fc" font-size="13" font-weight="bold" text-anchor="end">Vcc</text>
+          <text x="78" y="100" fill="#58a6ff" font-size="12" font-weight="bold">+</text>
+          <text x="78" y="125" fill="#58a6ff" font-size="14" font-weight="bold">-</text>
 
-          <!-- Perna 1: S1 (Superior) e S4 (Inferior) -->
-          <line x1="140" y1="30" x2="140" y2="55" stroke="#58a6ff" stroke-width="2.5" />
-          <rect x="125" y="55" width="30" height="26" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="4" />
-          <text x="140" y="73" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="middle">S1</text>
-          <line x1="140" y1="81" x2="140" y2="139" stroke="#58a6ff" stroke-width="2.5" />
-          <circle cx="140" cy="110" r="3.5" fill="#58a6ff" />
-          <rect x="125" y="139" width="30" height="26" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="4" />
-          <text x="140" y="157" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="middle">S4</text>
-          <line x1="140" y1="165" x2="140" y2="190" stroke="#58a6ff" stroke-width="2.5" />
+          <!-- Perna 1 (X=175): S1/D1 (Superior) e S4/D4 (Inferior) -->
+          <circle cx="175" cy="30" r="3.5" fill="#58a6ff" />
+          <line x1="175" y1="30" x2="175" y2="48" stroke="#58a6ff" stroke-width="2" />
+          <line x1="175" y1="48" x2="163" y2="58" stroke="#58a6ff" stroke-width="2" />
+          <line x1="163" y1="56" x2="163" y2="84" stroke="#f0f6fc" stroke-width="2.5" />
+          <line x1="157" y1="60" x2="157" y2="80" stroke="#f0f6fc" stroke-width="2" />
+          <line x1="163" y1="82" x2="175" y2="92" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="173,87 177,93 170,93" fill="#58a6ff" />
+          <line x1="175" y1="92" x2="175" y2="110" stroke="#58a6ff" stroke-width="2" />
+          <text x="147" y="74" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="end">S1</text>
 
-          <!-- Perna 2: S3 (Superior) e S2 (Inferior) -->
-          <line x1="280" y1="30" x2="280" y2="55" stroke="#58a6ff" stroke-width="2.5" />
-          <rect x="265" y="55" width="30" height="26" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="4" />
-          <text x="280" y="73" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="middle">S3</text>
-          <line x1="280" y1="81" x2="280" y2="139" stroke="#58a6ff" stroke-width="2.5" />
-          <circle cx="280" cy="110" r="3.5" fill="#58a6ff" />
-          <rect x="265" y="139" width="30" height="26" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="4" />
-          <text x="280" y="157" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="middle">S2</text>
-          <line x1="280" y1="165" x2="280" y2="190" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="175" y1="45" x2="200" y2="45" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="200" y1="45" x2="200" y2="55" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="191" y1="55" x2="209" y2="55" stroke="#238636" stroke-width="2.5" />
+          <polygon points="191,75 209,75 200,55" fill="#238636" stroke="#238636" stroke-width="1.8" />
+          <line x1="200" y1="75" x2="200" y2="95" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="200" y1="95" x2="175" y2="95" stroke="#58a6ff" stroke-width="1.8" />
+          <text x="214" y="69" fill="#238636" font-size="11" font-weight="bold">D1</text>
 
-          <!-- Carga R central na horizontal -->
-          <line x1="140" y1="110" x2="185" y2="110" stroke="#58a6ff" stroke-width="2.5" />
-          <path d="M 185 110 L 190 110 L 195 120 L 205 100 L 215 120 L 225 100 L 230 110 L 235 110" stroke="#e3b341" stroke-width="2.5" fill="none" />
-          <line x1="235" y1="110" x2="280" y2="110" stroke="#58a6ff" stroke-width="2.5" />
-          <text x="210" y="90" fill="#e3b341" font-size="14" font-weight="bold" text-anchor="middle">R</text>
+          <!-- Nó a -->
+          <circle cx="175" cy="110" r="3.5" fill="#58a6ff" />
+          <text x="160" y="105" fill="#58a6ff" font-size="12" font-weight="bold">a</text>
 
-          <!-- Tensão vo(t) e Corrente io(t) -->
-          <text x="150" y="103" fill="#58a6ff" font-size="14" font-weight="bold">+</text>
-          <text x="268" y="103" fill="#58a6ff" font-size="16" font-weight="bold">-</text>
-          <text x="210" y="140" fill="#58a6ff" font-size="13" font-weight="bold" text-anchor="middle">vo(t)</text>
-          <line x1="155" y1="95" x2="180" y2="95" stroke="#f0883e" stroke-width="2" />
-          <polygon points="180,92 188,95 180,98" fill="#f0883e" />
-          <text x="167" y="88" fill="#f0883e" font-size="11" font-weight="bold" text-anchor="middle">io(t)</text>
+          <line x1="175" y1="110" x2="175" y2="128" stroke="#58a6ff" stroke-width="2" />
+          <line x1="175" y1="128" x2="163" y2="138" stroke="#58a6ff" stroke-width="2" />
+          <line x1="163" y1="136" x2="163" y2="164" stroke="#f0f6fc" stroke-width="2.5" />
+          <line x1="157" y1="140" x2="157" y2="160" stroke="#f0f6fc" stroke-width="2" />
+          <line x1="163" y1="162" x2="175" y2="172" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="173,167 177,173 170,173" fill="#58a6ff" />
+          <line x1="175" y1="172" x2="175" y2="190" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="175" cy="190" r="3.5" fill="#58a6ff" />
+          <text x="147" y="154" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="end">S4</text>
+
+          <line x1="175" y1="125" x2="200" y2="125" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="200" y1="125" x2="200" y2="135" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="191" y1="135" x2="209" y2="135" stroke="#238636" stroke-width="2.5" />
+          <polygon points="191,155 209,155 200,135" fill="#238636" stroke="#238636" stroke-width="1.8" />
+          <line x1="200" y1="155" x2="200" y2="175" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="200" y1="175" x2="175" y2="175" stroke="#58a6ff" stroke-width="1.8" />
+          <text x="214" y="149" fill="#238636" font-size="11" font-weight="bold">D4</text>
+
+          <!-- Perna 2 (X=335): S3/D3 (Superior) e S2/D2 (Inferior) -->
+          <circle cx="335" cy="30" r="3.5" fill="#58a6ff" />
+          <line x1="335" y1="30" x2="335" y2="48" stroke="#58a6ff" stroke-width="2" />
+          <line x1="335" y1="48" x2="323" y2="58" stroke="#58a6ff" stroke-width="2" />
+          <line x1="323" y1="56" x2="323" y2="84" stroke="#f0f6fc" stroke-width="2.5" />
+          <line x1="317" y1="60" x2="317" y2="80" stroke="#f0f6fc" stroke-width="2" />
+          <line x1="323" y1="82" x2="335" y2="92" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="333,87 337,93 330,93" fill="#58a6ff" />
+          <line x1="335" y1="92" x2="335" y2="110" stroke="#58a6ff" stroke-width="2" />
+          <text x="307" y="74" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="end">S3</text>
+
+          <line x1="335" y1="45" x2="360" y2="45" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="360" y1="45" x2="360" y2="55" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="351" y1="55" x2="369" y2="55" stroke="#238636" stroke-width="2.5" />
+          <polygon points="351,75 369,75 360,55" fill="#238636" stroke="#238636" stroke-width="1.8" />
+          <line x1="360" y1="75" x2="360" y2="95" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="360" y1="95" x2="335" y2="95" stroke="#58a6ff" stroke-width="1.8" />
+          <text x="374" y="69" fill="#238636" font-size="11" font-weight="bold">D3</text>
+
+          <!-- Nó b -->
+          <circle cx="335" cy="110" r="3.5" fill="#58a6ff" />
+          <text x="345" y="105" fill="#58a6ff" font-size="12" font-weight="bold">b</text>
+
+          <line x1="335" y1="110" x2="335" y2="128" stroke="#58a6ff" stroke-width="2" />
+          <line x1="335" y1="128" x2="323" y2="138" stroke="#58a6ff" stroke-width="2" />
+          <line x1="323" y1="136" x2="323" y2="164" stroke="#f0f6fc" stroke-width="2.5" />
+          <line x1="317" y1="140" x2="317" y2="160" stroke="#f0f6fc" stroke-width="2" />
+          <line x1="323" y1="162" x2="335" y2="172" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="333,167 337,173 330,173" fill="#58a6ff" />
+          <line x1="335" y1="172" x2="335" y2="190" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="335" cy="190" r="3.5" fill="#58a6ff" />
+          <text x="307" y="154" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="end">S2</text>
+
+          <line x1="335" y1="125" x2="360" y2="125" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="360" y1="125" x2="360" y2="135" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="351" y1="135" x2="369" y2="135" stroke="#238636" stroke-width="2.5" />
+          <polygon points="351,155 369,155 360,135" fill="#238636" stroke="#238636" stroke-width="1.8" />
+          <line x1="360" y1="155" x2="360" y2="175" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="360" y1="175" x2="335" y2="175" stroke="#58a6ff" stroke-width="1.8" />
+          <text x="374" y="149" fill="#238636" font-size="11" font-weight="bold">D2</text>
+
+          <!-- Carga R Central Horizontal entre Nó a e Nó b -->
+          <line x1="175" y1="110" x2="225" y2="110" stroke="#58a6ff" stroke-width="2.5" />
+          <path d="M 225 110 L 230 110 L 237 98 L 249 122 L 261 98 L 273 122 L 280 110 L 285 110" stroke="#e3b341" stroke-width="2.5" fill="none" />
+          <line x1="285" y1="110" x2="335" y2="110" stroke="#58a6ff" stroke-width="2.5" />
+          <text x="255" y="88" fill="#e3b341" font-size="14" font-weight="bold" text-anchor="middle">R</text>
+
+          <text x="188" y="103" fill="#58a6ff" font-size="13" font-weight="bold">+</text>
+          <text x="322" y="103" fill="#58a6ff" font-size="15" font-weight="bold">-</text>
+          <text x="255" y="142" fill="#58a6ff" font-size="12" font-weight="bold" text-anchor="middle">vo(t)</text>
+          <line x1="240" y1="126" x2="270" y2="126" stroke="#f0883e" stroke-width="1.8" />
+          <polygon points="270,123 278,126 270,129" fill="#f0883e" />
+          <text x="255" y="122" fill="#f0883e" font-size="11" font-weight="bold" text-anchor="middle">io(t)</text>
         </svg>
       `,
       inversor_ponte_completa_rl: `
         <svg viewBox="0 0 460 220" xmlns="http://www.w3.org/2000/svg">
-          <!-- Barramentos VCC e GND -->
-          <line x1="45" y1="30" x2="340" y2="30" stroke="#58a6ff" stroke-width="2.5" />
-          <line x1="45" y1="190" x2="340" y2="190" stroke="#58a6ff" stroke-width="2.5" />
+          <!-- Barramentos Vcc (+) e GND (-) -->
+          <line x1="55" y1="30" x2="365" y2="30" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="55" y1="190" x2="365" y2="190" stroke="#58a6ff" stroke-width="2.5" />
 
-          <!-- Fonte CC VCC -->
-          <circle cx="45" cy="110" r="18" fill="#161b22" stroke="#58a6ff" stroke-width="2.5" />
-          <line x1="45" y1="30" x2="45" y2="92" stroke="#58a6ff" stroke-width="2.5" />
-          <line x1="45" y1="128" x2="45" y2="190" stroke="#58a6ff" stroke-width="2.5" />
-          <text x="45" y="104" fill="#f0f6fc" font-size="12" font-weight="bold" text-anchor="middle">+</text>
-          <text x="45" y="123" fill="#f0f6fc" font-size="14" font-weight="bold" text-anchor="middle">-</text>
-          <text x="18" y="114" fill="#58a6ff" font-size="12" font-weight="bold">VCC</text>
+          <!-- Fonte CC Vcc à Esquerda -->
+          <line x1="55" y1="30" x2="55" y2="105" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="38" y1="105" x2="72" y2="105" stroke="#58a6ff" stroke-width="3" />
+          <line x1="45" y1="115" x2="65" y2="115" stroke="#58a6ff" stroke-width="4.5" />
+          <line x1="55" y1="115" x2="55" y2="190" stroke="#58a6ff" stroke-width="2.5" />
+          <text x="28" y="114" fill="#f0f6fc" font-size="13" font-weight="bold" text-anchor="end">Vcc</text>
+          <text x="78" y="100" fill="#58a6ff" font-size="12" font-weight="bold">+</text>
+          <text x="78" y="125" fill="#58a6ff" font-size="14" font-weight="bold">-</text>
 
-          <!-- Perna 1: S1/D1 e S4/D4 -->
-          <rect x="105" y="50" width="26" height="24" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="3" />
-          <text x="118" y="66" fill="#2ea043" font-size="11" font-weight="bold" text-anchor="middle">S1</text>
-          <polygon points="145,72 163,72 154,54" fill="#238636" stroke="#238636" stroke-width="1.5" />
-          <line x1="145" y1="54" x2="163" y2="54" stroke="#238636" stroke-width="2" />
-          <text x="170" y="65" fill="#238636" font-size="10" font-weight="bold">D1</text>
+          <!-- Perna 1 (X=175): S1/D1 e S4/D4 -->
+          <circle cx="175" cy="30" r="3.5" fill="#58a6ff" />
+          <line x1="175" y1="30" x2="175" y2="48" stroke="#58a6ff" stroke-width="2" />
+          <line x1="175" y1="48" x2="163" y2="58" stroke="#58a6ff" stroke-width="2" />
+          <line x1="163" y1="56" x2="163" y2="84" stroke="#f0f6fc" stroke-width="2.5" />
+          <line x1="157" y1="60" x2="157" y2="80" stroke="#f0f6fc" stroke-width="2" />
+          <line x1="163" y1="82" x2="175" y2="92" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="173,87 177,93 170,93" fill="#58a6ff" />
+          <line x1="175" y1="92" x2="175" y2="110" stroke="#58a6ff" stroke-width="2" />
+          <text x="147" y="74" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="end">S1</text>
 
-          <rect x="105" y="146" width="26" height="24" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="3" />
-          <text x="118" y="162" fill="#2ea043" font-size="11" font-weight="bold" text-anchor="middle">S4</text>
-          <polygon points="145,168 163,168 154,150" fill="#238636" stroke="#238636" stroke-width="1.5" />
-          <line x1="145" y1="150" x2="163" y2="150" stroke="#238636" stroke-width="2" />
-          <text x="170" y="161" fill="#238636" font-size="10" font-weight="bold">D4</text>
+          <line x1="175" y1="45" x2="200" y2="45" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="200" y1="45" x2="200" y2="55" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="191" y1="55" x2="209" y2="55" stroke="#238636" stroke-width="2.5" />
+          <polygon points="191,75 209,75 200,55" fill="#238636" stroke="#238636" stroke-width="1.8" />
+          <line x1="200" y1="75" x2="200" y2="95" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="200" y1="95" x2="175" y2="95" stroke="#58a6ff" stroke-width="1.8" />
+          <text x="214" y="69" fill="#238636" font-size="11" font-weight="bold">D1</text>
 
-          <line x1="135" y1="30" x2="135" y2="50" stroke="#58a6ff" stroke-width="2" />
-          <line x1="135" y1="74" x2="135" y2="146" stroke="#58a6ff" stroke-width="2" />
-          <line x1="135" y1="170" x2="135" y2="190" stroke="#58a6ff" stroke-width="2" />
-          <circle cx="135" cy="110" r="3.5" fill="#58a6ff" />
+          <circle cx="175" cy="110" r="3.5" fill="#58a6ff" />
+          <text x="160" y="105" fill="#58a6ff" font-size="12" font-weight="bold">a</text>
 
-          <!-- Perna 2: S3/D3 e S2/D2 -->
-          <rect x="255" y="50" width="26" height="24" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="3" />
-          <text x="268" y="66" fill="#2ea043" font-size="11" font-weight="bold" text-anchor="middle">S3</text>
-          <polygon points="295,72 313,72 304,54" fill="#238636" stroke="#238636" stroke-width="1.5" />
-          <line x1="295" y1="54" x2="313" y2="54" stroke="#238636" stroke-width="2" />
-          <text x="320" y="65" fill="#238636" font-size="10" font-weight="bold">D3</text>
+          <line x1="175" y1="110" x2="175" y2="128" stroke="#58a6ff" stroke-width="2" />
+          <line x1="175" y1="128" x2="163" y2="138" stroke="#58a6ff" stroke-width="2" />
+          <line x1="163" y1="136" x2="163" y2="164" stroke="#f0f6fc" stroke-width="2.5" />
+          <line x1="157" y1="140" x2="157" y2="160" stroke="#f0f6fc" stroke-width="2" />
+          <line x1="163" y1="162" x2="175" y2="172" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="173,167 177,173 170,173" fill="#58a6ff" />
+          <line x1="175" y1="172" x2="175" y2="190" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="175" cy="190" r="3.5" fill="#58a6ff" />
+          <text x="147" y="154" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="end">S4</text>
 
-          <rect x="255" y="146" width="26" height="24" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="3" />
-          <text x="268" y="162" fill="#2ea043" font-size="11" font-weight="bold" text-anchor="middle">S2</text>
-          <polygon points="295,168 313,168 304,150" fill="#238636" stroke="#238636" stroke-width="1.5" />
-          <line x1="295" y1="150" x2="313" y2="150" stroke="#238636" stroke-width="2" />
-          <text x="320" y="161" fill="#238636" font-size="10" font-weight="bold">D2</text>
+          <line x1="175" y1="125" x2="200" y2="125" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="200" y1="125" x2="200" y2="135" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="191" y1="135" x2="209" y2="135" stroke="#238636" stroke-width="2.5" />
+          <polygon points="191,155 209,155 200,135" fill="#238636" stroke="#238636" stroke-width="1.8" />
+          <line x1="200" y1="155" x2="200" y2="175" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="200" y1="175" x2="175" y2="175" stroke="#58a6ff" stroke-width="1.8" />
+          <text x="214" y="149" fill="#238636" font-size="11" font-weight="bold">D4</text>
 
-          <line x1="285" y1="30" x2="285" y2="50" stroke="#58a6ff" stroke-width="2" />
-          <line x1="285" y1="74" x2="285" y2="146" stroke="#58a6ff" stroke-width="2" />
-          <line x1="285" y1="170" x2="285" y2="190" stroke="#58a6ff" stroke-width="2" />
-          <circle cx="285" cy="110" r="3.5" fill="#58a6ff" />
+          <!-- Perna 2 (X=335): S3/D3 e S2/D2 -->
+          <circle cx="335" cy="30" r="3.5" fill="#58a6ff" />
+          <line x1="335" y1="30" x2="335" y2="48" stroke="#58a6ff" stroke-width="2" />
+          <line x1="335" y1="48" x2="323" y2="58" stroke="#58a6ff" stroke-width="2" />
+          <line x1="323" y1="56" x2="323" y2="84" stroke="#f0f6fc" stroke-width="2.5" />
+          <line x1="317" y1="60" x2="317" y2="80" stroke="#f0f6fc" stroke-width="2" />
+          <line x1="323" y1="82" x2="335" y2="92" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="333,87 337,93 330,93" fill="#58a6ff" />
+          <line x1="335" y1="92" x2="335" y2="110" stroke="#58a6ff" stroke-width="2" />
+          <text x="307" y="74" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="end">S3</text>
 
-          <!-- Carga RL Série entre braços (135,110) e (285,110) -->
-          <line x1="135" y1="110" x2="165" y2="110" stroke="#58a6ff" stroke-width="2.5" />
-          <path d="M 165 110 L 170 110 L 175 118 L 183 102 L 191 118 L 199 102 L 205 110 L 210 110" stroke="#e3b341" stroke-width="2" fill="none" />
-          <text x="188" y="94" fill="#e3b341" font-size="12" font-weight="bold" text-anchor="middle">R</text>
-          <path d="M 210 110 A 6 6 0 0 1 222 110 A 6 6 0 0 1 234 110 A 6 6 0 0 1 246 110" stroke="#a371f7" stroke-width="2" fill="none" />
-          <text x="228" y="94" fill="#a371f7" font-size="12" font-weight="bold" text-anchor="middle">L</text>
-          <line x1="246" y1="110" x2="285" y2="110" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="335" y1="45" x2="360" y2="45" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="360" y1="45" x2="360" y2="55" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="351" y1="55" x2="369" y2="55" stroke="#238636" stroke-width="2.5" />
+          <polygon points="351,75 369,75 360,55" fill="#238636" stroke="#238636" stroke-width="1.8" />
+          <line x1="360" y1="75" x2="360" y2="95" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="360" y1="95" x2="335" y2="95" stroke="#58a6ff" stroke-width="1.8" />
+          <text x="374" y="69" fill="#238636" font-size="11" font-weight="bold">D3</text>
 
-          <text x="145" y="102" fill="#58a6ff" font-size="13" font-weight="bold">+</text>
-          <text x="272" y="102" fill="#58a6ff" font-size="15" font-weight="bold">-</text>
-          <text x="210" y="138" fill="#58a6ff" font-size="12" font-weight="bold" text-anchor="middle">vo(t)</text>
+          <circle cx="335" cy="110" r="3.5" fill="#58a6ff" />
+          <text x="345" y="105" fill="#58a6ff" font-size="12" font-weight="bold">b</text>
+
+          <line x1="335" y1="110" x2="335" y2="128" stroke="#58a6ff" stroke-width="2" />
+          <line x1="335" y1="128" x2="323" y2="138" stroke="#58a6ff" stroke-width="2" />
+          <line x1="323" y1="136" x2="323" y2="164" stroke="#f0f6fc" stroke-width="2.5" />
+          <line x1="317" y1="140" x2="317" y2="160" stroke="#f0f6fc" stroke-width="2" />
+          <line x1="323" y1="162" x2="335" y2="172" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="333,167 337,173 330,173" fill="#58a6ff" />
+          <line x1="335" y1="172" x2="335" y2="190" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="335" cy="190" r="3.5" fill="#58a6ff" />
+          <text x="307" y="154" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="end">S2</text>
+
+          <line x1="335" y1="125" x2="360" y2="125" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="360" y1="125" x2="360" y2="135" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="351" y1="135" x2="369" y2="135" stroke="#238636" stroke-width="2.5" />
+          <polygon points="351,155 369,155 360,135" fill="#238636" stroke="#238636" stroke-width="1.8" />
+          <line x1="360" y1="155" x2="360" y2="175" stroke="#58a6ff" stroke-width="1.8" />
+          <line x1="360" y1="175" x2="335" y2="175" stroke="#58a6ff" stroke-width="1.8" />
+          <text x="374" y="149" fill="#238636" font-size="11" font-weight="bold">D2</text>
+
+          <!-- Carga RL Série Central Horizontal entre Nó a e Nó b -->
+          <line x1="175" y1="110" x2="205" y2="110" stroke="#58a6ff" stroke-width="2.5" />
+          <path d="M 205 110 L 210 110 L 217 98 L 229 122 L 241 98 L 246 110 L 250 110" stroke="#e3b341" stroke-width="2.5" fill="none" />
+          <text x="228" y="88" fill="#e3b341" font-size="13" font-weight="bold" text-anchor="middle">R</text>
+
+          <path d="M 250 110 A 7 7 0 0 1 264 110 A 7 7 0 0 1 278 110 A 7 7 0 0 1 292 110 A 7 7 0 0 1 305 110" stroke="#a371f7" stroke-width="2.5" fill="none" />
+          <text x="278" y="88" fill="#a371f7" font-size="13" font-weight="bold" text-anchor="middle">L</text>
+          <line x1="305" y1="110" x2="335" y2="110" stroke="#58a6ff" stroke-width="2.5" />
+
+          <text x="188" y="103" fill="#58a6ff" font-size="13" font-weight="bold">+</text>
+          <text x="322" y="103" fill="#58a6ff" font-size="15" font-weight="bold">-</text>
+          <text x="255" y="142" fill="#58a6ff" font-size="12" font-weight="bold" text-anchor="middle">vo(t)</text>
+          <line x1="240" y1="126" x2="270" y2="126" stroke="#f0883e" stroke-width="1.8" />
+          <polygon points="270,123 278,126 270,129" fill="#f0883e" />
+          <text x="255" y="122" fill="#f0883e" font-size="11" font-weight="bold" text-anchor="middle">io(t)</text>
         </svg>
       `
     };
@@ -1581,19 +1741,19 @@ import {
         <div>Ponte de Graetz com 6 tiristores. Disparo comutado em pares a cada \\(60^\\circ\\). A condução é contínua para \\(0 \\le \\alpha \\le 60^\\circ\\), com \\(V_{o,méd} = \\frac{3\\sqrt{2}}{\\pi}V_{L,ef}\\cos\\alpha \\approx 1{,}35 V_{L,ef}\\cos\\alpha\\), e descontínua para \\(60^\\circ < \\alpha \\le 120^\\circ\\). Padrão da indústria para acionamentos CC de alta potência.</div>
       `,
       inversor_meia_ponte_r: `
-        <div style="font-weight: 600; color: #58a6ff; margin-bottom: 4px;">Funcionamento &bull; Inversor Monofásico Meia Ponte com Carga Resistiva (Aula 7)</div>
+        <div style="font-weight: 600; color: #58a6ff; margin-bottom: 4px;">Funcionamento &bull; Inversor Monofásico Meia Ponte com Carga Resistiva</div>
         <div>Converte tensão contínua \\(V_{CC}\\) em corrente alternada através de duas chaves semicondutoras ativas (\\(S_1\\) e \\(S_2\\)) e divisor capacitivo central com capacitores idênticos \\(C_1 = C_2\\). No semiciclo positivo \\(S_1\\) conduz e aplica \\(+V_{CC}/2\\) à carga; no semiciclo negativo \\(S_2\\) conduz e aplica \\(-V_{CC}/2\\). Produz onda quadrada pura de valor eficaz \\(V_{o,ef} = V_{CC}/2\\) e fundamental \\(V_{o1,ef} = \\frac{\\sqrt{2}}{\\pi}V_{CC} \\approx 0{,}45 V_{CC}\\).</div>
       `,
       inversor_meia_ponte_rl: `
-        <div style="font-weight: 600; color: #58a6ff; margin-bottom: 4px;">Funcionamento &bull; Inversor Monofásico Meia Ponte com Carga Indutiva RL (Aula 7)</div>
+        <div style="font-weight: 600; color: #58a6ff; margin-bottom: 4px;">Funcionamento &bull; Inversor Monofásico Meia Ponte com Carga Indutiva RL</div>
         <div>A presença de indutância na carga impede descontinuidade brusca de corrente. Diodos em antiparalelo (\\(D_1\\) e \\(D_2\\)) fornecem caminho de roda livre e regeneração de energia para a fonte CC quando os transistores bloqueiam. A corrente \\(i_o(t)\\) possui forma exponencial suave defasada de \\(\\phi\\) radianos em relação à tensão de onda quadrada.</div>
       `,
       inversor_ponte_completa_r: `
-        <div style="font-weight: 600; color: #58a6ff; margin-bottom: 4px;">Funcionamento &bull; Inversor Monofásico Ponte Completa (Ponte H) com Carga R (Aula 7)</div>
+        <div style="font-weight: 600; color: #58a6ff; margin-bottom: 4px;">Funcionamento &bull; Inversor Monofásico Ponte Completa (Ponte H) com Carga R</div>
         <div>Circuito clássico com 4 interruptores semicondutores. No primeiro semiciclo, fecham-se \\(S_1\\) e \\(S_2\\), aplicando \\(+V_{CC}\\) diretamente sobre a carga; no semiciclo seguinte fecham-se \\(S_3\\) e \\(S_4\\), invertendo o fluxo com \\(-V_{CC}\\). Dobra a tensão e quadruplica a potência em relação à meia ponte: \\(V_{o,ef} = V_{CC}\\) e fundamental \\(V_{o1,ef} = \\frac{2\\sqrt{2}}{\\pi}V_{CC} \\approx 0{,}90 V_{CC}\\).</div>
       `,
       inversor_ponte_completa_rl: `
-        <div style="font-weight: 600; color: #58a6ff; margin-bottom: 4px;">Funcionamento &bull; Inversor Monofásico Ponte Completa com Carga RL (Aula 7)</div>
+        <div style="font-weight: 600; color: #58a6ff; margin-bottom: 4px;">Funcionamento &bull; Inversor Monofásico Ponte Completa com Carga RL</div>
         <div>Ponte H completa com diodos antiparalelo \\(D_1-D_4\\). Ao comutar as chaves, a energia reativa armazenada no campo magnético do indutor \\(L\\) é devolvida à fonte CC através dos diodos, antes dos novos transistores assumirem a condução direta. THD harmônica de tensão de \\(48{,}34\\%\\) composta estritamente de harmônicos ímpares (\\(3^o, 5^o, 7^o, 9^o\\dots\\)).</div>
       `
     };
@@ -1688,7 +1848,7 @@ import {
 
       container.innerHTML = "";
 
-      // 2. ATUALIZA OS CAMPOS DO FORMULÁRIO COM VALORES PADRÃO CONFORME AULAS E LISTAS
+      // 2. ATUALIZA OS CAMPOS DO FORMULÁRIO COM VALORES PADRÃO
       let def_vrms = 220;
       let def_vp = 311.13;
       let def_freq = 60;
