@@ -848,7 +848,13 @@
       if (badgeMode) {
         let modoStr = "Monofásico 1Φ";
         if (plotData.is_inversor) {
-          modoStr = "Inversor CC-CA Monofásico";
+          if (plotData.topologia === "inversor_ponte_spwm_bipolar") {
+            modoStr = "Inversor SPWM Bipolar (Aula 8)";
+          } else if (plotData.topologia === "inversor_ponte_spwm_unipolar") {
+            modoStr = "Inversor SPWM Unipolar (Aula 8)";
+          } else {
+            modoStr = "Inversor CC-CA Monofásico";
+          }
         } else if (plotData.is_trifasico) {
           modoStr = plotData.is_controlado ? "Trifásico 3Φ Controlado (SCR)" : "Trifásico 3Φ Não Controlado";
         } else if (plotData.is_controlado) {
@@ -890,7 +896,14 @@
           { label: "v2(t) - Secundário 2 (V)", data: plotData.v_in.map(v => -v), color: "#da3633", borderWidth: 2 }
         ], "Tensão nos Enrolamentos (V)", false, plotData);
       } else if (plotData.is_inversor) {
-        chartVinInst = criarSubplot("chartVin", "VCC - Barramento CC (V)", plotData.v_in, "Tensão VCC (V)", false, plotData, "#58a6ff");
+        if (plotData.topologia.includes("_spwm_") && plotData.v_mod && plotData.v_tri && plotData.v_mod.length > 0) {
+          chartVinInst = criarSubplotMulti("chartVin", [
+            { label: "vm(t) - Modulante Senoidal (V)", data: plotData.v_mod, color: "#ec4899", borderWidth: 2 },
+            { label: "vtri(t) - Portadora Triangular (V)", data: plotData.v_tri, color: "#e3b341", borderWidth: 1.2 }
+          ], "Modulação SPWM: vm vs vtri (V)", false, plotData);
+        } else {
+          chartVinInst = criarSubplot("chartVin", "VCC - Barramento CC (V)", plotData.v_in, "Tensão VCC (V)", false, plotData, "#58a6ff");
+        }
       } else {
         chartVinInst = criarSubplot("chartVin", "vi(t)", plotData.v_in, "Tensão de entrada (V)", false, plotData, "#58a6ff");
       }
@@ -919,7 +932,8 @@
             { label: "G3 - Fase C (V)", data: plotData.gate3, color: "#fb923c", borderWidth: 2 }
           ], "Pulsos de Gate G1, G2, G3 (V)", false, plotData);
         } else {
-          chartGateInst = criarSubplot("chartGate", "G(t) - Pulso de Disparo / Gate (V)", plotData.gate, "Gate G(t) (V)", false, plotData, "#2ea043");
+          const labelGate = plotData.topologia.includes("_spwm_") ? "G1(t) - Pulso PWM Chave S1 (V)" : (plotData.is_inversor ? "G1(t) - Sinal de Comando Chave S1 (V)" : "G(t) - Pulso de Disparo / Gate (V)");
+          chartGateInst = criarSubplot("chartGate", labelGate, plotData.gate, "Gate G(t) (V)", false, plotData, "#2ea043");
         }
       } else {
         boxGate.style.display = "none";
@@ -957,8 +971,8 @@
         let labelD1 = "iD1(t) - Diodo Principal (A)";
         let titleD1 = "Corrente iD1 (A)";
         if (plotData.is_inversor) {
-          labelD1 = plotData.topologia.includes("ponte_completa") ? "iS1,S2(t) - Chaves S1-S2 (A)" : "iS1(t) - Chave S1 (A)";
-          titleD1 = plotData.topologia.includes("ponte_completa") ? "Corrente iS1,S2 (A)" : "Corrente iS1 (A)";
+          labelD1 = plotData.topologia.includes("_spwm_") ? "iS1(t) - Chave S1 (Pulsos PWM) (A)" : (plotData.topologia.includes("ponte_completa") ? "iS1,S2(t) - Chaves S1-S2 (A)" : "iS1(t) - Chave S1 (A)");
+          titleD1 = plotData.topologia.includes("_spwm_") ? "Corrente iS1 (A)" : (plotData.topologia.includes("ponte_completa") ? "Corrente iS1,S2 (A)" : "Corrente iS1 (A)");
         } else if (plotData.is_controlado) {
           labelD1 = plotData.is_onda_completa ? "iT1,T4(t) - Tiristores T1-T4 (A)" : (plotData.is_trifasico ? "iT1(t) - Tiristor Fase A (A)" : "iT1(t) - Tiristor Principal (A)");
           titleD1 = plotData.is_onda_completa ? "Corrente iT1,T4 (A)" : (plotData.is_trifasico ? "Corrente iT1 (A)" : "Corrente iT1 (A)");

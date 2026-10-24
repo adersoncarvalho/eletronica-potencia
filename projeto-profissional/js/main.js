@@ -79,10 +79,12 @@ import {
         { id: "tri_ponte_controlado_r", nome: "Retificador Trifásico Controlado em Ponte Completa", grupo: "Retificadores Trifásicos Controlados" }
       ],
       conversores_cc_ca: [
-        { id: "inversor_meia_ponte_r", nome: "Inversor Monofásico Meia Ponte com Carga R", grupo: "Inversores Monofásicos de Tensão" },
-        { id: "inversor_meia_ponte_rl", nome: "Inversor Monofásico Meia Ponte com Carga RL", grupo: "Inversores Monofásicos de Tensão" },
-        { id: "inversor_ponte_completa_r", nome: "Inversor Monofásico Ponte Completa (Ponte H) com Carga R", grupo: "Inversores Monofásicos de Tensão" },
-        { id: "inversor_ponte_completa_rl", nome: "Inversor Monofásico Ponte Completa (Ponte H) com Carga RL", grupo: "Inversores Monofásicos de Tensão" }
+        { id: "inversor_meia_ponte_r", nome: "Inversor Monofásico Meia Ponte com Carga R", grupo: "Inversores de Onda Quadrada" },
+        { id: "inversor_meia_ponte_rl", nome: "Inversor Monofásico Meia Ponte com Carga RL", grupo: "Inversores de Onda Quadrada" },
+        { id: "inversor_ponte_completa_r", nome: "Inversor Monofásico Ponte Completa (Ponte H) com Carga R", grupo: "Inversores de Onda Quadrada" },
+        { id: "inversor_ponte_completa_rl", nome: "Inversor Monofásico Ponte Completa (Ponte H) com Carga RL", grupo: "Inversores de Onda Quadrada" },
+        { id: "inversor_ponte_spwm_bipolar", nome: "Inversor Monofásico Ponte H com Modulação SPWM Bipolar (2 Níveis)", grupo: "Inversores com Modulação PWM/SPWM (Aula 8)" },
+        { id: "inversor_ponte_spwm_unipolar", nome: "Inversor Monofásico Ponte H com Modulação SPWM Unipolar (3 Níveis)", grupo: "Inversores com Modulação PWM/SPWM (Aula 8)" }
       ]
     };
 
@@ -1651,6 +1653,180 @@ import {
           <polygon points="270,123 278,126 270,129" fill="#f0883e" />
           <text x="255" y="122" fill="#f0883e" font-size="11" font-weight="bold" text-anchor="middle">io(t)</text>
         </svg>
+      `,
+      inversor_ponte_spwm_bipolar: `
+        <svg viewBox="0 0 520 220" xmlns="http://www.w3.org/2000/svg">
+          <!-- Bloco Comparador PWM (Esquerda) -->
+          <rect x="15" y="35" width="115" height="150" fill="#161b22" stroke="#38bdf8" stroke-width="1.8" rx="6" />
+          <text x="72" y="55" fill="#38bdf8" font-size="11" font-weight="bold" text-anchor="middle">Modulador SPWM</text>
+          <!-- Símbolo Senoide Modulante vm -->
+          <path d="M 30 80 Q 42 68 54 80 T 78 80" stroke="#ec4899" stroke-width="2" fill="none" />
+          <text x="92" y="84" fill="#ec4899" font-size="10" font-weight="bold">vm(t)</text>
+          <!-- Símbolo Triangular Portadora vtri -->
+          <path d="M 30 115 L 42 100 L 54 115 L 66 100 L 78 115" stroke="#e3b341" stroke-width="1.8" fill="none" />
+          <text x="92" y="112" fill="#e3b341" font-size="10" font-weight="bold">vtri(t)</text>
+          <!-- Comparador triangular -->
+          <polygon points="40,140 40,175 75,157" fill="#21262d" stroke="#58a6ff" stroke-width="1.5" />
+          <text x="47" y="152" fill="#ec4899" font-size="11" font-weight="bold">+</text>
+          <text x="47" y="170" fill="#e3b341" font-size="13" font-weight="bold">-</text>
+          <line x1="75" y1="157" x2="130" y2="157" stroke="#38bdf8" stroke-width="2" />
+          <text x="100" y="152" fill="#38bdf8" font-size="9" font-weight="bold">PWM</text>
+
+          <!-- Barramentos VCC e GND -->
+          <line x1="170" y1="28" x2="490" y2="28" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="170" y1="192" x2="490" y2="192" stroke="#58a6ff" stroke-width="2.5" />
+
+          <!-- Fonte CC VCC -->
+          <circle cx="170" cy="110" r="18" fill="#161b22" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="170" y1="28" x2="170" y2="92" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="170" y1="128" x2="170" y2="192" stroke="#58a6ff" stroke-width="2.5" />
+          <text x="170" y="104" fill="#f0f6fc" font-size="12" font-weight="bold" text-anchor="middle">+</text>
+          <text x="170" y="123" fill="#f0f6fc" font-size="14" font-weight="bold" text-anchor="middle">-</text>
+          <text x="144" y="114" fill="#58a6ff" font-size="11" font-weight="bold">VCC</text>
+
+          <!-- Perna 1: S1/D1 e S4/D4 -->
+          <rect x="235" y="48" width="28" height="24" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="3" />
+          <text x="249" y="64" fill="#2ea043" font-size="11" font-weight="bold" text-anchor="middle">S1</text>
+          <polygon points="278,70 296,70 287,52" fill="#238636" stroke="#238636" stroke-width="1.5" />
+          <line x1="278" y1="52" x2="296" y2="52" stroke="#238636" stroke-width="2" />
+          <text x="303" y="63" fill="#238636" font-size="10" font-weight="bold">D1</text>
+
+          <rect x="235" y="148" width="28" height="24" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="3" />
+          <text x="249" y="164" fill="#2ea043" font-size="11" font-weight="bold" text-anchor="middle">S4</text>
+          <polygon points="278,170 296,170 287,152" fill="#238636" stroke="#238636" stroke-width="1.5" />
+          <line x1="278" y1="152" x2="296" y2="152" stroke="#238636" stroke-width="2" />
+          <text x="303" y="163" fill="#238636" font-size="10" font-weight="bold">D4</text>
+
+          <line x1="268" y1="28" x2="268" y2="48" stroke="#58a6ff" stroke-width="2" />
+          <line x1="268" y1="72" x2="268" y2="148" stroke="#58a6ff" stroke-width="2" />
+          <line x1="268" y1="172" x2="268" y2="192" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="268" cy="110" r="3.5" fill="#58a6ff" />
+
+          <!-- Perna 2: S3/D3 e S2/D2 -->
+          <rect x="405" y="48" width="28" height="24" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="3" />
+          <text x="419" y="64" fill="#2ea043" font-size="11" font-weight="bold" text-anchor="middle">S3</text>
+          <polygon points="448,70 466,70 457,52" fill="#238636" stroke="#238636" stroke-width="1.5" />
+          <line x1="448" y1="52" x2="466" y2="52" stroke="#238636" stroke-width="2" />
+          <text x="473" y="63" fill="#238636" font-size="10" font-weight="bold">D3</text>
+
+          <rect x="405" y="148" width="28" height="24" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="3" />
+          <text x="419" y="164" fill="#2ea043" font-size="11" font-weight="bold" text-anchor="middle">S2</text>
+          <polygon points="448,170 466,170 457,152" fill="#238636" stroke="#238636" stroke-width="1.5" />
+          <line x1="448" y1="152" x2="466" y2="152" stroke="#238636" stroke-width="2" />
+          <text x="473" y="163" fill="#238636" font-size="10" font-weight="bold">D2</text>
+
+          <line x1="438" y1="28" x2="438" y2="48" stroke="#58a6ff" stroke-width="2" />
+          <line x1="438" y1="72" x2="438" y2="148" stroke="#58a6ff" stroke-width="2" />
+          <line x1="438" y1="172" x2="438" y2="192" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="438" cy="110" r="3.5" fill="#58a6ff" />
+
+          <!-- Carga RL Série entre braços (268,110) e (438,110) -->
+          <line x1="268" y1="110" x2="305" y2="110" stroke="#58a6ff" stroke-width="2.5" />
+          <path d="M 305 110 L 310 110 L 315 118 L 323 102 L 331 118 L 339 102 L 345 110 L 350 110" stroke="#e3b341" stroke-width="2" fill="none" />
+          <text x="328" y="94" fill="#e3b341" font-size="12" font-weight="bold" text-anchor="middle">R</text>
+          <path d="M 350 110 A 6 6 0 0 1 362 110 A 6 6 0 0 1 374 110 A 6 6 0 0 1 386 110" stroke="#a371f7" stroke-width="2" fill="none" />
+          <text x="368" y="94" fill="#a371f7" font-size="12" font-weight="bold" text-anchor="middle">L</text>
+          <line x1="386" y1="110" x2="438" y2="110" stroke="#58a6ff" stroke-width="2.5" />
+
+          <text x="280" y="102" fill="#58a6ff" font-size="13" font-weight="bold">+</text>
+          <text x="424" y="102" fill="#58a6ff" font-size="15" font-weight="bold">-</text>
+          <text x="353" y="136" fill="#38bdf8" font-size="11" font-weight="bold" text-anchor="middle">vo(t) = ±VCC (2 Níveis)</text>
+        </svg>
+      `,
+      inversor_ponte_spwm_unipolar: `
+        <svg viewBox="0 0 520 220" xmlns="http://www.w3.org/2000/svg">
+          <!-- Bloco Comparador SPWM Unipolar Dual (Esquerda) -->
+          <rect x="15" y="25" width="125" height="170" fill="#161b22" stroke="#ec4899" stroke-width="1.8" rx="6" />
+          <text x="77" y="44" fill="#ec4899" font-size="10" font-weight="bold" text-anchor="middle">SPWM Unipolar (3 Níveis)</text>
+
+          <!-- Modulante 1: +vm -->
+          <path d="M 28 65 Q 40 55 52 65 T 76 65" stroke="#ec4899" stroke-width="1.8" fill="none" />
+          <text x="86" y="68" fill="#ec4899" font-size="9" font-weight="bold">+vm(t)</text>
+          <!-- Comparador A -->
+          <polygon points="35,80 35,105 60,92" fill="#21262d" stroke="#58a6ff" stroke-width="1.2" />
+          <line x1="60" y1="92" x2="140" y2="92" stroke="#38bdf8" stroke-width="1.5" />
+          <text x="85" y="89" fill="#38bdf8" font-size="8" font-weight="bold">Gate S1,S4</text>
+
+          <!-- Portadora Triangular Compartilhada -->
+          <path d="M 28 120 L 38 110 L 48 120 L 58 110 L 68 120" stroke="#e3b341" stroke-width="1.5" fill="none" />
+          <text x="82" y="119" fill="#e3b341" font-size="9" font-weight="bold">vtri(t)</text>
+
+          <!-- Modulante 2: -vm (oposição 180°) -->
+          <path d="M 28 150 Q 40 160 52 150 T 76 150" stroke="#ec4899" stroke-width="1.8" fill="none" stroke-dasharray="2,2" />
+          <text x="86" y="152" fill="#ec4899" font-size="9" font-weight="bold">-vm(t)</text>
+          <!-- Comparador B -->
+          <polygon points="35,160 35,185 60,172" fill="#21262d" stroke="#58a6ff" stroke-width="1.2" />
+          <line x1="60" y1="172" x2="140" y2="172" stroke="#da3633" stroke-width="1.5" />
+          <text x="85" y="169" fill="#da3633" font-size="8" font-weight="bold">Gate S3,S2</text>
+
+          <!-- Barramentos VCC e GND -->
+          <line x1="180" y1="28" x2="490" y2="28" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="180" y1="192" x2="490" y2="192" stroke="#58a6ff" stroke-width="2.5" />
+
+          <!-- Fonte CC VCC -->
+          <circle cx="180" cy="110" r="18" fill="#161b22" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="180" y1="28" x2="180" y2="92" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="180" y1="128" x2="180" y2="192" stroke="#58a6ff" stroke-width="2.5" />
+          <text x="180" y="104" fill="#f0f6fc" font-size="12" font-weight="bold" text-anchor="middle">+</text>
+          <text x="180" y="123" fill="#f0f6fc" font-size="14" font-weight="bold" text-anchor="middle">-</text>
+          <text x="154" y="114" fill="#58a6ff" font-size="11" font-weight="bold">VCC</text>
+
+          <!-- Perna 1: S1/D1 e S4/D4 -->
+          <rect x="245" y="48" width="28" height="24" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="3" />
+          <text x="259" y="64" fill="#2ea043" font-size="11" font-weight="bold" text-anchor="middle">S1</text>
+          <polygon points="288,70 306,70 297,52" fill="#238636" stroke="#238636" stroke-width="1.5" />
+          <line x1="288" y1="52" x2="306" y2="52" stroke="#238636" stroke-width="2" />
+          <text x="313" y="63" fill="#238636" font-size="10" font-weight="bold">D1</text>
+
+          <rect x="245" y="148" width="28" height="24" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="3" />
+          <text x="259" y="164" fill="#2ea043" font-size="11" font-weight="bold" text-anchor="middle">S4</text>
+          <polygon points="288,170 306,170 297,152" fill="#238636" stroke="#238636" stroke-width="1.5" />
+          <line x1="288" y1="152" x2="306" y2="152" stroke="#238636" stroke-width="2" />
+          <text x="313" y="163" fill="#238636" font-size="10" font-weight="bold">D4</text>
+
+          <line x1="278" y1="28" x2="278" y2="48" stroke="#58a6ff" stroke-width="2" />
+          <line x1="278" y1="72" x2="278" y2="148" stroke="#58a6ff" stroke-width="2" />
+          <line x1="278" y1="172" x2="278" y2="192" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="278" cy="110" r="3.5" fill="#58a6ff" />
+
+          <!-- Perna 2: S3/D3 e S2/D2 -->
+          <rect x="410" y="48" width="28" height="24" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="3" />
+          <text x="424" y="64" fill="#2ea043" font-size="11" font-weight="bold" text-anchor="middle">S3</text>
+          <polygon points="453,70 471,70 462,52" fill="#238636" stroke="#238636" stroke-width="1.5" />
+          <line x1="453" y1="52" x2="471" y2="52" stroke="#238636" stroke-width="2" />
+          <text x="478" y="63" fill="#238636" font-size="10" font-weight="bold">D3</text>
+
+          <rect x="410" y="148" width="28" height="24" fill="#161b22" stroke="#2ea043" stroke-width="2" rx="3" />
+          <text x="424" y="164" fill="#2ea043" font-size="11" font-weight="bold" text-anchor="middle">S2</text>
+          <polygon points="453,170 471,170 462,152" fill="#238636" stroke="#238636" stroke-width="1.5" />
+          <line x1="453" y1="152" x2="471" y2="152" stroke="#238636" stroke-width="2" />
+          <text x="478" y="163" fill="#238636" font-size="10" font-weight="bold">D2</text>
+
+          <line x1="443" y1="28" x2="443" y2="48" stroke="#58a6ff" stroke-width="2" />
+          <line x1="443" y1="72" x2="443" y2="148" stroke="#58a6ff" stroke-width="2" />
+          <line x1="443" y1="172" x2="443" y2="192" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="443" cy="110" r="3.5" fill="#58a6ff" />
+
+          <!-- Carga RL Série entre braços (278,110) e (443,110) -->
+          <line x1="278" y1="110" x2="315" y2="110" stroke="#58a6ff" stroke-width="2.5" />
+          <path d="M 315 110 L 320 110 L 325 118 L 333 102 L 341 118 L 349 102 L 355 110 L 360 110" stroke="#e3b341" stroke-width="2" fill="none" />
+          <text x="338" y="94" fill="#e3b341" font-size="12" font-weight="bold" text-anchor="middle">R</text>
+          <path d="M 360 110 A 6 6 0 0 1 372 110 A 6 6 0 0 1 384 110 A 6 6 0 0 1 396 110" stroke="#a371f7" stroke-width="2" fill="none" />
+          <text x="378" y="94" fill="#a371f7" font-size="12" font-weight="bold" text-anchor="middle">L</text>
+          <line x1="396" y1="110" x2="443" y2="110" stroke="#58a6ff" stroke-width="2.5" />
+
+          <text x="290" y="102" fill="#58a6ff" font-size="13" font-weight="bold">+</text>
+          <text x="428" y="102" fill="#58a6ff" font-size="15" font-weight="bold">-</text>
+          <text x="360" y="136" fill="#ec4899" font-size="11" font-weight="bold" text-anchor="middle">vo(t) = +VCC, 0, -VCC (3 Níveis)</text>
+        </svg>
+      `,
+      inversor_ponte_spwm_bipolar: `
+        <div style="font-weight: 600; color: #58a6ff; margin-bottom: 4px;">Funcionamento &bull; Inversor Monofásico Ponte H com Modulação SPWM Bipolar (Aula 8)</div>
+        <div>Modulação por Largura de Pulso Senoidal Bipolar (2 Níveis: \(\pm V_{CC}\)). Uma tensão de controle senoidal \(v_m(t) = m_a \sin(\omega_1 t)\) é comparada com uma portadora triangular \(v_{tri}(t)\) de alta frequência (\(f_s = m_f f_1\)). As chaves operam em diagonais opostas: quando \(v_m > v_{tri}\), \(S_1\) e \(S_4\) conduzem e \(v_o = +V_{CC}\); quando \(v_m < v_{tri}\), fecham-se \(S_2\) e \(S_3\) com \(v_o = -V_{CC}\). A fundamental é \(V_{o1,ef} = \frac{m_a V_{CC}}{\sqrt{2}}\). Os harmônicos de baixa ordem são eliminados, empurrando o ripple para frequências em torno de \(m_f f_1\), facilmente filtradas pela indutância.</div>
+      `,
+      inversor_ponte_spwm_unipolar: `
+        <div style="font-weight: 600; color: #58a6ff; margin-bottom: 4px;">Funcionamento &bull; Inversor Monofásico Ponte H com Modulação SPWM Unipolar (Aula 8)</div>
+        <div>Modulação por Largura de Pulso Senoidal Unipolar (3 Níveis: \(+V_{CC}, 0, -V_{CC}\)). Utiliza duas modulantes em oposição de fase \(180^\circ\) (\(+v_m\) e \(-v_m\)) comparadas à mesma portadora triangular. Cada perna comuta de modo independente, permitindo estados de roda livre interna (\(v_o = 0\)). A tensão de saída apresenta 3 níveis, mantendo \(V_{o1,ef} = \frac{m_a V_{CC}}{\sqrt{2}}\), porém com cancelamento completo dos harmônicos em torno de \(m_f\). A primeira banda de harmônicos surge em \(2 m_f f_1\) (frequência aparente dobrada), reduzindo o ripple da corrente pela metade e diminuindo drasticamente a THD.</div>
       `
     };
 
@@ -1976,15 +2152,15 @@ import {
         inputsHTML = `
           <div class="form-group">
             <label for="input-vrms">Tensão CC de Alimentação V<sub>CC</sub> [V]</label>
-            <input type="number" id="input-vrms" step="any" value="100" required>
+            <input type="number" id="input-vrms" step="any" value="400" required>
           </div>
           <div class="grid-2">
             <div class="form-group">
-              <label for="input-freq">Frequência de Saída f [Hz]</label>
+              <label for="input-freq">Frequência Fundamental de Saída f₁ [Hz]</label>
               <input type="number" id="input-freq" step="any" value="${def_freq}" required>
             </div>
             <div class="form-group">
-              <label for="input-omega">Freq. Angular ω [rad/s]</label>
+              <label for="input-omega">Freq. Angular Fundamental ω₁ [rad/s]</label>
               <input type="number" id="input-omega" step="any" value="${def_omega}" required>
             </div>
           </div>
@@ -2301,7 +2477,30 @@ import {
             </div>
             <div class="form-group">
               <label for="input-l">Indutância de Carga L [H]</label>
-              <input type="number" id="input-l" step="any" value="0.025" required>
+              <input type="number" id="input-l" step="any" value="0.01" required>
+            </div>
+          </div>
+        `;
+      } else if (topologia === "inversor_ponte_spwm_bipolar" || topologia === "inversor_ponte_spwm_unipolar") {
+        inputsHTML += `
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="input-ma">Índice de Modulação de Amplitude m<sub>a</sub> (0 &lt; m<sub>a</sub> ≤ 1)</label>
+              <input type="number" id="input-ma" step="0.05" min="0.05" max="1" value="0.8" required>
+            </div>
+            <div class="form-group">
+              <label for="input-mf">Razão de Frequência m<sub>f</sub> (f<sub>s</sub> / f<sub>1</sub>, ímpar)</label>
+              <input type="number" id="input-mf" step="2" min="3" max="99" value="21" required>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="input-r">Resistência de Carga R [Ω]</label>
+              <input type="number" id="input-r" step="any" value="10" required>
+            </div>
+            <div class="form-group">
+              <label for="input-l">Indutância de Carga L [H]</label>
+              <input type="number" id="input-l" step="any" value="0.01" required>
             </div>
           </div>
         `;
