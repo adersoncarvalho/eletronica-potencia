@@ -2221,10 +2221,10 @@ import { atualizarGrafico } from './graficos.js';
             <!-- Método 1: Ábaco Parametrizado -->
             <div style="background: rgba(56, 139, 253, 0.08); border-left: 3px solid #388bfd; padding: 10px 14px; border-radius: 0 6px 6px 0; margin-bottom: 12px;">
               <div style="font-weight: 700; color: #58a6ff; font-size: 0.9rem; margin-bottom: 4px;">
-                🔹 Método 1: Ábaco de Corrente Eficaz Parametrizada (\(I_{efp}\)) 
+                🔹 Método 1: Ábaco de Corrente Eficaz Parametrizada (\\(I_{efp}\\)) 
               </div>
               <div class="step-desc">
-                Com os parâmetros adimensionais \(a = \frac{E}{\sqrt{2}V_{ef}} = ${fator_a.toFixed(2)}\), \(\cos\phi = \frac{R}{Z} = ${cos_phi.toFixed(2)}\) e \(\alpha = ${alpha}^\circ\), faz-se a leitura da corrente normalizada no ábaco:
+                Com os parâmetros adimensionais \\(a = \\frac{E}{\\sqrt{2}V_{ef}} = ${fator_a.toFixed(2)}\\), \\(\\cos\\phi = \\frac{R}{Z} = ${cos_phi.toFixed(2)}\\) e \\(\\alpha = ${alpha}^\\circ\\), faz-se a leitura da corrente normalizada no ábaco:
                 <button type="button" class="btn-table-tag" style="margin-left: 6px; padding: 2px 7px; font-size: 0.74rem;" onclick="toggleAbacoIefp()">📊 Ver Ábaco Traçado</button>
               </div>
               <div class="math-block">\\[ I_{efp} = \\frac{I_{o,ef} \\cdot R}{\\sqrt{2} V_{ef}} \\approx ${I_efp.toFixed(4)} \\]</div>
@@ -2243,7 +2243,7 @@ import { atualizarGrafico } from './graficos.js';
                 🔹 Método 2: Solução Computacional por Integração Direta da Equação Diferencial
               </div>
               <div class="step-desc">
-                Cálculo exato da integral RMS da forma de onda de corrente \(i(\theta)\) durante o intervalo de condução \([\alpha, \beta]\):
+                Cálculo exato da integral RMS da forma de onda de corrente \\(i(\\theta)\\) durante o intervalo de condução \\([\\alpha, \\beta]\\):
               </div>
               <div class="math-block">\\[ I_{o,ef} = \\sqrt{\\frac{1}{2\\pi} \\int_{\\alpha}^{\\beta} [i(\\theta)]^2 \\, d\\theta} = \\sqrt{\\frac{1}{2\\pi} \\int_{${alpha}^\\circ}^{${Math.round(beta_deg)}^\\circ} [i(\\theta)]^2 \\, d\\theta} = ${I_o_ef.toFixed(3)}\\text{ A} \\]</div>
             </div>
@@ -2252,7 +2252,7 @@ import { atualizarGrafico } from './graficos.js';
             <div style="background: rgba(227, 179, 65, 0.12); border: 1px solid #e3b341; padding: 10px 14px; border-radius: 6px; margin-bottom: 14px; font-size: 0.85rem; color: #f0e6c5;">
               <strong>✅ Confronto e Validação de Equivalência:</strong>
               <div style="margin-top: 4px;">
-                • Corrente pelo Ábaco Parametrizado (\(I_{efp}\)): <strong>${I_o_ef_abaco.toFixed(3)} A</strong>
+                • Corrente pelo Ábaco Parametrizado (\\(I_{efp}\\)): <strong>${I_o_ef_abaco.toFixed(3)} A</strong>
                 <br>• Corrente pela Integral da Forma de Onda: <strong>${I_o_ef.toFixed(3)} A</strong>
                 <br>• Concordância: <strong>100% exata</strong> (o ábaco é a representação analítica parametrizada da mesma integral).
               </div>
@@ -3035,14 +3035,14 @@ import { atualizarGrafico } from './graficos.js';
             <div class="math-block">\\[ \\text{THD}_i = \\frac{\\sqrt{I_{o,ef}^2 - I_{o1,ef}^2}}{I_{o1,ef}} = \\frac{\\sqrt{${I_o_ef.toFixed(3)}^2 - ${I_o1_ef.toFixed(3)}^2}}{${I_o1_ef.toFixed(3)}} = ${THD_i.toFixed(2)}\\% \\]</div>
           <div class="step-box">
             <div class="step-title">Etapa 4: Solução Fechada Analítica Exata para Corrente Eficaz e Potência (Aula 8 - Slide 18)</div>
-            <div class="step-desc">A dedução analítica direta por integração de \(i_L^2(t)\) no domínio do tempo fornece a fórmula exata sem truncamento harmônico (Slide 18 da Aula 8):</div>
-            <div class="math-block">\[ I_{ef} = \frac{V_{CC}}{2R} \sqrt{1 - \frac{4\tau}{T} - \frac{4\tau}{T} e^{-T/\tau} + \frac{8\tau}{T} e^{-T/(2\tau)}} \]</div>
-            <div class="step-desc">Para os valores \(V_{CC} = ${V_CC.toFixed(1)}\text{ V}\), \(R = ${R}\;\Omega\), \(L = ${(L*1000).toFixed(1)}\text{ mH}\) (\(\tau = ${(tau*1000).toFixed(2)}\text{ ms}\)) e \(T = ${(T_seg*1000).toFixed(2)}\text{ ms}\):</div>
-            <div class="math-block">\[ I_{ef} = \frac{${V_CC.toFixed(1)}}{2 \cdot ${R}} \sqrt{${Math.max(0, term_aula8).toFixed(5)}} = ${I_ef_analitico.toFixed(3)}\text{ A} \]</div>
-            <div class="math-block">\[ P_o = R \cdot (I_{ef})^2 = ${R} \cdot (${I_ef_analitico.toFixed(3)})^2 = ${P_R_analitico.toFixed(2)}\text{ W} \]</div>
-            <div class="step-desc">Tempo exato de comutação dos diodos \(D_1\) e condução do transistor \(S_1\) (Slide 18):</div>
-            <div class="math-block">\[ t_1 = \tau \ln(2) \approx 0{,}693 \cdot \tau = 0{,}693 \cdot ${(tau*1000).toFixed(2)}\text{ ms} = ${t1_aula8_ms.toFixed(3)}\text{ ms} \]</div>
-            <div class="step-desc">Conclusão: A solução fechada analítica da Aula 8 (\(I_{ef} = ${I_ef_analitico.toFixed(3)}\text{ A}\)) valida a expansão em série de Fourier (\(I_{o,ef} = ${I_o_ef.toFixed(3)}\text{ A}\)), demonstrando convergência rigorosa.</div>
+            <div class="step-desc">A dedução analítica direta por integração de \\(i_L^2(t)\\) no domínio do tempo fornece a fórmula exata sem truncamento harmônico (Slide 18 da Aula 8):</div>
+            <div class="math-block">\\[ I_{ef} = \\frac{V_{CC}}{2R} \\sqrt{1 - \\frac{4\\tau}{T} - \\frac{4\\tau}{T} e^{-T/\\tau} + \\frac{8\\tau}{T} e^{-T/(2\\tau)}} \\]</div>
+            <div class="step-desc">Para os valores \\(V_{CC} = ${V_CC.toFixed(1)}\\text{ V}\\), \\(R = ${R}\\;\\Omega\\), \\(L = ${(L*1000).toFixed(1)}\\text{ mH}\\) (\\(\\tau = ${(tau*1000).toFixed(2)}\\text{ ms}\\)) e \\(T = ${(T_seg*1000).toFixed(2)}\\text{ ms}\\):</div>
+            <div class="math-block">\\[ I_{ef} = \\frac{${V_CC.toFixed(1)}}{2 \\cdot ${R}} \\sqrt{${Math.max(0, term_aula8).toFixed(5)}} = ${I_ef_analitico.toFixed(3)}\\text{ A} \\]</div>
+            <div class="math-block">\\[ P_o = R \\cdot (I_{ef})^2 = ${R} \\cdot (${I_ef_analitico.toFixed(3)})^2 = ${P_R_analitico.toFixed(2)}\\text{ W} \\]</div>
+            <div class="step-desc">Tempo exato de comutação dos diodos \\(D_1\\) e condução do transistor \\(S_1\\) (Slide 18):</div>
+            <div class="math-block">\\[ t_1 = \\tau \\ln(2) \\approx 0{,}693 \\cdot \\tau = 0{,}693 \\cdot ${(tau*1000).toFixed(2)}\\text{ ms} = ${t1_aula8_ms.toFixed(3)}\\text{ ms} \\]</div>
+            <div class="step-desc">Conclusão: A solução fechada analítica da Aula 8 (\\(I_{ef} = ${I_ef_analitico.toFixed(3)}\\text{ A}\\)) valida a expansão em série de Fourier (\\(I_{o,ef} = ${I_o_ef.toFixed(3)}\\text{ A}\\)), demonstrando convergência rigorosa.</div>
           </div>
           </div>
         `;
@@ -3326,8 +3326,8 @@ import { atualizarGrafico } from './graficos.js';
           <div class="step-box">
             <div class="step-title">Etapa 1: Parâmetros de Modulação por Largura de Pulso Senoidal (SPWM - Aula 8)</div>
             <div class="step-desc">A técnica SPWM compara uma tensão de referência senoidal (modulante) com uma portadora triangular de alta frequência (Slides 21-24 da Aula 8):</div>
-            <div class="math-block">\[ m_a = \frac{A_m}{A_c} = ${m_a.toFixed(2)} \qquad m_f = \frac{f_s}{f_1} = \frac{${f_s}}{${freq}} = ${m_f} \]</div>
-            <div class="step-desc">Frequência de chaveamento dos semicondutores: \(f_s = m_f \cdot f_1 = ${m_f} \cdot ${freq} = ${f_s}\text{ Hz}\) (Período \(T_s = ${(1000/f_s).toFixed(3)}\text{ ms}\)).</div>
+            <div class="math-block">\\[ m_a = \\frac{A_m}{A_c} = ${m_a.toFixed(2)} \\qquad m_f = \\frac{f_s}{f_1} = \\frac{${f_s}}{${freq}} = ${m_f} \\]</div>
+            <div class="step-desc">Frequência de chaveamento dos semicondutores: \\(f_s = m_f \\cdot f_1 = ${m_f} \\cdot ${freq} = ${f_s}\\text{ Hz}\\) (Período \\(T_s = ${(1000/f_s).toFixed(3)}\\text{ ms}\\)).</div>
             <div class="step-desc">${isBipolar
               ? "<b>Topologia Bipolar (Slide 23):</b> Uma única modulante comparada à portadora triangular. As chaves comutam em diagonais opostas (\\(S_1-S_4\\) vs \\(S_2-S_3\\)), gerando tensão de saída com <b>2 níveis</b> (\\(+V_{CC}\\) e \\(-V_{CC}\\))."
               : "<b>Topologia Unipolar (Slide 24):</b> Duas modulantes defasadas de \\(180^\\circ\\) (\\(+v_m\\) e \\(-v_m\\)) comparadas à mesma portadora triangular. Cada perna comuta de forma independente, gerando tensão de saída com <b>3 níveis</b> (\\(+V_{CC}, 0, -V_{CC}\\))."}</div>
@@ -3335,9 +3335,9 @@ import { atualizarGrafico } from './graficos.js';
 
           <div class="step-box">
             <div class="step-title">Etapa 2: Componente Fundamental e Tensão Eficaz da Saída</div>
-            <div class="step-desc">Na região de modulação linear (\(0 < m_a \le 1\)), a amplitude de pico da componente fundamental é dada diretamente por:</div>
-            <div class="math-block">\[ V_{o1,pico} = m_a \cdot V_{CC} = ${m_a.toFixed(2)} \cdot ${V_CC.toFixed(2)} = ${V_o1_pico.toFixed(2)}\text{ V} \]</div>
-            <div class="math-block">\[ V_{o1,ef} = \frac{m_a \cdot V_{CC}}{\sqrt{2}} = \frac{${m_a.toFixed(2)} \cdot ${V_CC.toFixed(2)}}{\sqrt{2}} = ${V_o1_ef.toFixed(2)}\text{ V} \]</div>
+            <div class="step-desc">Na região de modulação linear (\\(0 < m_a \\le 1\\)), a amplitude de pico da componente fundamental é dada diretamente por:</div>
+            <div class="math-block">\\[ V_{o1,pico} = m_a \\cdot V_{CC} = ${m_a.toFixed(2)} \\cdot ${V_CC.toFixed(2)} = ${V_o1_pico.toFixed(2)}\\text{ V} \\]</div>
+            <div class="math-block">\\[ V_{o1,ef} = \\frac{m_a \\cdot V_{CC}}{\\sqrt{2}} = \\frac{${m_a.toFixed(2)} \\cdot ${V_CC.toFixed(2)}}{\\sqrt{2}} = ${V_o1_ef.toFixed(2)}\\text{ V} \\]</div>
             <div class="step-desc">Tensão eficaz total True RMS (incluindo todas as componentes de chaveamento PWM):</div>
             <div class="math-block">${isBipolar
               ? "\\[ V_{o,ef} = V_{CC} = " + V_CC.toFixed(2) + "\\text{ V} \\qquad \\text{THD}_v = \\sqrt{\\frac{2}{m_a^2} - 1} = \\sqrt{\\frac{2}{" + (m_a*m_a).toFixed(4) + "} - 1} = " + THD_v.toFixed(1) + "\\% \\]"
@@ -3349,10 +3349,10 @@ import { atualizarGrafico } from './graficos.js';
 
           <div class="step-box">
             <div class="step-title">Etapa 3: Resposta da Carga Indutiva RL e Filtragem Harmônica Natural</div>
-            <div class="step-desc">A impedância da carga RL na frequência fundamental (\(f_1 = ${freq}\text{ Hz}\)) é:</div>
-            <div class="math-block">\[ Z_1 = \sqrt{R^2 + (\omega_1 L)^2} = \sqrt{${R}^2 + (${omega_1.toFixed(1)} \cdot ${L})^2} = ${Z1.toFixed(2)}\;\Omega \quad (\phi_1 = ${phi1_deg.toFixed(1)}^\circ) \]</div>
-            <div class="math-block">\[ I_{o1,ef} = \frac{V_{o1,ef}}{Z_1} = \frac{${V_o1_ef.toFixed(2)}}{${Z1.toFixed(2)}} = ${I_o1_ef.toFixed(3)}\text{ A} \qquad I_{o1,pico} = \sqrt{2} \cdot I_{o1,ef} = ${I_o1_pico.toFixed(3)}\text{ A} \]</div>
-            <div class="step-desc">Espectro harmônico na carga RL com atenuação indutiva de alta frequência (\(Z_n = \sqrt{R^2 + (n\omega_1 L)^2}\)):</div>
+            <div class="step-desc">A impedância da carga RL na frequência fundamental (\\(f_1 = ${freq}\\text{ Hz}\\)) é:</div>
+            <div class="math-block">\\[ Z_1 = \\sqrt{R^2 + (\\omega_1 L)^2} = \\sqrt{${R}^2 + (${omega_1.toFixed(1)} \\cdot ${L})^2} = ${Z1.toFixed(2)}\\;\\Omega \\quad (\\phi_1 = ${phi1_deg.toFixed(1)}^\\circ) \\]</div>
+            <div class="math-block">\\[ I_{o1,ef} = \\frac{V_{o1,ef}}{Z_1} = \\frac{${V_o1_ef.toFixed(2)}}{${Z1.toFixed(2)}} = ${I_o1_ef.toFixed(3)}\\text{ A} \\qquad I_{o1,pico} = \\sqrt{2} \\cdot I_{o1,ef} = ${I_o1_pico.toFixed(3)}\\text{ A} \\]</div>
+            <div class="step-desc">Espectro harmônico na carga RL com atenuação indutiva de alta frequência (\\(Z_n = \\sqrt{R^2 + (n\\omega_1 L)^2}\\)):</div>
             <div style="overflow-x: auto; margin: 12px 0;">
               <table style="width: 100%; border-collapse: collapse; text-align: center; font-size: 0.85rem; background: #161b22; border-radius: 4px;">
                 <thead>
@@ -3371,9 +3371,9 @@ import { atualizarGrafico } from './graficos.js';
               </table>
             </div>
             <div class="step-desc">Resultados finais True RMS e qualidade da forma de onda:</div>
-            <div class="math-block">\[ I_{o,ef} \approx \sqrt{ \sum (I_{on,ef})^2 } = ${I_o_ef.toFixed(3)}\text{ A} \qquad P_o = R \cdot (I_{o,ef})^2 = ${P_R.toFixed(2)}\text{ W} \]</div>
-            <div class="math-block">\[ \text{THD}_i = \frac{\sqrt{I_{o,ef}^2 - I_{o1,ef}^2}}{I_{o1,ef}} = ${THD_i.toFixed(2)}\% \qquad \text{FP} = \frac{P_o}{V_{o,ef} \cdot I_{o,ef}} = ${FP.toFixed(3)} \]</div>
-            <div class="step-desc">A indutância de carga \(L = ${(L*1000).toFixed(1)}\text{ mH}\) atua como um filtro passa-baixas altamente eficaz, resultando em corrente praticamente senoidal com THDi residual inferior a ${Math.max(5, Math.ceil(THD_i))}\%.</div>
+            <div class="math-block">\\[ I_{o,ef} \\approx \\sqrt{ \\sum (I_{on,ef})^2 } = ${I_o_ef.toFixed(3)}\\text{ A} \\qquad P_o = R \\cdot (I_{o,ef})^2 = ${P_R.toFixed(2)}\\text{ W} \\]</div>
+            <div class="math-block">\\[ \\text{THD}_i = \\frac{\\sqrt{I_{o,ef}^2 - I_{o1,ef}^2}}{I_{o1,ef}} = ${THD_i.toFixed(2)}\\% \\qquad \\text{FP} = \\frac{P_o}{V_{o,ef} \\cdot I_{o,ef}} = ${FP.toFixed(3)} \\]</div>
+            <div class="step-desc">A indutância de carga \\(L = ${(L*1000).toFixed(1)}\\text{ mH}\\) atua como um filtro passa-baixas altamente eficaz, resultando em corrente praticamente senoidal com THDi residual inferior a ${Math.max(5, Math.ceil(THD_i))}\\%.</div>
           </div>
         `;
       } else if (topologia === "buck_mcc") {
@@ -3439,54 +3439,54 @@ import { atualizarGrafico } from './graficos.js';
         stepsHTML = `
           <div class="step-box">
             <div class="step-title">Etapa 1: Ganho Estático e Balanço Volts-Segundo (Slides 23 e 29)</div>
-            <div class="step-desc">Em regime permanente, a tensão média no indutor ao longo de um período de comutação \(T_s\) é estritamente nula:</div>
-            <div class="math-block">\[ \langle v_L \rangle = \frac{1}{T_s} \int_0^{T_s} v_L(t)\,dt = \frac{(V_g - V_o) D T_s + (-V_o)(1 - D)T_s}{T_s} = 0 \]</div>
-            <div class="step-desc">Isolando o ganho estático ideal \(G\) do conversor Buck:</div>
-            <div class="math-block">\[ G = \frac{V_o}{V_g} = D \implies D = \frac{V_o}{V_g} = \frac{${V_o}}{${V_g}} = ${D.toFixed(4)}\quad (${(D * 100).toFixed(2)}\%) \]</div>
+            <div class="step-desc">Em regime permanente, a tensão média no indutor ao longo de um período de comutação \\(T_s\\) é estritamente nula:</div>
+            <div class="math-block">\\[ \\langle v_L \\rangle = \\frac{1}{T_s} \\int_0^{T_s} v_L(t)\\,dt = \\frac{(V_g - V_o) D T_s + (-V_o)(1 - D)T_s}{T_s} = 0 \\]</div>
+            <div class="step-desc">Isolando o ganho estático ideal \\(G\\) do conversor Buck:</div>
+            <div class="math-block">\\[ G = \\frac{V_o}{V_g} = D \\implies D = \\frac{V_o}{V_g} = \\frac{${V_o}}{${V_g}} = ${D.toFixed(4)}\\quad (${(D * 100).toFixed(2)}\\%) \\]</div>
             <div class="step-desc">Período de chaveamento e intervalos de condução:</div>
-            <div class="math-block">\[ T_s = \frac{1}{f_s} = \frac{1}{${f_s}\text{ Hz}} = ${(Ts * 1e6).toFixed(3)}\,\mu\text{s} \]</div>
-            <div class="math-block">\[ t_{on} = D \cdot T_s = ${(ton * 1e6).toFixed(3)}\,\mu\text{s} \qquad t_{off} = (1 - D) \cdot T_s = ${(toff * 1e6).toFixed(3)}\,\mu\text{s} \]</div>
+            <div class="math-block">\\[ T_s = \\frac{1}{f_s} = \\frac{1}{${f_s}\\text{ Hz}} = ${(Ts * 1e6).toFixed(3)}\\,\\mu\\text{s} \\]</div>
+            <div class="math-block">\\[ t_{on} = D \\cdot T_s = ${(ton * 1e6).toFixed(3)}\\,\\mu\\text{s} \\qquad t_{off} = (1 - D) \\cdot T_s = ${(toff * 1e6).toFixed(3)}\\,\\mu\\text{s} \\]</div>
           </div>
 
           <div class="step-box">
             <div class="step-title">Etapa 2: Corrente Nominal de Carga e Verificação do Modo Contínuo (MCC)</div>
             <div class="step-desc">Cálculo da corrente média contínua de carga e resistência de carga equivalente:</div>
-            <div class="math-block">\[ I_o = \frac{P_o}{V_o} = \frac{${P_o}\text{ W}}{${V_o}\text{ V}} = ${I_o.toFixed(2)}\text{ A} \qquad R = \frac{V_o}{I_o} = \frac{${V_o}}{${I_o.toFixed(2)}} = ${R.toFixed(3)}\,\Omega \]</div>
-            <div class="step-desc">Ondulação de corrente especificada (\(${delta_i_pct}\%\) de \(I_o\)):</div>
-            <div class="math-block">\[ \Delta i_L = ${delta_i_pct}\% \cdot I_o = ${(delta_i_pct/100).toFixed(2)} \cdot ${I_o.toFixed(2)} = ${delta_i.toFixed(3)}\text{ A} \]</div>
+            <div class="math-block">\\[ I_o = \\frac{P_o}{V_o} = \\frac{${P_o}\\text{ W}}{${V_o}\\text{ V}} = ${I_o.toFixed(2)}\\text{ A} \\qquad R = \\frac{V_o}{I_o} = \\frac{${V_o}}{${I_o.toFixed(2)}} = ${R.toFixed(3)}\\,\\Omega \\]</div>
+            <div class="step-desc">Ondulação de corrente especificada (\\(${delta_i_pct}\\%\\) de \\(I_o\\)):</div>
+            <div class="math-block">\\[ \\Delta i_L = ${delta_i_pct}\\% \\cdot I_o = ${(delta_i_pct/100).toFixed(2)} \\cdot ${I_o.toFixed(2)} = ${delta_i.toFixed(3)}\\text{ A} \\]</div>
             <div class="step-desc">Indutância crítica no limiar de condução crítica (BCM - Slide 17):</div>
-            <div class="math-block">\[ L_{crít} = \frac{(1 - D) R}{2 f_s} = \frac{(1 - ${D.toFixed(3)}) \cdot ${R.toFixed(3)}}{2 \cdot ${f_s}} = ${(L_crit * 1e6).toFixed(2)}\,\mu\text{H} \]</div>
-            <div class="step-desc">Como \(L = ${(L * 1e6).toFixed(2)}\,\mu\text{H} > L_{crít}\), o circuito opera estritamente em <strong>Modo de Condução Contínua (MCC)</strong>.</div>
-            <div class="math-block">\[ I_{L,mín} = I_o - \frac{\Delta i_L}{2} = ${IL_min.toFixed(3)}\text{ A} \qquad I_{L,máx} = I_o + \frac{\Delta i_L}{2} = ${IL_max.toFixed(3)}\text{ A} \]</div>
+            <div class="math-block">\\[ L_{crít} = \\frac{(1 - D) R}{2 f_s} = \\frac{(1 - ${D.toFixed(3)}) \\cdot ${R.toFixed(3)}}{2 \\cdot ${f_s}} = ${(L_crit * 1e6).toFixed(2)}\\,\\mu\\text{H} \\]</div>
+            <div class="step-desc">Como \\(L = ${(L * 1e6).toFixed(2)}\\,\\mu\\text{H} > L_{crít}\\), o circuito opera estritamente em <strong>Modo de Condução Contínua (MCC)</strong>.</div>
+            <div class="math-block">\\[ I_{L,mín} = I_o - \\frac{\\Delta i_L}{2} = ${IL_min.toFixed(3)}\\text{ A} \\qquad I_{L,máx} = I_o + \\frac{\\Delta i_L}{2} = ${IL_max.toFixed(3)}\\text{ A} \\]</div>
           </div>
 
           <div class="step-box">
             <div class="step-title">Etapa 3: Dimensionamento do Indutor L (Slide 25)</div>
-            <div class="step-desc">Na primeira etapa com \(Q_1\) ligado (\(v_L = V_g - V_o\)):</div>
-            <div class="math-block">\[ v_L = L \frac{\Delta i}{\Delta t} \implies L = \frac{(V_g - V_o) D}{f_s \cdot \Delta i_L} = \frac{(${V_g} - ${V_o}) \cdot ${D.toFixed(4)}}{${f_s} \cdot ${delta_i.toFixed(3)}} = ${(L * 1e6).toFixed(2)}\,\mu\text{H} \]</div>
-            <div class="step-desc">Expressão equivalente com \(V_g(1 - D)D / (f \Delta i)\):</div>
-            <div class="math-block">\[ L = \frac{V_g (1 - D) D}{f_s \Delta i_L} = \frac{${V_g} \cdot (1 - ${D.toFixed(3)}) \cdot ${D.toFixed(3)}}{${f_s} \cdot ${delta_i.toFixed(3)}} = ${(L * 1e6).toFixed(2)}\,\mu\text{H} \]</div>
+            <div class="step-desc">Na primeira etapa com \\(Q_1\\) ligado (\\(v_L = V_g - V_o\\)):</div>
+            <div class="math-block">\\[ v_L = L \\frac{\\Delta i}{\\Delta t} \\implies L = \\frac{(V_g - V_o) D}{f_s \\cdot \\Delta i_L} = \\frac{(${V_g} - ${V_o}) \\cdot ${D.toFixed(4)}}{${f_s} \\cdot ${delta_i.toFixed(3)}} = ${(L * 1e6).toFixed(2)}\\,\\mu\\text{H} \\]</div>
+            <div class="step-desc">Expressão equivalente com \\(V_g(1 - D)D / (f \\Delta i)\\):</div>
+            <div class="math-block">\\[ L = \\frac{V_g (1 - D) D}{f_s \\Delta i_L} = \\frac{${V_g} \\cdot (1 - ${D.toFixed(3)}) \\cdot ${D.toFixed(3)}}{${f_s} \\cdot ${delta_i.toFixed(3)}} = ${(L * 1e6).toFixed(2)}\\,\\mu\\text{H} \\]</div>
           </div>
 
           <div class="step-box">
             <div class="step-title">Etapa 4: Dimensionamento do Capacitor de Saída C (Slide 26)</div>
-            <div class="step-desc">A ondulação de corrente do indutor circula integralmente pelo capacitor. A carga acumulada \(q\) é a área geométrica do triângulo positivo da corrente \(i_C(t)\):</div>
-            <div class="math-block">\[ \Delta Q = \frac{1}{2} \left( \frac{\Delta i_L}{2} \right) \left( \frac{T_s}{2} \right) = \frac{\Delta i_L \cdot T_s}{8} \]</div>
-            <div class="step-desc">A capacitância mínima para limitar a ondulação a \(\Delta v_o = ${(delta_v * 1000).toFixed(1)}\text{ mV}\) (\(${delta_v_pct}\%\)) é:</div>
-            <div class="math-block">\[ C = \frac{\Delta Q}{\Delta v_o} = \frac{\Delta i_L}{8 f_s \cdot \Delta v_o} = \frac{${delta_i.toFixed(3)}}{8 \cdot ${f_s} \cdot ${delta_v.toFixed(4)}} = ${(C * 1e6).toFixed(2)}\,\mu\text{F} \]</div>
-            <div class="math-block">\[ C = \frac{V_g (1 - D) D}{8 f_s^2 L \Delta v_o} = ${(C * 1e6).toFixed(2)}\,\mu\text{F} \]</div>
+            <div class="step-desc">A ondulação de corrente do indutor circula integralmente pelo capacitor. A carga acumulada \\(q\\) é a área geométrica do triângulo positivo da corrente \\(i_C(t)\\):</div>
+            <div class="math-block">\\[ \\Delta Q = \\frac{1}{2} \\left( \\frac{\\Delta i_L}{2} \\right) \\left( \\frac{T_s}{2} \\right) = \\frac{\\Delta i_L \\cdot T_s}{8} \\]</div>
+            <div class="step-desc">A capacitância mínima para limitar a ondulação a \\(\\Delta v_o = ${(delta_v * 1000).toFixed(1)}\\text{ mV}\\) (\\(${delta_v_pct}\\%\\)) é:</div>
+            <div class="math-block">\\[ C = \\frac{\\Delta Q}{\\Delta v_o} = \\frac{\\Delta i_L}{8 f_s \\cdot \\Delta v_o} = \\frac{${delta_i.toFixed(3)}}{8 \\cdot ${f_s} \\cdot ${delta_v.toFixed(4)}} = ${(C * 1e6).toFixed(2)}\\,\\mu\\text{F} \\]</div>
+            <div class="math-block">\\[ C = \\frac{V_g (1 - D) D}{8 f_s^2 L \\Delta v_o} = ${(C * 1e6).toFixed(2)}\\,\\mu\\text{F} \\]</div>
           </div>
 
           <div class="step-box">
             <div class="step-title">Etapa 5: Esforços nos Interruptores Semicondutores (Slides 27 e 28)</div>
-            <div class="step-desc"><strong>• Transistor de Chaveamento \(Q_1\) (Slide 27):</strong></div>
-            <div class="math-block">\[ V_{Q1,máx} = V_g = ${V_Q1_max.toFixed(1)}\text{ V} \qquad I_{Q1,pico} = I_{L,máx} = ${I_Q1_pico.toFixed(3)}\text{ A} \]</div>
-            <div class="math-block">\[ I_{Q1,méd} = I_o \cdot D = ${I_o.toFixed(2)} \cdot ${D.toFixed(4)} = ${I_Q1_med.toFixed(3)}\text{ A} \]</div>
-            <div class="math-block">\[ I_{Q1,ef} = \sqrt{ D \left[ I_o^2 + \frac{\Delta i_L^2}{12} \right] } = \sqrt{ ${D.toFixed(4)} \left[ ${I_o.toFixed(2)}^2 + \frac{${delta_i.toFixed(3)}^2}{12} \right] } = ${I_Q1_ef.toFixed(3)}\text{ A} \]</div>
-            <div class="step-desc"><strong>• Diodo de Roda Livre \(D_1\) (Slide 28):</strong></div>
-            <div class="math-block">\[ V_{D1,máx} = V_g = ${V_D1_max.toFixed(1)}\text{ V} \qquad I_{D1,pico} = I_{L,máx} = ${I_D1_pico.toFixed(3)}\text{ A} \]</div>
-            <div class="math-block">\[ I_{D1,méd} = I_o \cdot (1 - D) = ${I_o.toFixed(2)} \cdot (1 - ${D.toFixed(4)}) = ${I_D1_med.toFixed(3)}\text{ A} \]</div>
-            <div class="math-block">\[ I_{D1,ef} = \sqrt{ (1 - D) \left[ I_o^2 + \frac{\Delta i_L^2}{12} \right] } = \sqrt{ (1 - ${D.toFixed(4)}) \left[ ${I_o.toFixed(2)}^2 + \frac{${delta_i.toFixed(3)}^2}{12} \right] } = ${I_D1_ef.toFixed(3)}\text{ A} \]</div>
+            <div class="step-desc"><strong>• Transistor de Chaveamento \\(Q_1\\) (Slide 27):</strong></div>
+            <div class="math-block">\\[ V_{Q1,máx} = V_g = ${V_Q1_max.toFixed(1)}\\text{ V} \\qquad I_{Q1,pico} = I_{L,máx} = ${I_Q1_pico.toFixed(3)}\\text{ A} \\]</div>
+            <div class="math-block">\\[ I_{Q1,méd} = I_o \\cdot D = ${I_o.toFixed(2)} \\cdot ${D.toFixed(4)} = ${I_Q1_med.toFixed(3)}\\text{ A} \\]</div>
+            <div class="math-block">\\[ I_{Q1,ef} = \\sqrt{ D \\left[ I_o^2 + \\frac{\\Delta i_L^2}{12} \\right] } = \\sqrt{ ${D.toFixed(4)} \\left[ ${I_o.toFixed(2)}^2 + \\frac{${delta_i.toFixed(3)}^2}{12} \\right] } = ${I_Q1_ef.toFixed(3)}\\text{ A} \\]</div>
+            <div class="step-desc"><strong>• Diodo de Roda Livre \\(D_1\\) (Slide 28):</strong></div>
+            <div class="math-block">\\[ V_{D1,máx} = V_g = ${V_D1_max.toFixed(1)}\\text{ V} \\qquad I_{D1,pico} = I_{L,máx} = ${I_D1_pico.toFixed(3)}\\text{ A} \\]</div>
+            <div class="math-block">\\[ I_{D1,méd} = I_o \\cdot (1 - D) = ${I_o.toFixed(2)} \\cdot (1 - ${D.toFixed(4)}) = ${I_D1_med.toFixed(3)}\\text{ A} \\]</div>
+            <div class="math-block">\\[ I_{D1,ef} = \\sqrt{ (1 - D) \\left[ I_o^2 + \\frac{\\Delta i_L^2}{12} \\right] } = \\sqrt{ (1 - ${D.toFixed(4)}) \\left[ ${I_o.toFixed(2)}^2 + \\frac{${delta_i.toFixed(3)}^2}{12} \\right] } = ${I_D1_ef.toFixed(3)}\\text{ A} \\]</div>
           </div>
 
           <div class="step-box">
@@ -3570,28 +3570,28 @@ Rload out 0 ${R.toFixed(3)}
           <div class="step-box">
             <div class="step-title">Etapa 1: Critério de Descontinuidade e Ganho Estático em MCD (Slide 33)</div>
             <div class="step-desc">Indutância crítica no limiar de condução contínua:</div>
-            <div class="math-block">\[ L_{crít} = \frac{(1 - D) R}{2 f_s} = \frac{(1 - ${D}) \cdot ${R}}{2 \cdot ${f_s}} = ${(L_crit * 1e6).toFixed(2)}\,\mu\text{H} \]</div>
-            <div class="step-desc">Como \(L = ${L_uH}\,\mu\text{H} < L_{crít}\), a corrente no indutor se anula antes de completar o período (MCD).</div>
+            <div class="math-block">\\[ L_{crít} = \\frac{(1 - D) R}{2 f_s} = \\frac{(1 - ${D}) \\cdot ${R}}{2 \\cdot ${f_s}} = ${(L_crit * 1e6).toFixed(2)}\\,\\mu\\text{H} \\]</div>
+            <div class="step-desc">Como \\(L = ${L_uH}\\,\\mu\\text{H} < L_{crít}\\), a corrente no indutor se anula antes de completar o período (MCD).</div>
             <div class="step-desc">Pelo balanço Volts-Segundo com 3 etapas (Slide 33):</div>
-            <div class="math-block">\[ (V_g - V_o) D T_s + (-V_o) t_x = 0 \implies V_o = V_g \frac{D T_s}{D T_s + t_x} \]</div>
-            <div class="math-block">\[ G = \frac{V_o}{V_g} = \frac{D^2}{D^2 + \frac{2 L I_o}{V_g T_s}} = ${G.toFixed(4)} \implies V_o = ${V_o.toFixed(2)}\text{ V} \]</div>
+            <div class="math-block">\\[ (V_g - V_o) D T_s + (-V_o) t_x = 0 \\implies V_o = V_g \\frac{D T_s}{D T_s + t_x} \\]</div>
+            <div class="math-block">\\[ G = \\frac{V_o}{V_g} = \\frac{D^2}{D^2 + \\frac{2 L I_o}{V_g T_s}} = ${G.toFixed(4)} \\implies V_o = ${V_o.toFixed(2)}\\text{ V} \\]</div>
           </div>
 
           <div class="step-box">
             <div class="step-title">Etapa 2: Intervalos Temporais de Condução e Roda Livre (Slides 31 a 34)</div>
             <div class="step-desc">Ondulação e pico de corrente máxima no indutor:</div>
-            <div class="math-block">\[ \Delta i = I_{L,pico} = \frac{(V_g - V_o) D T_s}{L} = \frac{(${V_g} - ${V_o.toFixed(2)}) \cdot ${D} \cdot ${(Ts * 1e6).toFixed(2)}\,\mu\text{s}}{${L_uH}\,\mu\text{H}} = ${delta_i.toFixed(3)}\text{ A} \]</div>
-            <div class="step-desc">Tempo de extinção da corrente através do diodo \(D_1\) (\(t_x\)):</div>
-            <div class="math-block">\[ t_x = \frac{L \Delta i}{V_o} = \frac{(V_g - V_o) D T_s}{V_o} = ${(tx * 1e6).toFixed(3)}\,\mu\text{s} \]</div>
+            <div class="math-block">\\[ \\Delta i = I_{L,pico} = \\frac{(V_g - V_o) D T_s}{L} = \\frac{(${V_g} - ${V_o.toFixed(2)}) \\cdot ${D} \\cdot ${(Ts * 1e6).toFixed(2)}\\,\\mu\\text{s}}{${L_uH}\\,\\mu\\text{H}} = ${delta_i.toFixed(3)}\\text{ A} \\]</div>
+            <div class="step-desc">Tempo de extinção da corrente através do diodo \\(D_1\\) (\\(t_x\\)):</div>
+            <div class="math-block">\\[ t_x = \\frac{L \\Delta i}{V_o} = \\frac{(V_g - V_o) D T_s}{V_o} = ${(tx * 1e6).toFixed(3)}\\,\\mu\\text{s} \\]</div>
             <div class="step-desc">Intervalo de corrente nula (Etapa 3 - ambos abertos):</div>
-            <div class="math-block">\[ t_{morto} = T_s - (D T_s + t_x) = ${(tmorto * 1e6).toFixed(3)}\,\mu\text{s} \]</div>
+            <div class="math-block">\\[ t_{morto} = T_s - (D T_s + t_x) = ${(tmorto * 1e6).toFixed(3)}\\,\\mu\\text{s} \\]</div>
           </div>
 
           <div class="step-box">
             <div class="step-title">Etapa 3: Dimensionamento do Filtro Capacitivo em MCD (Slide 35)</div>
             <div class="step-desc">Intervalos de carga e descarga do capacitor com corrente descontínua:</div>
-            <div class="math-block">\[ t_a = D T_s - \frac{L I_o}{V_g - V_o} = ${(ta * 1e6).toFixed(3)}\,\mu\text{s} \qquad t_b = \frac{V_g D T_s - L I_o}{V_o} - D T_s = ${(tb * 1e6).toFixed(3)}\,\mu\text{s} \]</div>
-            <div class="math-block">\[ \Delta Q = \frac{(t_a + t_b)(\Delta i - I_o)}{2} = ${(delta_Q * 1e6).toFixed(3)}\,\mu\text{C} \qquad \Delta v_C = \frac{\Delta Q}{C} = ${(delta_v * 1000).toFixed(1)}\text{ mV} \]</div>
+            <div class="math-block">\\[ t_a = D T_s - \\frac{L I_o}{V_g - V_o} = ${(ta * 1e6).toFixed(3)}\\,\\mu\\text{s} \\qquad t_b = \\frac{V_g D T_s - L I_o}{V_o} - D T_s = ${(tb * 1e6).toFixed(3)}\\,\\mu\\text{s} \\]</div>
+            <div class="math-block">\\[ \\Delta Q = \\frac{(t_a + t_b)(\\Delta i - I_o)}{2} = ${(delta_Q * 1e6).toFixed(3)}\\,\\mu\\text{C} \\qquad \\Delta v_C = \\frac{\\Delta Q}{C} = ${(delta_v * 1000).toFixed(1)}\\text{ mV} \\]</div>
           </div>
         `;
       } else if (topologia === "boost_mcc") {
@@ -3650,27 +3650,27 @@ Rload out 0 ${R.toFixed(3)}
           <div class="step-box">
             <div class="step-title">Etapa 1: Ganho Estático do Elevador Boost (Slide 46)</div>
             <div class="step-desc">Pelo balanço Volts-Segundo no indutor em regime permanente:</div>
-            <div class="math-block">\[ \langle v_L \rangle = V_g D + (V_g - V_o)(1 - D) = 0 \implies \frac{V_o}{V_g} = \frac{1}{1 - D} \]</div>
-            <div class="math-block">\[ D = 1 - \frac{V_g}{V_o} = 1 - \frac{${V_g}}{${V_o}} = ${D.toFixed(4)}\quad (${(D * 100).toFixed(2)}\%) \]</div>
+            <div class="math-block">\\[ \\langle v_L \\rangle = V_g D + (V_g - V_o)(1 - D) = 0 \\implies \\frac{V_o}{V_g} = \\frac{1}{1 - D} \\]</div>
+            <div class="math-block">\\[ D = 1 - \\frac{V_g}{V_o} = 1 - \\frac{${V_g}}{${V_o}} = ${D.toFixed(4)}\\quad (${(D * 100).toFixed(2)}\\%) \\]</div>
           </div>
 
           <div class="step-box">
             <div class="step-title">Etapa 2: Dimensionamento do Indutor de Entrada L (Slide 47)</div>
             <div class="step-desc">Corrente média no indutor igual à drenada da fonte:</div>
-            <div class="math-block">\[ I_{L,méd} = I_g = \frac{P_o}{V_g} = \frac{I_o}{1 - D} = \frac{${I_o.toFixed(2)}}{1 - ${D.toFixed(3)}} = ${I_g.toFixed(2)}\text{ A} \]</div>
-            <div class="math-block">\[ L = \frac{V_g D}{f_s \Delta i_L} = \frac{${V_g} \cdot ${D.toFixed(4)}}{${f_s} \cdot ${delta_i.toFixed(3)}} = ${(L * 1e6).toFixed(2)}\,\mu\text{H} \]</div>
+            <div class="math-block">\\[ I_{L,méd} = I_g = \\frac{P_o}{V_g} = \\frac{I_o}{1 - D} = \\frac{${I_o.toFixed(2)}}{1 - ${D.toFixed(3)}} = ${I_g.toFixed(2)}\\text{ A} \\]</div>
+            <div class="math-block">\\[ L = \\frac{V_g D}{f_s \\Delta i_L} = \\frac{${V_g} \\cdot ${D.toFixed(4)}}{${f_s} \\cdot ${delta_i.toFixed(3)}} = ${(L * 1e6).toFixed(2)}\\,\\mu\\text{H} \\]</div>
           </div>
 
           <div class="step-box">
             <div class="step-title">Etapa 3: Dimensionamento do Capacitor de Saída C (Slide 48)</div>
-            <div class="step-desc">Durante o intervalo ligado (\(DT_s\)), o diodo bloqueia e o capacitor sustenta sozinho a corrente da carga \(I_o\):</div>
-            <div class="math-block">\[ C = \frac{I_o D}{f_s \Delta v_o} = \frac{${I_o.toFixed(2)} \cdot ${D.toFixed(4)}}{${f_s} \cdot ${delta_v.toFixed(4)}} = ${(C * 1e6).toFixed(2)}\,\mu\text{F} \]</div>
+            <div class="step-desc">Durante o intervalo ligado (\\(DT_s\\)), o diodo bloqueia e o capacitor sustenta sozinho a corrente da carga \\(I_o\\):</div>
+            <div class="math-block">\\[ C = \\frac{I_o D}{f_s \\Delta v_o} = \\frac{${I_o.toFixed(2)} \\cdot ${D.toFixed(4)}}{${f_s} \\cdot ${delta_v.toFixed(4)}} = ${(C * 1e6).toFixed(2)}\\,\\mu\\text{F} \\]</div>
           </div>
 
           <div class="step-box">
             <div class="step-title">Etapa 4: Esforços nos Semicondutores (Slides 49 e 50)</div>
-            <div class="math-block">\[ V_{Q1,máx} = V_{D1,máx} = V_o = ${V_o.toFixed(1)}\text{ V} \]</div>
-            <div class="math-block">\[ I_{Q1,ef} = \sqrt{D \left[ I_g^2 + \frac{\Delta i_L^2}{12} \right]} = ${I_Q1_ef.toFixed(3)}\text{ A} \qquad I_{D1,ef} = \sqrt{(1 - D) \left[ I_g^2 + \frac{\Delta i_L^2}{12} \right]} = ${I_D1_ef.toFixed(3)}\text{ A} \]</div>
+            <div class="math-block">\\[ V_{Q1,máx} = V_{D1,máx} = V_o = ${V_o.toFixed(1)}\\text{ V} \\]</div>
+            <div class="math-block">\\[ I_{Q1,ef} = \\sqrt{D \\left[ I_g^2 + \\frac{\\Delta i_L^2}{12} \\right]} = ${I_Q1_ef.toFixed(3)}\\text{ A} \\qquad I_{D1,ef} = \\sqrt{(1 - D) \\left[ I_g^2 + \\frac{\\Delta i_L^2}{12} \\right]} = ${I_D1_ef.toFixed(3)}\\text{ A} \\]</div>
           </div>
         `;
       } else if (topologia === "buck_boost_mcc") {
@@ -3727,29 +3727,29 @@ Rload out 0 ${R.toFixed(3)}
         stepsHTML = `
           <div class="step-box">
             <div class="step-title">Etapa 1: Ganho Estático e Polaridade Invertida (Slides 58 e 59)</div>
-            <div class="step-desc">Pelo balanço Volts-Segundo no indutor (\(\langle v_L \rangle = 0\)):</div>
-            <div class="math-block">\[ V_g D + V_o (1 - D) = 0 \implies \frac{V_o}{V_g} = -\frac{D}{1 - D} \implies \left|\frac{V_o}{V_g}\right| = \frac{D}{1 - D} \]</div>
-            <div class="math-block">\[ D = \frac{|V_o|}{V_g + |V_o|} = \frac{${V_o_abs}}{${V_g} + ${V_o_abs}} = ${D.toFixed(4)}\quad (${(D * 100).toFixed(2)}\%) \]</div>
-            <div class="step-desc">Regime: ${D < 0.5 ? "Como \(D < 0{,}5\), opera como **Abaixador (Buck)**." : "Como \(D > 0{,}5\), opera como **Elevador (Boost)**."}</div>
+            <div class="step-desc">Pelo balanço Volts-Segundo no indutor (\\(\\langle v_L \\rangle = 0\\)):</div>
+            <div class="math-block">\\[ V_g D + V_o (1 - D) = 0 \\implies \\frac{V_o}{V_g} = -\\frac{D}{1 - D} \\implies \\left|\\frac{V_o}{V_g}\\right| = \\frac{D}{1 - D} \\]</div>
+            <div class="math-block">\\[ D = \\frac{|V_o|}{V_g + |V_o|} = \\frac{${V_o_abs}}{${V_g} + ${V_o_abs}} = ${D.toFixed(4)}\\quad (${(D * 100).toFixed(2)}\\%) \\]</div>
+            <div class="step-desc">Regime: ${D < 0.5 ? "Como \\(D < 0{,}5\\), opera como **Abaixador (Buck)**." : "Como \\(D > 0{,}5\\), opera como **Elevador (Boost)**."}</div>
           </div>
 
           <div class="step-box">
             <div class="step-title">Etapa 2: Dimensionamento do Indutor L (Slides 60 e 61)</div>
             <div class="step-desc">A corrente média no indutor supre tanto a entrada quanto a saída:</div>
-            <div class="math-block">\[ I_{L,méd} = I_{Q1,méd} + I_{D1,méd} = \frac{I_o}{1 - D} = \frac{${I_o.toFixed(2)}}{1 - ${D.toFixed(3)}} = ${I_L_med.toFixed(2)}\text{ A} \]</div>
-            <div class="math-block">\[ L = \frac{V_g D}{f_s \Delta i_L} = \frac{${V_g} \cdot ${D.toFixed(4)}}{${f_s} \cdot ${delta_i.toFixed(3)}} = ${(L * 1e6).toFixed(2)}\,\mu\text{H} \]</div>
+            <div class="math-block">\\[ I_{L,méd} = I_{Q1,méd} + I_{D1,méd} = \\frac{I_o}{1 - D} = \\frac{${I_o.toFixed(2)}}{1 - ${D.toFixed(3)}} = ${I_L_med.toFixed(2)}\\text{ A} \\]</div>
+            <div class="math-block">\\[ L = \\frac{V_g D}{f_s \\Delta i_L} = \\frac{${V_g} \\cdot ${D.toFixed(4)}}{${f_s} \\cdot ${delta_i.toFixed(3)}} = ${(L * 1e6).toFixed(2)}\\,\\mu\\text{H} \\]</div>
           </div>
 
           <div class="step-box">
             <div class="step-title">Etapa 3: Dimensionamento do Filtro Capacitivo C (Slide 62)</div>
-            <div class="math-block">\[ C = \frac{I_o D}{f_s \Delta v_o} = \frac{${I_o.toFixed(2)} \cdot ${D.toFixed(4)}}{${f_s} \cdot ${delta_v.toFixed(4)}} = ${(C * 1e6).toFixed(2)}\,\mu\text{F} \]</div>
+            <div class="math-block">\\[ C = \\frac{I_o D}{f_s \\Delta v_o} = \\frac{${I_o.toFixed(2)} \\cdot ${D.toFixed(4)}}{${f_s} \\cdot ${delta_v.toFixed(4)}} = ${(C * 1e6).toFixed(2)}\\,\\mu\\text{F} \\]</div>
           </div>
 
           <div class="step-box">
             <div class="step-title">Etapa 4: Esforços nos Interruptores Semicondutores (Slides 63 e 64)</div>
-            <div class="step-desc">A tensão máxima de bloqueio em \(Q_1\) e \(D_1\) é a soma das tensões de entrada e saída:</div>
-            <div class="math-block">\[ V_{Q1,máx} = V_{D1,máx} = V_g + |V_o| = ${V_g} + ${V_o_abs} = ${V_sw_max.toFixed(1)}\text{ V} \]</div>
-            <div class="math-block">\[ I_{Q1,ef} = \sqrt{D \left[ I_{L,méd}^2 + \frac{\Delta i_L^2}{12} \right]} = ${I_Q1_ef.toFixed(3)}\text{ A} \qquad I_{D1,ef} = \sqrt{(1 - D) \left[ I_{L,méd}^2 + \frac{\Delta i_L^2}{12} \right]} = ${I_D1_ef.toFixed(3)}\text{ A} \]</div>
+            <div class="step-desc">A tensão máxima de bloqueio em \\(Q_1\\) e \\(D_1\\) é a soma das tensões de entrada e saída:</div>
+            <div class="math-block">\\[ V_{Q1,máx} = V_{D1,máx} = V_g + |V_o| = ${V_g} + ${V_o_abs} = ${V_sw_max.toFixed(1)}\\text{ V} \\]</div>
+            <div class="math-block">\\[ I_{Q1,ef} = \\sqrt{D \\left[ I_{L,méd}^2 + \\frac{\\Delta i_L^2}{12} \\right]} = ${I_Q1_ef.toFixed(3)}\\text{ A} \\qquad I_{D1,ef} = \\sqrt{(1 - D) \\left[ I_{L,méd}^2 + \\frac{\\Delta i_L^2}{12} \\right]} = ${I_D1_ef.toFixed(3)}\\text{ A} \\]</div>
           </div>
         `;
       }
