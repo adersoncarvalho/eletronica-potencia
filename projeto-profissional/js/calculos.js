@@ -3376,9 +3376,6 @@ import { atualizarGrafico } from './graficos.js';
             <div class="step-desc">A indutância de carga \(L = ${(L*1000).toFixed(1)}\text{ mH}\) atua como um filtro passa-baixas altamente eficaz, resultando em corrente praticamente senoidal com THDi residual inferior a ${Math.max(5, Math.ceil(THD_i))}\%.</div>
           </div>
         `;
-      }
-
-
       } else if (topologia === "buck_mcc") {
         const V_g = parseFloat(document.getElementById("input-vg")?.value || 15);
         const V_o = parseFloat(document.getElementById("input-vo")?.value || 5);
@@ -3757,9 +3754,15 @@ Rload out 0 ${R.toFixed(3)}
         `;
       }
 
-            // Geração unificada de dados temporais para exatamente 2 PERÍODOS (t em ms)
-      const T_periodo = 1000 / freq;  // Período em ms (~16.67 ms para 60Hz)
-      const t_max = 2 * T_periodo;    // 2 ciclos completos (~33.33 ms)
+            // Geração unificada de dados temporais para exatamente 2 PERÍODOS (t em ms ou µs)
+      const isDCDC = (topologia === "buck_mcc" || topologia === "buck_mcd" || topologia === "boost_mcc" || topologia === "buck_boost_mcc");
+      let fs_dcdc = 70000;
+      if (isDCDC) {
+        fs_dcdc = parseFloat(document.getElementById("input-fs")?.value || 70) * 1000;
+        freq = fs_dcdc;
+      }
+      const T_periodo = isDCDC ? (1e6 / fs_dcdc) : (1000 / freq);  // Em µs para DCDC, em ms para AC
+      const t_max = 2 * T_periodo;
       const numPontos = (topologia.includes("_spwm_")) ? 720 : 360;
       const dt = t_max / numPontos;
 
@@ -3784,9 +3787,11 @@ Rload out 0 ${R.toFixed(3)}
         topologia: topologia,
         freq: freq,
         title: plotTitle,
-        caption: isInversor
-          ? `Alimentação CC: ${V_rms.toFixed(1)} Vcc, Frequência de Saída: ${freq.toFixed(1)} Hz (ω = ${omega.toFixed(1)} rad/s) • Chaveamento Bipolar 180°`
-          : `Fonte: ${V_rms.toFixed(1)} Vef (${V_p.toFixed(1)} Vp), ${freq.toFixed(1)} Hz (ω = ${omega.toFixed(1)} rad/s) • ${diodeCaption}`,
+        caption: isDCDC
+          ? `Conversor CC-CC Não Isolado • Frequência fs = ${(freq/1000).toFixed(0)} kHz (Ts = ${(1e6/freq).toFixed(2)} µs) • Análise de 2 Períodos de Comutação`
+          : (isInversor
+            ? `Alimentação CC: ${V_rms.toFixed(1)} Vcc, Frequência de Saída: ${freq.toFixed(1)} Hz (ω = ${omega.toFixed(1)} rad/s) • Chaveamento Bipolar 180°`
+            : `Fonte: ${V_rms.toFixed(1)} Vef (${V_p.toFixed(1)} Vp), ${freq.toFixed(1)} Hz (ω = ${omega.toFixed(1)} rad/s) • ${diodeCaption}`),
         t: [],
         v_in: [],
         v_mod: [],
@@ -3813,11 +3818,19 @@ Rload out 0 ${R.toFixed(3)}
         tem_vlinha: temVlinha,
         tem_gate: temGate,
         tem_vd: temVD,
-        tem_ig: temIg,
+        tem_diodos: temDiodos || isDCDC,
+        tem_d2: temD2 || isDCDC,
+        tem_d3: temD3,
+        tem_vlinha: temVlinha,
+        tem_gate: temGate || isDCDC,
+        tem_vd: temVD || isDCDC,
+        tem_ig: temIg || isDCDC,
         is_onda_completa: isOndaCompleta,
         is_controlado: isControlado,
         is_trifasico: isTrifasico,
-        is_inversor: isInversor
+        is_inversor: isInversor,
+        is_dcdc: isDCDC,
+        time_unit: isDCDC ? "µs" : "ms"
       };
 
       // Inicialização do estado de corrente para simulação SPWM em regime permanente
@@ -3872,7 +3885,182 @@ Rload out 0 ${R.toFixed(3)}
         let i_fonte_val = 0;
         let v_mod_val = 0, v_tri_val = 0;
 
-        if (topologia === "mono_meia_onda_r") {
+        if (topologia === "buck_mcc") {
+          const V_g = parseFloat(document.getElementById("input-vg")?.value || 15);
+          const V_o = parseFloat(document.getElementById("input-vo")?.value || 5);
+          const P_o = parseFloat(document.getElementById("input-po")?.value || 20);
+          const fs_val = parseFloat(document.getElementById("input-fs")?.value || 70) * 1000;
+          const delta_i_pct = parseFloat(document.getElementById("input-delta-il")?.value || 25);
+          const delta_v_pct = parseFloat(document.getElementById("input-delta-vo")?.value || 1);
+          const L_user = parseFloat(document.getElementById("input-l-dcdc")?.value || 0);
+          const C_user = parseFloat(document.getElementById("input-c-dcdc")?.value || 0);
+
+          const D = V_o / V_g;
+          const Ts_sec = 1 / fs_val;
+          const I_o = P_o / V_o;
+          const L = (L_user > 0) ? (L_user * 1e-6) : (((V_g - V_o) * D) / (fs_val * ((delta_i_pct / 100) * I_o)));
+          const delta_i = ((V_g - V_o) * D) / (fs_val * L);
+          const C = (C_user > 0) ? (C_user * 1e-6) : (delta_i / (8 * fs_val * ((delta_v_pct / 100) * V_o)));
+          const delta_v = delta_i / (8 * fs_val * C);
+
+          const IL_min = I_o - delta_i / 2;
+          const IL_max = I_o + delta_i / 2;
+
+          const t_sec = t_ms * 1e-6;
+          const t_cycle = t_sec % Ts_sec;
+          const ton = D * Ts_sec;
+
+          v_in_val = V_g;
+          if (t_cycle < ton) {
+            gate_val = 10;
+            v_d_val = V_g - V_o;
+            i_out_val = IL_min + delta_i * (t_cycle / ton);
+            i_d1_val = i_out_val;
+            i_d2_val = 0;
+            i_fonte_val = i_d1_val;
+          } else {
+            gate_val = 0;
+            v_d_val = -V_o;
+            i_out_val = IL_max - delta_i * ((t_cycle - ton) / (Ts_sec - ton));
+            i_d1_val = 0;
+            i_d2_val = i_out_val;
+            i_fonte_val = 0;
+          }
+          v_out_val = V_o + (delta_v / 2) * Math.sin(2 * Math.PI * (t_cycle / Ts_sec) - Math.PI / 2);
+        } else if (topologia === "buck_mcd") {
+          const V_g = parseFloat(document.getElementById("input-vg")?.value || 24);
+          const D = parseFloat(document.getElementById("input-d-dcdc")?.value || 0.4);
+          const R = parseFloat(document.getElementById("input-r")?.value || 20);
+          const fs_val = parseFloat(document.getElementById("input-fs")?.value || 50) * 1000;
+          const Ts_sec = 1 / fs_val;
+          const L = parseFloat(document.getElementById("input-l-dcdc")?.value || 30) * 1e-6;
+          const C = parseFloat(document.getElementById("input-c-dcdc")?.value || 47) * 1e-6;
+
+          const K = (2 * L) / (R * Ts_sec);
+          const G = 2 / (1 + Math.sqrt(1 + (4 * K) / (D * D)));
+          const V_o = G * V_g;
+          const I_o = V_o / R;
+
+          const ton = D * Ts_sec;
+          const delta_i = ((V_g - V_o) * D * Ts_sec) / L;
+          const tx = ((V_g - V_o) * D * Ts_sec) / V_o;
+
+          const t_sec = t_ms * 1e-6;
+          const t_cycle = t_sec % Ts_sec;
+
+          v_in_val = V_g;
+          if (t_cycle < ton) {
+            gate_val = 10;
+            v_d_val = V_g - V_o;
+            i_out_val = delta_i * (t_cycle / ton);
+            i_d1_val = i_out_val;
+            i_d2_val = 0;
+            i_fonte_val = i_d1_val;
+          } else if (t_cycle < ton + tx) {
+            gate_val = 0;
+            v_d_val = -V_o;
+            i_out_val = delta_i * (1 - (t_cycle - ton) / tx);
+            i_d1_val = 0;
+            i_d2_val = i_out_val;
+            i_fonte_val = 0;
+          } else {
+            gate_val = 0;
+            v_d_val = 0;
+            i_out_val = 0;
+            i_d1_val = 0;
+            i_d2_val = 0;
+            i_fonte_val = 0;
+          }
+          v_out_val = V_o + (I_o * Ts_sec / (2 * C)) * Math.sin(2 * Math.PI * (t_cycle / Ts_sec) - Math.PI / 2);
+        } else if (topologia === "boost_mcc") {
+          const V_g = parseFloat(document.getElementById("input-vg")?.value || 12);
+          const V_o = parseFloat(document.getElementById("input-vo")?.value || 24);
+          const P_o = parseFloat(document.getElementById("input-po")?.value || 48);
+          const fs_val = parseFloat(document.getElementById("input-fs")?.value || 50) * 1000;
+          const Ts_sec = 1 / fs_val;
+          const delta_i_pct = parseFloat(document.getElementById("input-delta-il")?.value || 20);
+          const delta_v_pct = parseFloat(document.getElementById("input-delta-vo")?.value || 1);
+          const L_user = parseFloat(document.getElementById("input-l-dcdc")?.value || 0);
+          const C_user = parseFloat(document.getElementById("input-c-dcdc")?.value || 0);
+
+          const D = Math.max(0.01, Math.min(0.95, 1 - (V_g / V_o)));
+          const I_o = P_o / V_o;
+          const I_g = P_o / V_g;
+          const L = (L_user > 0) ? (L_user * 1e-6) : ((V_g * D) / (fs_val * ((delta_i_pct / 100) * I_g)));
+          const delta_i = (V_g * D) / (fs_val * L);
+          const C = (C_user > 0) ? (C_user * 1e-6) : ((I_o * D) / (fs_val * ((delta_v_pct / 100) * V_o)));
+          const delta_v = (I_o * D) / (fs_val * C);
+
+          const IL_min = I_g - delta_i / 2;
+          const IL_max = I_g + delta_i / 2;
+
+          const t_sec = t_ms * 1e-6;
+          const t_cycle = t_sec % Ts_sec;
+          const ton = D * Ts_sec;
+
+          v_in_val = V_g;
+          if (t_cycle < ton) {
+            gate_val = 10;
+            v_d_val = V_g;
+            i_out_val = IL_min + delta_i * (t_cycle / ton);
+            i_d1_val = i_out_val;
+            i_d2_val = 0;
+            i_fonte_val = i_out_val;
+            v_out_val = V_o + (delta_v / 2) * (1 - 2 * (t_cycle / ton));
+          } else {
+            gate_val = 0;
+            v_d_val = V_g - V_o;
+            i_out_val = IL_max - delta_i * ((t_cycle - ton) / (Ts_sec - ton));
+            i_d1_val = 0;
+            i_d2_val = i_out_val;
+            i_fonte_val = i_out_val;
+            v_out_val = V_o - (delta_v / 2) + delta_v * ((t_cycle - ton) / (Ts_sec - ton));
+          }
+        } else if (topologia === "buck_boost_mcc") {
+          const V_g = parseFloat(document.getElementById("input-vg")?.value || 20);
+          const V_o_abs = parseFloat(document.getElementById("input-vo")?.value || 12);
+          const P_o = parseFloat(document.getElementById("input-po")?.value || 36);
+          const fs_val = parseFloat(document.getElementById("input-fs")?.value || 60) * 1000;
+          const Ts_sec = 1 / fs_val;
+          const delta_i_pct = parseFloat(document.getElementById("input-delta-il")?.value || 25);
+          const delta_v_pct = parseFloat(document.getElementById("input-delta-vo")?.value || 1);
+          const L_user = parseFloat(document.getElementById("input-l-dcdc")?.value || 0);
+          const C_user = parseFloat(document.getElementById("input-c-dcdc")?.value || 0);
+
+          const D = V_o_abs / (V_g + V_o_abs);
+          const I_o = P_o / V_o_abs;
+          const I_L_med = I_o / (1 - D);
+          const L = (L_user > 0) ? (L_user * 1e-6) : ((V_g * D) / (fs_val * ((delta_i_pct / 100) * I_L_med)));
+          const delta_i = (V_g * D) / (fs_val * L);
+          const C = (C_user > 0) ? (C_user * 1e-6) : ((I_o * D) / (fs_val * ((delta_v_pct / 100) * V_o_abs)));
+          const delta_v = (I_o * D) / (fs_val * C);
+
+          const IL_min = I_L_med - delta_i / 2;
+          const IL_max = I_L_med + delta_i / 2;
+
+          const t_sec = t_ms * 1e-6;
+          const t_cycle = t_sec % Ts_sec;
+          const ton = D * Ts_sec;
+
+          v_in_val = V_g;
+          if (t_cycle < ton) {
+            gate_val = 10;
+            v_d_val = V_g;
+            i_out_val = IL_min + delta_i * (t_cycle / ton);
+            i_d1_val = i_out_val;
+            i_d2_val = 0;
+            i_fonte_val = i_out_val;
+            v_out_val = -V_o_abs + (delta_v / 2) * (1 - 2 * (t_cycle / ton));
+          } else {
+            gate_val = 0;
+            v_d_val = -V_o_abs;
+            i_out_val = IL_max - delta_i * ((t_cycle - ton) / (Ts_sec - ton));
+            i_d1_val = 0;
+            i_d2_val = i_out_val;
+            i_fonte_val = 0;
+            v_out_val = -V_o_abs - (delta_v / 2) + delta_v * ((t_cycle - ton) / (Ts_sec - ton));
+          }
+        } else if (topologia === "mono_meia_onda_r") {
           const R = parseFloat(document.getElementById("input-r").value);
           if (theta <= Math.PI) {
             v_out_val = v_in_val;
@@ -4631,7 +4819,7 @@ Rload out 0 ${R.toFixed(3)}
       document.getElementById("card-grafico").style.display = "block";
 
       if (window.renderMathInElement) {
-        renderMathInElement(document.getElementById("steps-container"), {
+        window.renderMathInElement(document.getElementById("steps-container"), {
           delimiters: [
             {left: "\\(", right: "\\)", display: false},
             {left: "\\[", right: "\\]", display: true}

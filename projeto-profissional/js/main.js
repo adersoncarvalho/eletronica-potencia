@@ -84,13 +84,13 @@ import {
         { id: "inversor_ponte_completa_r", nome: "Inversor Monofásico Ponte Completa (Ponte H) com Carga R", grupo: "Inversores de Onda Quadrada" },
         { id: "inversor_ponte_completa_rl", nome: "Inversor Monofásico Ponte Completa (Ponte H) com Carga RL", grupo: "Inversores de Onda Quadrada" },
         { id: "inversor_ponte_spwm_bipolar", nome: "Inversor Monofásico Ponte H com Modulação SPWM Bipolar (2 Níveis)", grupo: "Inversores com Modulação PWM/SPWM (Aula 8)" },
-        { id: "inversor_ponte_spwm_unipolar", nome: "Inversor Monofásico Ponte H com Modulação SPWM Unipolar (3 Níveis)", grupo: "Inversores com Modulação PWM/SPWM (Aula 8)" },
+        { id: "inversor_ponte_spwm_unipolar", nome: "Inversor Monofásico Ponte H com Modulação SPWM Unipolar (3 Níveis)", grupo: "Inversores com Modulação PWM/SPWM (Aula 8)" }
+      ],
       conversores_cc_cc: [
         { id: "buck_mcc", nome: "Conversor Buck em Condução Contínua (MCC) - Slide 29", grupo: "Conversor Buck (Aulas 9 e 10)" },
         { id: "buck_mcd", nome: "Conversor Buck em Condução Descontínua (MCD)", grupo: "Conversor Buck (Aulas 9 e 10)" },
         { id: "boost_mcc", nome: "Conversor Boost em Condução Contínua (MCC)", grupo: "Conversor Boost (Aula 10)" },
         { id: "buck_boost_mcc", nome: "Conversor Buck-Boost em Condução Contínua (MCC)", grupo: "Conversor Buck-Boost (Aula 11)" }
-      ]
       ]
     };
 
@@ -2234,7 +2234,7 @@ import {
         const isHidden = (box.style.display === "none");
         box.style.display = isHidden ? "block" : "none";
         if (isHidden && window.renderMathInElement) {
-          renderMathInElement(box, {
+          window.renderMathInElement(box, {
             delimiters: [
               {left: "\\(", right: "\\)", display: false},
               {left: "\\[", right: "\\]", display: true}
@@ -2346,7 +2346,7 @@ import {
       if (descBox) {
         descBox.innerHTML = descricoesTopologias[topologia] || "";
         if (window.renderMathInElement) {
-          renderMathInElement(descBox, {
+          window.renderMathInElement(descBox, {
             delimiters: [
               {left: "\\(", right: "\\)", display: false},
               {left: "\\[", right: "\\]", display: true}
