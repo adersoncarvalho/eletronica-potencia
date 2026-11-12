@@ -3378,7 +3378,386 @@ import { atualizarGrafico } from './graficos.js';
         `;
       }
 
-      // Geração unificada de dados temporais para exatamente 2 PERÍODOS (t em ms)
+
+      } else if (topologia === "buck_mcc") {
+        const V_g = parseFloat(document.getElementById("input-vg")?.value || 15);
+        const V_o = parseFloat(document.getElementById("input-vo")?.value || 5);
+        const P_o = parseFloat(document.getElementById("input-po")?.value || 20);
+        const fs_kHz = parseFloat(document.getElementById("input-fs")?.value || 70);
+        const f_s = fs_kHz * 1000;
+        const delta_i_pct = parseFloat(document.getElementById("input-delta-il")?.value || 25);
+        const delta_v_pct = parseFloat(document.getElementById("input-delta-vo")?.value || 1);
+        const L_user_uH = parseFloat(document.getElementById("input-l-dcdc")?.value || 0);
+        const C_user_uF = parseFloat(document.getElementById("input-c-dcdc")?.value || 0);
+
+        const D = V_o / V_g;
+        const Ts = 1 / f_s;
+        const ton = D * Ts;
+        const toff = (1 - D) * Ts;
+        const I_o = P_o / V_o;
+        const R = V_o / I_o;
+
+        const delta_i_desej = (delta_i_pct / 100) * I_o;
+        const L_crit = ((1 - D) * R) / (2 * f_s);
+        const L_proj = ((V_g - V_o) * D) / (f_s * delta_i_desej);
+        const L = (L_user_uH > 0) ? (L_user_uH * 1e-6) : L_proj;
+        const delta_i = ((V_g - V_o) * D) / (f_s * L);
+
+        const delta_v_desej = (delta_v_pct / 100) * V_o;
+        const C_proj = delta_i / (8 * f_s * delta_v_desej);
+        const C = (C_user_uF > 0) ? (C_user_uF * 1e-6) : C_proj;
+        const delta_v = delta_i / (8 * f_s * C);
+
+        const IL_max = I_o + delta_i / 2;
+        const IL_min = I_o - delta_i / 2;
+
+        const V_Q1_max = V_g;
+        const I_Q1_med = I_o * D;
+        const I_Q1_ef = Math.sqrt(D * (I_o * I_o + (delta_i * delta_i) / 12));
+        const I_Q1_pico = IL_max;
+
+        const V_D1_max = V_g;
+        const I_D1_med = I_o * (1 - D);
+        const I_D1_ef = Math.sqrt((1 - D) * (I_o * I_o + (delta_i * delta_i) / 12));
+        const I_D1_pico = IL_max;
+
+        const I_g_med = I_Q1_med;
+        const P_in = V_g * I_g_med;
+
+        plotTitle = `Conversor Buck em MCC: Vg = ${V_g.toFixed(1)} V &rarr; Vo = ${V_o.toFixed(2)} V, Po = ${P_o.toFixed(1)} W, fs = ${fs_kHz.toFixed(0)} kHz (Slide 29)`;
+
+        summaryHTML = `
+          <div class="stat-box"><div class="stat-label">Razão Cíclica D</div><div class="stat-value">${(D * 100).toFixed(2)}%</div></div>
+          <div class="stat-box"><div class="stat-label">Corrente Saída Io</div><div class="stat-value">${I_o.toFixed(2)} A</div></div>
+          <div class="stat-box"><div class="stat-label">Resistência Carga</div><div class="stat-value">${R.toFixed(3)} &Omega;</div></div>
+          <div class="stat-box"><div class="stat-label">Indutância L</div><div class="stat-value" style="color: #58a6ff;">${(L * 1e6).toFixed(2)} &micro;H</div></div>
+          <div class="stat-box"><div class="stat-label">Indutância Crítica</div><div class="stat-value">${(L_crit * 1e6).toFixed(2)} &micro;H</div></div>
+          <div class="stat-box"><div class="stat-label">Capacitância C</div><div class="stat-value" style="color: #2ea043;">${(C * 1e6).toFixed(2)} &micro;F</div></div>
+          <div class="stat-box"><div class="stat-label">Ondulação &Delta;iL</div><div class="stat-value">${delta_i.toFixed(3)} A (${((delta_i/I_o)*100).toFixed(1)}%)</div></div>
+          <div class="stat-box"><div class="stat-label">Ondulação &Delta;vo</div><div class="stat-value">${(delta_v * 1000).toFixed(1)} mV (${((delta_v/V_o)*100).toFixed(2)}%)</div></div>
+          <div class="stat-box"><div class="stat-label">Transistor Q1 (RMS)</div><div class="stat-value">${I_Q1_ef.toFixed(3)} A</div></div>
+          <div class="stat-box"><div class="stat-label">Diodo D1 (RMS)</div><div class="stat-value">${I_D1_ef.toFixed(3)} A</div></div>
+        `;
+
+        stepsHTML = `
+          <div class="step-box">
+            <div class="step-title">Etapa 1: Ganho Estático e Balanço Volts-Segundo (Slides 23 e 29)</div>
+            <div class="step-desc">Em regime permanente, a tensão média no indutor ao longo de um período de comutação \(T_s\) é estritamente nula:</div>
+            <div class="math-block">\[ \langle v_L \rangle = \frac{1}{T_s} \int_0^{T_s} v_L(t)\,dt = \frac{(V_g - V_o) D T_s + (-V_o)(1 - D)T_s}{T_s} = 0 \]</div>
+            <div class="step-desc">Isolando o ganho estático ideal \(G\) do conversor Buck:</div>
+            <div class="math-block">\[ G = \frac{V_o}{V_g} = D \implies D = \frac{V_o}{V_g} = \frac{${V_o}}{${V_g}} = ${D.toFixed(4)}\quad (${(D * 100).toFixed(2)}\%) \]</div>
+            <div class="step-desc">Período de chaveamento e intervalos de condução:</div>
+            <div class="math-block">\[ T_s = \frac{1}{f_s} = \frac{1}{${f_s}\text{ Hz}} = ${(Ts * 1e6).toFixed(3)}\,\mu\text{s} \]</div>
+            <div class="math-block">\[ t_{on} = D \cdot T_s = ${(ton * 1e6).toFixed(3)}\,\mu\text{s} \qquad t_{off} = (1 - D) \cdot T_s = ${(toff * 1e6).toFixed(3)}\,\mu\text{s} \]</div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 2: Corrente Nominal de Carga e Verificação do Modo Contínuo (MCC)</div>
+            <div class="step-desc">Cálculo da corrente média contínua de carga e resistência de carga equivalente:</div>
+            <div class="math-block">\[ I_o = \frac{P_o}{V_o} = \frac{${P_o}\text{ W}}{${V_o}\text{ V}} = ${I_o.toFixed(2)}\text{ A} \qquad R = \frac{V_o}{I_o} = \frac{${V_o}}{${I_o.toFixed(2)}} = ${R.toFixed(3)}\,\Omega \]</div>
+            <div class="step-desc">Ondulação de corrente especificada (\(${delta_i_pct}\%\) de \(I_o\)):</div>
+            <div class="math-block">\[ \Delta i_L = ${delta_i_pct}\% \cdot I_o = ${(delta_i_pct/100).toFixed(2)} \cdot ${I_o.toFixed(2)} = ${delta_i.toFixed(3)}\text{ A} \]</div>
+            <div class="step-desc">Indutância crítica no limiar de condução crítica (BCM - Slide 17):</div>
+            <div class="math-block">\[ L_{crít} = \frac{(1 - D) R}{2 f_s} = \frac{(1 - ${D.toFixed(3)}) \cdot ${R.toFixed(3)}}{2 \cdot ${f_s}} = ${(L_crit * 1e6).toFixed(2)}\,\mu\text{H} \]</div>
+            <div class="step-desc">Como \(L = ${(L * 1e6).toFixed(2)}\,\mu\text{H} > L_{crít}\), o circuito opera estritamente em <strong>Modo de Condução Contínua (MCC)</strong>.</div>
+            <div class="math-block">\[ I_{L,mín} = I_o - \frac{\Delta i_L}{2} = ${IL_min.toFixed(3)}\text{ A} \qquad I_{L,máx} = I_o + \frac{\Delta i_L}{2} = ${IL_max.toFixed(3)}\text{ A} \]</div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 3: Dimensionamento do Indutor L (Slide 25)</div>
+            <div class="step-desc">Na primeira etapa com \(Q_1\) ligado (\(v_L = V_g - V_o\)):</div>
+            <div class="math-block">\[ v_L = L \frac{\Delta i}{\Delta t} \implies L = \frac{(V_g - V_o) D}{f_s \cdot \Delta i_L} = \frac{(${V_g} - ${V_o}) \cdot ${D.toFixed(4)}}{${f_s} \cdot ${delta_i.toFixed(3)}} = ${(L * 1e6).toFixed(2)}\,\mu\text{H} \]</div>
+            <div class="step-desc">Expressão equivalente com \(V_g(1 - D)D / (f \Delta i)\):</div>
+            <div class="math-block">\[ L = \frac{V_g (1 - D) D}{f_s \Delta i_L} = \frac{${V_g} \cdot (1 - ${D.toFixed(3)}) \cdot ${D.toFixed(3)}}{${f_s} \cdot ${delta_i.toFixed(3)}} = ${(L * 1e6).toFixed(2)}\,\mu\text{H} \]</div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 4: Dimensionamento do Capacitor de Saída C (Slide 26)</div>
+            <div class="step-desc">A ondulação de corrente do indutor circula integralmente pelo capacitor. A carga acumulada \(q\) é a área geométrica do triângulo positivo da corrente \(i_C(t)\):</div>
+            <div class="math-block">\[ \Delta Q = \frac{1}{2} \left( \frac{\Delta i_L}{2} \right) \left( \frac{T_s}{2} \right) = \frac{\Delta i_L \cdot T_s}{8} \]</div>
+            <div class="step-desc">A capacitância mínima para limitar a ondulação a \(\Delta v_o = ${(delta_v * 1000).toFixed(1)}\text{ mV}\) (\(${delta_v_pct}\%\)) é:</div>
+            <div class="math-block">\[ C = \frac{\Delta Q}{\Delta v_o} = \frac{\Delta i_L}{8 f_s \cdot \Delta v_o} = \frac{${delta_i.toFixed(3)}}{8 \cdot ${f_s} \cdot ${delta_v.toFixed(4)}} = ${(C * 1e6).toFixed(2)}\,\mu\text{F} \]</div>
+            <div class="math-block">\[ C = \frac{V_g (1 - D) D}{8 f_s^2 L \Delta v_o} = ${(C * 1e6).toFixed(2)}\,\mu\text{F} \]</div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 5: Esforços nos Interruptores Semicondutores (Slides 27 e 28)</div>
+            <div class="step-desc"><strong>• Transistor de Chaveamento \(Q_1\) (Slide 27):</strong></div>
+            <div class="math-block">\[ V_{Q1,máx} = V_g = ${V_Q1_max.toFixed(1)}\text{ V} \qquad I_{Q1,pico} = I_{L,máx} = ${I_Q1_pico.toFixed(3)}\text{ A} \]</div>
+            <div class="math-block">\[ I_{Q1,méd} = I_o \cdot D = ${I_o.toFixed(2)} \cdot ${D.toFixed(4)} = ${I_Q1_med.toFixed(3)}\text{ A} \]</div>
+            <div class="math-block">\[ I_{Q1,ef} = \sqrt{ D \left[ I_o^2 + \frac{\Delta i_L^2}{12} \right] } = \sqrt{ ${D.toFixed(4)} \left[ ${I_o.toFixed(2)}^2 + \frac{${delta_i.toFixed(3)}^2}{12} \right] } = ${I_Q1_ef.toFixed(3)}\text{ A} \]</div>
+            <div class="step-desc"><strong>• Diodo de Roda Livre \(D_1\) (Slide 28):</strong></div>
+            <div class="math-block">\[ V_{D1,máx} = V_g = ${V_D1_max.toFixed(1)}\text{ V} \qquad I_{D1,pico} = I_{L,máx} = ${I_D1_pico.toFixed(3)}\text{ A} \]</div>
+            <div class="math-block">\[ I_{D1,méd} = I_o \cdot (1 - D) = ${I_o.toFixed(2)} \cdot (1 - ${D.toFixed(4)}) = ${I_D1_med.toFixed(3)}\text{ A} \]</div>
+            <div class="math-block">\[ I_{D1,ef} = \sqrt{ (1 - D) \left[ I_o^2 + \frac{\Delta i_L^2}{12} \right] } = \sqrt{ (1 - ${D.toFixed(4)}) \left[ ${I_o.toFixed(2)}^2 + \frac{${delta_i.toFixed(3)}^2}{12} \right] } = ${I_D1_ef.toFixed(3)}\text{ A} \]</div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 6: Parâmetros para Simulação no LTspice (Slide 29)</div>
+            <div class="step-desc">Netlist completa com os valores exatos de projeto para verificação direta no LTspice:</div>
+            <pre style="background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 12px; font-size: 0.82rem; color: #58a6ff; overflow-x: auto;">* Conversor Buck MCC - Exercicio Resolvido Slide 29
+Vg in 0 DC ${V_g}V
+Vpulse gate 0 PULSE(0 10 0 10n 10n ${(ton*1e6).toFixed(3)}u ${(Ts*1e6).toFixed(3)}u)
+M1 in gate sw sw MyNMOS
+D1 0 sw MyDiode
+L1 sw out ${(L*1e6).toFixed(2)}u
+C1 out 0 ${(C*1e6).toFixed(2)}u
+Rload out 0 ${R.toFixed(3)}
+
+.model MyNMOS VDMOS(Ron=0.01 Qg=10n)
+.model MyDiode D(Ron=0.01 Vfwd=0)
+.tran 0 5m 4.5m 10n uic
+.meas tran Vout_avg AVG V(out)
+.meas tran Vout_rip PP V(out)
+.meas tran IL_avg AVG I(L1)
+.meas tran IL_rip PP I(L1)</pre>
+          </div>
+        `;
+      } else if (topologia === "buck_mcd") {
+        const V_g = parseFloat(document.getElementById("input-vg")?.value || 24);
+        const D = parseFloat(document.getElementById("input-d-dcdc")?.value || 0.4);
+        const R = parseFloat(document.getElementById("input-r")?.value || 20);
+        const fs_kHz = parseFloat(document.getElementById("input-fs")?.value || 50);
+        const f_s = fs_kHz * 1000;
+        const Ts = 1 / f_s;
+        const L_uH = parseFloat(document.getElementById("input-l-dcdc")?.value || 30);
+        const L = L_uH * 1e-6;
+        const C_uF = parseFloat(document.getElementById("input-c-dcdc")?.value || 47);
+        const C = C_uF * 1e-6;
+
+        const L_crit = ((1 - D) * R) / (2 * f_s);
+        const isMCD = (L < L_crit);
+
+        // Ganho estático exato em MCD (Slide 33)
+        const K = (2 * L) / (R * Ts);
+        const G = 2 / (1 + Math.sqrt(1 + (4 * K) / (D * D)));
+        const V_o = G * V_g;
+        const I_o = V_o / R;
+        const P_o = V_o * I_o;
+
+        const ton = D * Ts;
+        const delta_i = ((V_g - V_o) * D * Ts) / L;
+        const tx = ((V_g - V_o) * D * Ts) / V_o;
+        const tmorto = Math.max(0, Ts - (ton + tx));
+
+        // Slide 35
+        const ta = Math.max(0, ton - (L * I_o) / (V_g - V_o));
+        const tb = Math.max(0, ((V_g * D * Ts - L * I_o) / V_o) - ton);
+        const delta_Q = ((ta + tb) * (delta_i - I_o)) / 2;
+        const delta_v = Math.abs(delta_Q / C);
+
+        const V_Q1_max = V_g;
+        const I_Q1_pico = delta_i;
+        const I_Q1_med = (delta_i * D) / 2;
+        const I_Q1_ef = delta_i * Math.sqrt(D / 3);
+
+        const V_D1_max = V_g;
+        const I_D1_pico = delta_i;
+        const I_D1_med = (delta_i * tx) / (2 * Ts);
+        const I_D1_ef = delta_i * Math.sqrt(tx / (3 * Ts));
+
+        plotTitle = `Conversor Buck em MCD: Vg = ${V_g.toFixed(1)} V, D = ${D.toFixed(2)}, R = ${R} &Omega;, L = ${L_uH} &micro;H &rarr; Vo = ${V_o.toFixed(2)} V (Slides 30 a 35)`;
+
+        summaryHTML = `
+          <div class="stat-box"><div class="stat-label">Regime Operação</div><div class="stat-value" style="color: #e3b341;">${isMCD ? "MCD (Descontínuo)" : "MCC (Contínuo)"}</div></div>
+          <div class="stat-box"><div class="stat-label">Tensão Saída Vo</div><div class="stat-value">${V_o.toFixed(2)} V</div></div>
+          <div class="stat-box"><div class="stat-label">Ganho Estático G</div><div class="stat-value">${G.toFixed(4)}</div></div>
+          <div class="stat-box"><div class="stat-label">Indutância L / Lcrit</div><div class="stat-value">${L_uH} &micro;H / ${(L_crit * 1e6).toFixed(1)} &micro;H</div></div>
+          <div class="stat-box"><div class="stat-label">Tempo tx (Diodo)</div><div class="stat-value">${(tx * 1e6).toFixed(2)} &micro;s</div></div>
+          <div class="stat-box"><div class="stat-label">Tempo Morto (iL=0)</div><div class="stat-value">${(tmorto * 1e6).toFixed(2)} &micro;s</div></div>
+          <div class="stat-box"><div class="stat-label">Pico Corrente &Delta;i</div><div class="stat-value">${delta_i.toFixed(2)} A</div></div>
+          <div class="stat-box"><div class="stat-label">Ondulação &Delta;vo</div><div class="stat-value">${(delta_v * 1000).toFixed(1)} mV</div></div>
+        `;
+
+        stepsHTML = `
+          <div class="step-box">
+            <div class="step-title">Etapa 1: Critério de Descontinuidade e Ganho Estático em MCD (Slide 33)</div>
+            <div class="step-desc">Indutância crítica no limiar de condução contínua:</div>
+            <div class="math-block">\[ L_{crít} = \frac{(1 - D) R}{2 f_s} = \frac{(1 - ${D}) \cdot ${R}}{2 \cdot ${f_s}} = ${(L_crit * 1e6).toFixed(2)}\,\mu\text{H} \]</div>
+            <div class="step-desc">Como \(L = ${L_uH}\,\mu\text{H} < L_{crít}\), a corrente no indutor se anula antes de completar o período (MCD).</div>
+            <div class="step-desc">Pelo balanço Volts-Segundo com 3 etapas (Slide 33):</div>
+            <div class="math-block">\[ (V_g - V_o) D T_s + (-V_o) t_x = 0 \implies V_o = V_g \frac{D T_s}{D T_s + t_x} \]</div>
+            <div class="math-block">\[ G = \frac{V_o}{V_g} = \frac{D^2}{D^2 + \frac{2 L I_o}{V_g T_s}} = ${G.toFixed(4)} \implies V_o = ${V_o.toFixed(2)}\text{ V} \]</div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 2: Intervalos Temporais de Condução e Roda Livre (Slides 31 a 34)</div>
+            <div class="step-desc">Ondulação e pico de corrente máxima no indutor:</div>
+            <div class="math-block">\[ \Delta i = I_{L,pico} = \frac{(V_g - V_o) D T_s}{L} = \frac{(${V_g} - ${V_o.toFixed(2)}) \cdot ${D} \cdot ${(Ts * 1e6).toFixed(2)}\,\mu\text{s}}{${L_uH}\,\mu\text{H}} = ${delta_i.toFixed(3)}\text{ A} \]</div>
+            <div class="step-desc">Tempo de extinção da corrente através do diodo \(D_1\) (\(t_x\)):</div>
+            <div class="math-block">\[ t_x = \frac{L \Delta i}{V_o} = \frac{(V_g - V_o) D T_s}{V_o} = ${(tx * 1e6).toFixed(3)}\,\mu\text{s} \]</div>
+            <div class="step-desc">Intervalo de corrente nula (Etapa 3 - ambos abertos):</div>
+            <div class="math-block">\[ t_{morto} = T_s - (D T_s + t_x) = ${(tmorto * 1e6).toFixed(3)}\,\mu\text{s} \]</div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 3: Dimensionamento do Filtro Capacitivo em MCD (Slide 35)</div>
+            <div class="step-desc">Intervalos de carga e descarga do capacitor com corrente descontínua:</div>
+            <div class="math-block">\[ t_a = D T_s - \frac{L I_o}{V_g - V_o} = ${(ta * 1e6).toFixed(3)}\,\mu\text{s} \qquad t_b = \frac{V_g D T_s - L I_o}{V_o} - D T_s = ${(tb * 1e6).toFixed(3)}\,\mu\text{s} \]</div>
+            <div class="math-block">\[ \Delta Q = \frac{(t_a + t_b)(\Delta i - I_o)}{2} = ${(delta_Q * 1e6).toFixed(3)}\,\mu\text{C} \qquad \Delta v_C = \frac{\Delta Q}{C} = ${(delta_v * 1000).toFixed(1)}\text{ mV} \]</div>
+          </div>
+        `;
+      } else if (topologia === "boost_mcc") {
+        const V_g = parseFloat(document.getElementById("input-vg")?.value || 12);
+        const V_o = parseFloat(document.getElementById("input-vo")?.value || 24);
+        const P_o = parseFloat(document.getElementById("input-po")?.value || 48);
+        const fs_kHz = parseFloat(document.getElementById("input-fs")?.value || 50);
+        const f_s = fs_kHz * 1000;
+        const Ts = 1 / f_s;
+        const delta_i_pct = parseFloat(document.getElementById("input-delta-il")?.value || 20);
+        const delta_v_pct = parseFloat(document.getElementById("input-delta-vo")?.value || 1);
+        const L_user_uH = parseFloat(document.getElementById("input-l-dcdc")?.value || 0);
+        const C_user_uF = parseFloat(document.getElementById("input-c-dcdc")?.value || 0);
+
+        const D = Math.max(0.01, Math.min(0.95, 1 - (V_g / V_o)));
+        const I_o = P_o / V_o;
+        const R = V_o / I_o;
+        const I_g = P_o / V_g; // I_L,med
+
+        const delta_i_desej = (delta_i_pct / 100) * I_g;
+        const L_crit = (D * Math.pow(1 - D, 2) * R) / (2 * f_s);
+        const L_proj = (V_g * D) / (f_s * delta_i_desej);
+        const L = (L_user_uH > 0) ? (L_user_uH * 1e-6) : L_proj;
+        const delta_i = (V_g * D) / (f_s * L);
+
+        const delta_v_desej = (delta_v_pct / 100) * V_o;
+        const C_proj = (I_o * D) / (f_s * delta_v_desej);
+        const C = (C_user_uF > 0) ? (C_user_uF * 1e-6) : C_proj;
+        const delta_v = (I_o * D) / (f_s * C);
+
+        const IL_max = I_g + delta_i / 2;
+        const IL_min = I_g - delta_i / 2;
+
+        const V_Q1_max = V_o;
+        const I_Q1_med = I_g * D;
+        const I_Q1_ef = Math.sqrt(D * (I_g * I_g + (delta_i * delta_i) / 12));
+
+        const V_D1_max = V_o;
+        const I_D1_med = I_g * (1 - D);
+        const I_D1_ef = Math.sqrt((1 - D) * (I_g * I_g + (delta_i * delta_i) / 12));
+
+        plotTitle = `Conversor Boost em MCC: Vg = ${V_g.toFixed(1)} V &rarr; Vo = ${V_o.toFixed(1)} V (Elevador), Po = ${P_o.toFixed(1)} W, fs = ${fs_kHz.toFixed(0)} kHz (Slides 41 a 50)`;
+
+        summaryHTML = `
+          <div class="stat-box"><div class="stat-label">Razão Cíclica D</div><div class="stat-value">${(D * 100).toFixed(2)}%</div></div>
+          <div class="stat-box"><div class="stat-label">Ganho Vo/Vg</div><div class="stat-value">${(1 / (1 - D)).toFixed(2)}</div></div>
+          <div class="stat-box"><div class="stat-label">Corrente Entrada Ig</div><div class="stat-value">${I_g.toFixed(2)} A</div></div>
+          <div class="stat-box"><div class="stat-label">Corrente Saída Io</div><div class="stat-value">${I_o.toFixed(2)} A</div></div>
+          <div class="stat-box"><div class="stat-label">Indutância L</div><div class="stat-value" style="color: #58a6ff;">${(L * 1e6).toFixed(2)} &micro;H</div></div>
+          <div class="stat-box"><div class="stat-label">Capacitância C</div><div class="stat-value" style="color: #2ea043;">${(C * 1e6).toFixed(2)} &micro;F</div></div>
+          <div class="stat-box"><div class="stat-label">Ondulação &Delta;iL</div><div class="stat-value">${delta_i.toFixed(3)} A</div></div>
+          <div class="stat-box"><div class="stat-label">Ondulação &Delta;vo</div><div class="stat-value">${(delta_v * 1000).toFixed(1)} mV</div></div>
+        `;
+
+        stepsHTML = `
+          <div class="step-box">
+            <div class="step-title">Etapa 1: Ganho Estático do Elevador Boost (Slide 46)</div>
+            <div class="step-desc">Pelo balanço Volts-Segundo no indutor em regime permanente:</div>
+            <div class="math-block">\[ \langle v_L \rangle = V_g D + (V_g - V_o)(1 - D) = 0 \implies \frac{V_o}{V_g} = \frac{1}{1 - D} \]</div>
+            <div class="math-block">\[ D = 1 - \frac{V_g}{V_o} = 1 - \frac{${V_g}}{${V_o}} = ${D.toFixed(4)}\quad (${(D * 100).toFixed(2)}\%) \]</div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 2: Dimensionamento do Indutor de Entrada L (Slide 47)</div>
+            <div class="step-desc">Corrente média no indutor igual à drenada da fonte:</div>
+            <div class="math-block">\[ I_{L,méd} = I_g = \frac{P_o}{V_g} = \frac{I_o}{1 - D} = \frac{${I_o.toFixed(2)}}{1 - ${D.toFixed(3)}} = ${I_g.toFixed(2)}\text{ A} \]</div>
+            <div class="math-block">\[ L = \frac{V_g D}{f_s \Delta i_L} = \frac{${V_g} \cdot ${D.toFixed(4)}}{${f_s} \cdot ${delta_i.toFixed(3)}} = ${(L * 1e6).toFixed(2)}\,\mu\text{H} \]</div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 3: Dimensionamento do Capacitor de Saída C (Slide 48)</div>
+            <div class="step-desc">Durante o intervalo ligado (\(DT_s\)), o diodo bloqueia e o capacitor sustenta sozinho a corrente da carga \(I_o\):</div>
+            <div class="math-block">\[ C = \frac{I_o D}{f_s \Delta v_o} = \frac{${I_o.toFixed(2)} \cdot ${D.toFixed(4)}}{${f_s} \cdot ${delta_v.toFixed(4)}} = ${(C * 1e6).toFixed(2)}\,\mu\text{F} \]</div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 4: Esforços nos Semicondutores (Slides 49 e 50)</div>
+            <div class="math-block">\[ V_{Q1,máx} = V_{D1,máx} = V_o = ${V_o.toFixed(1)}\text{ V} \]</div>
+            <div class="math-block">\[ I_{Q1,ef} = \sqrt{D \left[ I_g^2 + \frac{\Delta i_L^2}{12} \right]} = ${I_Q1_ef.toFixed(3)}\text{ A} \qquad I_{D1,ef} = \sqrt{(1 - D) \left[ I_g^2 + \frac{\Delta i_L^2}{12} \right]} = ${I_D1_ef.toFixed(3)}\text{ A} \]</div>
+          </div>
+        `;
+      } else if (topologia === "buck_boost_mcc") {
+        const V_g = parseFloat(document.getElementById("input-vg")?.value || 20);
+        const V_o_abs = parseFloat(document.getElementById("input-vo")?.value || 12);
+        const P_o = parseFloat(document.getElementById("input-po")?.value || 36);
+        const fs_kHz = parseFloat(document.getElementById("input-fs")?.value || 60);
+        const f_s = fs_kHz * 1000;
+        const Ts = 1 / f_s;
+        const delta_i_pct = parseFloat(document.getElementById("input-delta-il")?.value || 25);
+        const delta_v_pct = parseFloat(document.getElementById("input-delta-vo")?.value || 1);
+        const L_user_uH = parseFloat(document.getElementById("input-l-dcdc")?.value || 0);
+        const C_user_uF = parseFloat(document.getElementById("input-c-dcdc")?.value || 0);
+
+        const D = V_o_abs / (V_g + V_o_abs);
+        const I_o = P_o / V_o_abs;
+        const R = V_o_abs / I_o;
+        const I_L_med = I_o / (1 - D);
+
+        const delta_i_desej = (delta_i_pct / 100) * I_L_med;
+        const L_crit = (Math.pow(1 - D, 2) * R) / (2 * f_s);
+        const L_proj = (V_g * D) / (f_s * delta_i_desej);
+        const L = (L_user_uH > 0) ? (L_user_uH * 1e-6) : L_proj;
+        const delta_i = (V_g * D) / (f_s * L);
+
+        const delta_v_desej = (delta_v_pct / 100) * V_o_abs;
+        const C_proj = (I_o * D) / (f_s * delta_v_desej);
+        const C = (C_user_uF > 0) ? (C_user_uF * 1e-6) : C_proj;
+        const delta_v = (I_o * D) / (f_s * C);
+
+        const IL_max = I_L_med + delta_i / 2;
+        const IL_min = I_L_med - delta_i / 2;
+
+        const V_sw_max = V_g + V_o_abs;
+        const I_Q1_med = I_L_med * D;
+        const I_Q1_ef = Math.sqrt(D * (I_L_med * I_L_med + (delta_i * delta_i) / 12));
+
+        const I_D1_med = I_L_med * (1 - D);
+        const I_D1_ef = Math.sqrt((1 - D) * (I_L_med * I_L_med + (delta_i * delta_i) / 12));
+
+        plotTitle = `Conversor Buck-Boost em MCC: Vg = ${V_g.toFixed(1)} V &rarr; Vo = -${V_o_abs.toFixed(1)} V (Inversor), Po = ${P_o.toFixed(1)} W (Slides 53 a 64)`;
+
+        summaryHTML = `
+          <div class="stat-box"><div class="stat-label">Razão Cíclica D</div><div class="stat-value">${(D * 100).toFixed(2)}%</div></div>
+          <div class="stat-box"><div class="stat-label">Ganho |Vo/Vg|</div><div class="stat-value">${(D / (1 - D)).toFixed(2)} (${D < 0.5 ? "Abaixador" : "Elevador"})</div></div>
+          <div class="stat-box"><div class="stat-label">Corrente Indutor IL</div><div class="stat-value">${I_L_med.toFixed(2)} A</div></div>
+          <div class="stat-box"><div class="stat-label">Corrente Saída Io</div><div class="stat-value">${I_o.toFixed(2)} A</div></div>
+          <div class="stat-box"><div class="stat-label">Indutância L</div><div class="stat-value" style="color: #58a6ff;">${(L * 1e6).toFixed(2)} &micro;H</div></div>
+          <div class="stat-box"><div class="stat-label">Capacitância C</div><div class="stat-value" style="color: #2ea043;">${(C * 1e6).toFixed(2)} &micro;F</div></div>
+          <div class="stat-box"><div class="stat-label">Esforço Vsw (Q1/D1)</div><div class="stat-value">${V_sw_max.toFixed(1)} V</div></div>
+          <div class="stat-box"><div class="stat-label">Ondulação &Delta;vo</div><div class="stat-value">${(delta_v * 1000).toFixed(1)} mV</div></div>
+        `;
+
+        stepsHTML = `
+          <div class="step-box">
+            <div class="step-title">Etapa 1: Ganho Estático e Polaridade Invertida (Slides 58 e 59)</div>
+            <div class="step-desc">Pelo balanço Volts-Segundo no indutor (\(\langle v_L \rangle = 0\)):</div>
+            <div class="math-block">\[ V_g D + V_o (1 - D) = 0 \implies \frac{V_o}{V_g} = -\frac{D}{1 - D} \implies \left|\frac{V_o}{V_g}\right| = \frac{D}{1 - D} \]</div>
+            <div class="math-block">\[ D = \frac{|V_o|}{V_g + |V_o|} = \frac{${V_o_abs}}{${V_g} + ${V_o_abs}} = ${D.toFixed(4)}\quad (${(D * 100).toFixed(2)}\%) \]</div>
+            <div class="step-desc">Regime: ${D < 0.5 ? "Como \(D < 0{,}5\), opera como **Abaixador (Buck)**." : "Como \(D > 0{,}5\), opera como **Elevador (Boost)**."}</div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 2: Dimensionamento do Indutor L (Slides 60 e 61)</div>
+            <div class="step-desc">A corrente média no indutor supre tanto a entrada quanto a saída:</div>
+            <div class="math-block">\[ I_{L,méd} = I_{Q1,méd} + I_{D1,méd} = \frac{I_o}{1 - D} = \frac{${I_o.toFixed(2)}}{1 - ${D.toFixed(3)}} = ${I_L_med.toFixed(2)}\text{ A} \]</div>
+            <div class="math-block">\[ L = \frac{V_g D}{f_s \Delta i_L} = \frac{${V_g} \cdot ${D.toFixed(4)}}{${f_s} \cdot ${delta_i.toFixed(3)}} = ${(L * 1e6).toFixed(2)}\,\mu\text{H} \]</div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 3: Dimensionamento do Filtro Capacitivo C (Slide 62)</div>
+            <div class="math-block">\[ C = \frac{I_o D}{f_s \Delta v_o} = \frac{${I_o.toFixed(2)} \cdot ${D.toFixed(4)}}{${f_s} \cdot ${delta_v.toFixed(4)}} = ${(C * 1e6).toFixed(2)}\,\mu\text{F} \]</div>
+          </div>
+
+          <div class="step-box">
+            <div class="step-title">Etapa 4: Esforços nos Interruptores Semicondutores (Slides 63 e 64)</div>
+            <div class="step-desc">A tensão máxima de bloqueio em \(Q_1\) e \(D_1\) é a soma das tensões de entrada e saída:</div>
+            <div class="math-block">\[ V_{Q1,máx} = V_{D1,máx} = V_g + |V_o| = ${V_g} + ${V_o_abs} = ${V_sw_max.toFixed(1)}\text{ V} \]</div>
+            <div class="math-block">\[ I_{Q1,ef} = \sqrt{D \left[ I_{L,méd}^2 + \frac{\Delta i_L^2}{12} \right]} = ${I_Q1_ef.toFixed(3)}\text{ A} \qquad I_{D1,ef} = \sqrt{(1 - D) \left[ I_{L,méd}^2 + \frac{\Delta i_L^2}{12} \right]} = ${I_D1_ef.toFixed(3)}\text{ A} \]</div>
+          </div>
+        `;
+      }
+
+            // Geração unificada de dados temporais para exatamente 2 PERÍODOS (t em ms)
       const T_periodo = 1000 / freq;  // Período em ms (~16.67 ms para 60Hz)
       const t_max = 2 * T_periodo;    // 2 ciclos completos (~33.33 ms)
       const numPontos = (topologia.includes("_spwm_")) ? 720 : 360;

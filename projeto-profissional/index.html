@@ -45,6 +45,7 @@
             <option value="trifasicos_nao_controlados">Retificadores Trifásicos não controlados</option>
             <option value="trifasicos_controlados">Retificadores Trifásicos controlados</option>
             <option value="conversores_cc_ca">Conversores CC-CA (Inversores de Tensão)</option>
+            <option value="conversores_cc_cc">Conversores CC-CC Não Isolados (Aulas 9, 10 e 11)</option>
           </select>
         </div>
 
@@ -178,6 +179,19 @@
             </div>
             <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #ec4899; border-radius: 4px;">
               <strong style="color: #f0f6fc;">27. Inversor Monofásico Ponte H com Modulação SPWM Unipolar (Aula 8):</strong> Modulação com duas modulantes senoidais em oposição de fase \(180^\circ\) (\(+v_m\) e \(-v_m\)) comparadas à mesma portadora triangular. Cada braço da ponte H comuta independentemente, gerando tensão de saída com 3 níveis (\(+V_{CC}, 0, -V_{CC}\)), fundamental eficaz \(V_{o1,ef} = \frac{m_a V_{CC}}{\sqrt{2}}\), cancelando harmônicos em torno de \(m_f\) e deslocando o espectro para \(2 m_f f_1\), reduzindo drasticamente a THD.
+            </div>
+            <div style="font-size: 0.8rem; font-weight: bold; color: #38bdf8; margin-top: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Conversores CC-CC Não Isolados (Aulas 9, 10 e 11)</div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #38bdf8; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">28. Conversor Buck em Condução Contínua (MCC):</strong> Conversor abaixador com filtro LC de saída. Ganho estático \(V_o/V_g = D\). A corrente no indutor permanece ininterrupta (\(i_L(t) > 0\)), garantindo menor ondulação na carga e esforços reduzidos nos semicondutores.
+            </div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #e3b341; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">29. Conversor Buck em Condução Descontínua (MCD):</strong> Opera com corrente nula no indutor durante parte do período (\(L < L_{crít}\)). Ganho \(V_o/V_g = \frac{D^2}{D^2 + \frac{2 L I_o}{V_g T_s}}\), variando com a corrente de carga e produzindo maiores picos de corrente nos semicondutores.
+            </div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #2ea043; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">30. Conversor Boost em Condução Contínua (MCC):</strong> Conversor elevador de tensão (\(V_o > V_g\)). Ganho estático \(V_o/V_g = \frac{1}{1 - D}\). A energia é armazenada no indutor no período ligado e transferida para a carga via diodo no período desligado.
+            </div>
+            <div style="padding: 7px 10px; background: #161b22; border-left: 3px solid #f0883e; border-radius: 4px;">
+              <strong style="color: #f0f6fc;">31. Conversor Buck-Boost em Condução Contínua (MCC):</strong> Conversor abaixador/elevador com inversão de polaridade na saída. Ganho estático \(|V_o/V_g| = \frac{D}{1 - D}\). Opera como abaixador para \(D < 0{,}5\) e elevador para \(D > 0{,}5\).
             </div>
           </div>
         </div>

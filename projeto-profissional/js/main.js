@@ -84,7 +84,13 @@ import {
         { id: "inversor_ponte_completa_r", nome: "Inversor Monofásico Ponte Completa (Ponte H) com Carga R", grupo: "Inversores de Onda Quadrada" },
         { id: "inversor_ponte_completa_rl", nome: "Inversor Monofásico Ponte Completa (Ponte H) com Carga RL", grupo: "Inversores de Onda Quadrada" },
         { id: "inversor_ponte_spwm_bipolar", nome: "Inversor Monofásico Ponte H com Modulação SPWM Bipolar (2 Níveis)", grupo: "Inversores com Modulação PWM/SPWM (Aula 8)" },
-        { id: "inversor_ponte_spwm_unipolar", nome: "Inversor Monofásico Ponte H com Modulação SPWM Unipolar (3 Níveis)", grupo: "Inversores com Modulação PWM/SPWM (Aula 8)" }
+        { id: "inversor_ponte_spwm_unipolar", nome: "Inversor Monofásico Ponte H com Modulação SPWM Unipolar (3 Níveis)", grupo: "Inversores com Modulação PWM/SPWM (Aula 8)" },
+      conversores_cc_cc: [
+        { id: "buck_mcc", nome: "Conversor Buck em Condução Contínua (MCC) - Slide 29", grupo: "Conversor Buck (Aulas 9 e 10)" },
+        { id: "buck_mcd", nome: "Conversor Buck em Condução Descontínua (MCD)", grupo: "Conversor Buck (Aulas 9 e 10)" },
+        { id: "boost_mcc", nome: "Conversor Boost em Condução Contínua (MCC)", grupo: "Conversor Boost (Aula 10)" },
+        { id: "buck_boost_mcc", nome: "Conversor Buck-Boost em Condução Contínua (MCC)", grupo: "Conversor Buck-Boost (Aula 11)" }
+      ]
       ]
     };
 
@@ -1654,6 +1660,293 @@ import {
           <text x="255" y="122" fill="#f0883e" font-size="11" font-weight="bold" text-anchor="middle">io(t)</text>
         </svg>
       `,
+
+      buck_mcc: `
+        <svg viewBox="0 0 480 230" xmlns="http://www.w3.org/2000/svg">
+          <!-- Trilho Superior e Inferior -->
+          <line x1="50" y1="50" x2="140" y2="50" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="50" y1="190" x2="440" y2="190" stroke="#58a6ff" stroke-width="2.5" />
+
+          <!-- Fonte CC de Entrada Vg -->
+          <line x1="50" y1="50" x2="50" y2="100" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="32" y1="100" x2="68" y2="100" stroke="#58a6ff" stroke-width="3" />
+          <line x1="40" y1="112" x2="60" y2="112" stroke="#58a6ff" stroke-width="4.5" />
+          <line x1="32" y1="124" x2="68" y2="124" stroke="#58a6ff" stroke-width="3" />
+          <line x1="40" y1="136" x2="60" y2="136" stroke="#58a6ff" stroke-width="4.5" />
+          <line x1="50" y1="136" x2="50" y2="190" stroke="#58a6ff" stroke-width="2.5" />
+          <text x="22" y="122" fill="#58a6ff" font-size="14" font-weight="bold" text-anchor="end">Vg</text>
+          <text x="56" y="90" fill="#58a6ff" font-size="12" font-weight="bold">+</text>
+          <text x="56" y="152" fill="#58a6ff" font-size="12" font-weight="bold">-</text>
+
+          <!-- Seta Corrente ig(t) -->
+          <line x1="85" y1="36" x2="115" y2="36" stroke="#db61a2" stroke-width="2" />
+          <polygon points="115,33 123,36 115,39" fill="#db61a2" />
+          <text x="104" y="28" fill="#db61a2" font-size="11" font-weight="bold" text-anchor="middle">ig(t)</text>
+
+          <!-- Transistor Q1 (MOSFET/Chave) -->
+          <circle cx="140" cy="50" r="3" fill="#58a6ff" />
+          <line x1="140" y1="50" x2="155" y2="50" stroke="#58a6ff" stroke-width="2" />
+          <line x1="155" y1="36" x2="155" y2="64" stroke="#38bdf8" stroke-width="3" />
+          <line x1="165" y1="38" x2="165" y2="48" stroke="#38bdf8" stroke-width="2.5" />
+          <line x1="165" y1="52" x2="165" y2="62" stroke="#38bdf8" stroke-width="2.5" />
+          <line x1="165" y1="43" x2="185" y2="43" stroke="#58a6ff" stroke-width="2" />
+          <line x1="185" y1="43" x2="185" y2="50" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="185" cy="50" r="3" fill="#58a6ff" />
+          <text x="160" y="28" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle">Q1</text>
+          <!-- Terminal Gate com PWM -->
+          <line x1="148" y1="50" x2="148" y2="70" stroke="#2ea043" stroke-width="2" />
+          <text x="135" y="76" fill="#2ea043" font-size="10" font-weight="bold">Gate G1</text>
+
+          <!-- Nó Central vx / vD -->
+          <line x1="185" y1="50" x2="250" y2="50" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="210" y1="50" x2="210" y2="105" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="210" cy="50" r="3.5" fill="#e3b341" />
+
+          <!-- Diodo de Roda Livre D1 (Anodo no Terra, Catodo no nó vx) -->
+          <polygon points="198,135 222,135 210,110" fill="#2ea043" />
+          <line x1="198" y1="110" x2="222" y2="110" stroke="#2ea043" stroke-width="3" />
+          <line x1="210" y1="135" x2="210" y2="190" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="210" cy="190" r="3" fill="#58a6ff" />
+          <text x="232" y="128" fill="#2ea043" font-size="12" font-weight="bold">D1</text>
+
+          <!-- Seta Corrente iD1(t) -->
+          <line x1="228" y1="165" x2="228" y2="145" stroke="#da3633" stroke-width="1.8" />
+          <polygon points="225,145 228,138 231,145" fill="#da3633" />
+          <text x="248" y="158" fill="#da3633" font-size="10" font-weight="bold">iD1</text>
+
+          <!-- Indutor de Filtro L com espiras -->
+          <path d="M 250 50 A 10 10 0 0 1 270 50 A 10 10 0 0 1 290 50 A 10 10 0 0 1 310 50 A 10 10 0 0 1 330 50" stroke="#a371f7" stroke-width="2.8" fill="none" />
+          <text x="290" y="32" fill="#a371f7" font-size="13" font-weight="bold" text-anchor="middle">L</text>
+          <!-- Tensão vL polaridade -->
+          <text x="254" y="44" fill="#a371f7" font-size="11" font-weight="bold">+</text>
+          <text x="326" y="44" fill="#a371f7" font-size="11" font-weight="bold">-</text>
+
+          <!-- Seta Corrente no Indutor iL(t) -->
+          <line x1="275" y1="68" x2="305" y2="68" stroke="#f0883e" stroke-width="2" />
+          <polygon points="305,65 313,68 305,71" fill="#f0883e" />
+          <text x="294" y="82" fill="#f0883e" font-size="11" font-weight="bold" text-anchor="middle">iL(t)</text>
+
+          <!-- Linha superior após L -->
+          <line x1="330" y1="50" x2="440" y2="50" stroke="#58a6ff" stroke-width="2.5" />
+
+          <!-- Capacitor de Filtro C -->
+          <line x1="370" y1="50" x2="370" y2="108" stroke="#58a6ff" stroke-width="2" />
+          <line x1="354" y1="108" x2="386" y2="108" stroke="#38bdf8" stroke-width="3.5" />
+          <line x1="354" y1="120" x2="386" y2="120" stroke="#38bdf8" stroke-width="3.5" />
+          <line x1="370" y1="120" x2="370" y2="190" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="370" cy="50" r="3" fill="#58a6ff" />
+          <circle cx="370" cy="190" r="3" fill="#58a6ff" />
+          <text x="394" y="118" fill="#38bdf8" font-size="12" font-weight="bold">C</text>
+
+          <!-- Resistor de Carga R -->
+          <line x1="440" y1="50" x2="440" y2="90" stroke="#58a6ff" stroke-width="2" />
+          <path d="M 440 90 L 440 94 L 432 99 L 448 107 L 432 115 L 448 123 L 432 131 L 448 139 L 440 144 L 440 150" stroke="#e3b341" stroke-width="2.5" fill="none" />
+          <line x1="440" y1="150" x2="440" y2="190" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="440" cy="50" r="3" fill="#58a6ff" />
+          <circle cx="440" cy="190" r="3" fill="#58a6ff" />
+          <text x="460" y="122" fill="#e3b341" font-size="13" font-weight="bold">R</text>
+
+          <!-- Tensão de Saída Vo -->
+          <text x="456" y="70" fill="#58a6ff" font-size="14" font-weight="bold">+</text>
+          <text x="456" y="180" fill="#58a6ff" font-size="14" font-weight="bold">-</text>
+          <text x="440" y="215" fill="#58a6ff" font-size="12" font-weight="bold" text-anchor="middle">vo(t) = Vo &plusmn; &Delta;vo</text>
+        </svg>
+      `,
+      buck_mcd: `
+        <svg viewBox="0 0 480 230" xmlns="http://www.w3.org/2000/svg">
+          <!-- Trilho Superior e Inferior -->
+          <line x1="50" y1="50" x2="140" y2="50" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="50" y1="190" x2="440" y2="190" stroke="#58a6ff" stroke-width="2.5" />
+
+          <!-- Fonte CC Vg -->
+          <line x1="50" y1="50" x2="50" y2="100" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="32" y1="100" x2="68" y2="100" stroke="#58a6ff" stroke-width="3" />
+          <line x1="40" y1="112" x2="60" y2="112" stroke="#58a6ff" stroke-width="4.5" />
+          <line x1="32" y1="124" x2="68" y2="124" stroke="#58a6ff" stroke-width="3" />
+          <line x1="40" y1="136" x2="60" y2="136" stroke="#58a6ff" stroke-width="4.5" />
+          <line x1="50" y1="136" x2="50" y2="190" stroke="#58a6ff" stroke-width="2.5" />
+          <text x="22" y="122" fill="#58a6ff" font-size="14" font-weight="bold" text-anchor="end">Vg</text>
+
+          <!-- Transistor Q1 -->
+          <circle cx="140" cy="50" r="3" fill="#58a6ff" />
+          <line x1="140" y1="50" x2="155" y2="50" stroke="#58a6ff" stroke-width="2" />
+          <line x1="155" y1="36" x2="155" y2="64" stroke="#38bdf8" stroke-width="3" />
+          <line x1="165" y1="38" x2="165" y2="48" stroke="#38bdf8" stroke-width="2.5" />
+          <line x1="165" y1="52" x2="165" y2="62" stroke="#38bdf8" stroke-width="2.5" />
+          <line x1="165" y1="43" x2="185" y2="43" stroke="#58a6ff" stroke-width="2" />
+          <line x1="185" y1="43" x2="185" y2="50" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="185" cy="50" r="3" fill="#58a6ff" />
+          <text x="160" y="28" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle">Q1</text>
+          <text x="135" y="76" fill="#2ea043" font-size="10" font-weight="bold">Gate</text>
+
+          <!-- Diodo D1 -->
+          <line x1="185" y1="50" x2="250" y2="50" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="210" y1="50" x2="210" y2="105" stroke="#58a6ff" stroke-width="2" />
+          <polygon points="198,135 222,135 210,110" fill="#2ea043" />
+          <line x1="198" y1="110" x2="222" y2="110" stroke="#2ea043" stroke-width="3" />
+          <line x1="210" y1="135" x2="210" y2="190" stroke="#58a6ff" stroke-width="2" />
+          <text x="232" y="128" fill="#2ea043" font-size="12" font-weight="bold">D1</text>
+
+          <!-- Indutor L com indicação MCD -->
+          <path d="M 250 50 A 10 10 0 0 1 270 50 A 10 10 0 0 1 290 50 A 10 10 0 0 1 310 50 A 10 10 0 0 1 330 50" stroke="#e3b341" stroke-width="2.8" fill="none" />
+          <text x="290" y="32" fill="#e3b341" font-size="13" font-weight="bold" text-anchor="middle">L &lt; Lcrit</text>
+          <text x="290" y="76" fill="#e3b341" font-size="11" font-weight="bold" text-anchor="middle">iL anula em tx</text>
+
+          <!-- Capacitor C e Carga R -->
+          <line x1="330" y1="50" x2="440" y2="50" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="370" y1="50" x2="370" y2="108" stroke="#58a6ff" stroke-width="2" />
+          <line x1="354" y1="108" x2="386" y2="108" stroke="#38bdf8" stroke-width="3.5" />
+          <line x1="354" y1="120" x2="386" y2="120" stroke="#38bdf8" stroke-width="3.5" />
+          <line x1="370" y1="120" x2="370" y2="190" stroke="#58a6ff" stroke-width="2" />
+          <text x="394" y="118" fill="#38bdf8" font-size="12" font-weight="bold">C</text>
+
+          <line x1="440" y1="50" x2="440" y2="90" stroke="#58a6ff" stroke-width="2" />
+          <path d="M 440 90 L 440 94 L 432 99 L 448 107 L 432 115 L 448 123 L 432 131 L 448 139 L 440 144 L 440 150" stroke="#e3b341" stroke-width="2.5" fill="none" />
+          <line x1="440" y1="150" x2="440" y2="190" stroke="#58a6ff" stroke-width="2" />
+          <text x="460" y="122" fill="#e3b341" font-size="13" font-weight="bold">R (Leve)</text>
+
+          <text x="240" y="215" fill="#e3b341" font-size="12" font-weight="bold" text-anchor="middle">Modo Descontínuo (MCD) &bull; 3 Etapas de Operação</text>
+        </svg>
+      `,
+      boost_mcc: `
+        <svg viewBox="0 0 480 230" xmlns="http://www.w3.org/2000/svg">
+          <!-- Trilho Inferior GND -->
+          <line x1="50" y1="190" x2="440" y2="190" stroke="#58a6ff" stroke-width="2.5" />
+
+          <!-- Fonte CC Vg -->
+          <line x1="50" y1="50" x2="50" y2="100" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="32" y1="100" x2="68" y2="100" stroke="#58a6ff" stroke-width="3" />
+          <line x1="40" y1="112" x2="60" y2="112" stroke="#58a6ff" stroke-width="4.5" />
+          <line x1="32" y1="124" x2="68" y2="124" stroke="#58a6ff" stroke-width="3" />
+          <line x1="40" y1="136" x2="60" y2="136" stroke="#58a6ff" stroke-width="4.5" />
+          <line x1="50" y1="136" x2="50" y2="190" stroke="#58a6ff" stroke-width="2.5" />
+          <text x="22" y="122" fill="#58a6ff" font-size="14" font-weight="bold" text-anchor="end">Vg</text>
+
+          <!-- Linha até o Indutor L -->
+          <line x1="50" y1="50" x2="90" y2="50" stroke="#58a6ff" stroke-width="2.5" />
+
+          <!-- Indutor L em Série na Entrada -->
+          <path d="M 90 50 A 10 10 0 0 1 110 50 A 10 10 0 0 1 130 50 A 10 10 0 0 1 150 50 A 10 10 0 0 1 170 50" stroke="#a371f7" stroke-width="2.8" fill="none" />
+          <text x="130" y="32" fill="#a371f7" font-size="13" font-weight="bold" text-anchor="middle">L</text>
+          <!-- Seta iL -->
+          <line x1="115" y1="68" x2="145" y2="68" stroke="#f0883e" stroke-width="2" />
+          <polygon points="145,65 153,68 145,71" fill="#f0883e" />
+          <text x="134" y="82" fill="#f0883e" font-size="11" font-weight="bold" text-anchor="middle">iL(t)</text>
+
+          <!-- Nó vx de comutação -->
+          <line x1="170" y1="50" x2="230" y2="50" stroke="#58a6ff" stroke-width="2.5" />
+          <circle cx="210" cy="50" r="3.5" fill="#e3b341" />
+
+          <!-- Transistor Q1 em Derivação para Terra -->
+          <line x1="210" y1="50" x2="210" y2="85" stroke="#58a6ff" stroke-width="2" />
+          <line x1="196" y1="85" x2="224" y2="85" stroke="#38bdf8" stroke-width="3" />
+          <line x1="198" y1="95" x2="208" y2="95" stroke="#38bdf8" stroke-width="2.5" />
+          <line x1="212" y1="95" x2="222" y2="95" stroke="#38bdf8" stroke-width="2.5" />
+          <line x1="203" y1="95" x2="203" y2="115" stroke="#58a6ff" stroke-width="2" />
+          <line x1="203" y1="115" x2="210" y2="115" stroke="#58a6ff" stroke-width="2" />
+          <line x1="210" y1="115" x2="210" y2="190" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="210" cy="190" r="3" fill="#58a6ff" />
+          <text x="235" y="105" fill="#38bdf8" font-size="13" font-weight="bold">Q1</text>
+          <text x="175" y="90" fill="#2ea043" font-size="10" font-weight="bold">Gate</text>
+
+          <!-- Diodo D1 em Série para Saída -->
+          <line x1="210" y1="50" x2="260" y2="50" stroke="#58a6ff" stroke-width="2.5" />
+          <polygon points="260,38 260,62 285,50" fill="#2ea043" />
+          <line x1="285" y1="38" x2="285" y2="62" stroke="#2ea043" stroke-width="3" />
+          <text x="272" y="32" fill="#2ea043" font-size="12" font-weight="bold">D1</text>
+
+          <!-- Linha Superior de Saída -->
+          <line x1="285" y1="50" x2="440" y2="50" stroke="#58a6ff" stroke-width="2.5" />
+
+          <!-- Capacitor C de Saída -->
+          <line x1="360" y1="50" x2="360" y2="108" stroke="#58a6ff" stroke-width="2" />
+          <line x1="344" y1="108" x2="376" y2="108" stroke="#38bdf8" stroke-width="3.5" />
+          <line x1="344" y1="120" x2="376" y2="120" stroke="#38bdf8" stroke-width="3.5" />
+          <line x1="360" y1="120" x2="360" y2="190" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="360" cy="50" r="3" fill="#58a6ff" />
+          <circle cx="360" cy="190" r="3" fill="#58a6ff" />
+          <text x="384" y="118" fill="#38bdf8" font-size="12" font-weight="bold">C</text>
+
+          <!-- Resistor R de Carga -->
+          <line x1="440" y1="50" x2="440" y2="90" stroke="#58a6ff" stroke-width="2" />
+          <path d="M 440 90 L 440 94 L 432 99 L 448 107 L 432 115 L 448 123 L 432 131 L 448 139 L 440 144 L 440 150" stroke="#e3b341" stroke-width="2.5" fill="none" />
+          <line x1="440" y1="150" x2="440" y2="190" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="440" cy="50" r="3" fill="#58a6ff" />
+          <circle cx="440" cy="190" r="3" fill="#58a6ff" />
+          <text x="460" y="122" fill="#e3b341" font-size="13" font-weight="bold">R</text>
+
+          <text x="456" y="70" fill="#58a6ff" font-size="14" font-weight="bold">+</text>
+          <text x="456" y="180" fill="#58a6ff" font-size="14" font-weight="bold">-</text>
+          <text x="240" y="215" fill="#2ea043" font-size="12" font-weight="bold" text-anchor="middle">Conversor Boost &bull; Vo = Vg / (1 - D) &gt; Vg (Elevador)</text>
+        </svg>
+      `,
+      buck_boost_mcc: `
+        <svg viewBox="0 0 480 230" xmlns="http://www.w3.org/2000/svg">
+          <!-- Trilho Inferior GND -->
+          <line x1="50" y1="190" x2="440" y2="190" stroke="#58a6ff" stroke-width="2.5" />
+
+          <!-- Fonte CC Vg -->
+          <line x1="50" y1="50" x2="50" y2="100" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="32" y1="100" x2="68" y2="100" stroke="#58a6ff" stroke-width="3" />
+          <line x1="40" y1="112" x2="60" y2="112" stroke="#58a6ff" stroke-width="4.5" />
+          <line x1="32" y1="124" x2="68" y2="124" stroke="#58a6ff" stroke-width="3" />
+          <line x1="40" y1="136" x2="60" y2="136" stroke="#58a6ff" stroke-width="4.5" />
+          <line x1="50" y1="136" x2="50" y2="190" stroke="#58a6ff" stroke-width="2.5" />
+          <text x="22" y="122" fill="#58a6ff" font-size="14" font-weight="bold" text-anchor="end">Vg</text>
+
+          <!-- Transistor Q1 em Série -->
+          <line x1="50" y1="50" x2="110" y2="50" stroke="#58a6ff" stroke-width="2.5" />
+          <circle cx="110" cy="50" r="3" fill="#58a6ff" />
+          <line x1="110" y1="50" x2="125" y2="50" stroke="#58a6ff" stroke-width="2" />
+          <line x1="125" y1="36" x2="125" y2="64" stroke="#38bdf8" stroke-width="3" />
+          <line x1="135" y1="38" x2="135" y2="48" stroke="#38bdf8" stroke-width="2.5" />
+          <line x1="135" y1="52" x2="135" y2="62" stroke="#38bdf8" stroke-width="2.5" />
+          <line x1="135" y1="43" x2="155" y2="43" stroke="#58a6ff" stroke-width="2" />
+          <line x1="155" y1="43" x2="155" y2="50" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="155" cy="50" r="3" fill="#58a6ff" />
+          <text x="130" y="28" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle">Q1</text>
+          <text x="105" y="76" fill="#2ea043" font-size="10" font-weight="bold">Gate</text>
+
+          <!-- Nó Central vx -->
+          <line x1="155" y1="50" x2="220" y2="50" stroke="#58a6ff" stroke-width="2.5" />
+          <circle cx="200" cy="50" r="3.5" fill="#e3b341" />
+
+          <!-- Indutor L em Derivação para Terra -->
+          <line x1="200" y1="50" x2="200" y2="80" stroke="#58a6ff" stroke-width="2" />
+          <path d="M 200 80 A 10 10 0 0 1 200 100 A 10 10 0 0 1 200 120 A 10 10 0 0 1 200 140 A 10 10 0 0 1 200 160" stroke="#a371f7" stroke-width="2.8" fill="none" />
+          <line x1="200" y1="160" x2="200" y2="190" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="200" cy="190" r="3" fill="#58a6ff" />
+          <text x="225" y="125" fill="#a371f7" font-size="13" font-weight="bold">L</text>
+
+          <!-- Diodo D1 Invertido em Série com a Saída (Catodo no nó de comutação vx) -->
+          <line x1="200" y1="50" x2="270" y2="50" stroke="#58a6ff" stroke-width="2.5" />
+          <line x1="270" y1="38" x2="270" y2="62" stroke="#2ea043" stroke-width="3" />
+          <polygon points="295,38 295,62 270,50" fill="#2ea043" />
+          <line x1="295" y1="50" x2="440" y2="50" stroke="#58a6ff" stroke-width="2.5" />
+          <text x="282" y="32" fill="#2ea043" font-size="12" font-weight="bold">D1</text>
+
+          <!-- Capacitor C -->
+          <line x1="360" y1="50" x2="360" y2="108" stroke="#58a6ff" stroke-width="2" />
+          <line x1="344" y1="108" x2="376" y2="108" stroke="#38bdf8" stroke-width="3.5" />
+          <line x1="344" y1="120" x2="376" y2="120" stroke="#38bdf8" stroke-width="3.5" />
+          <line x1="360" y1="120" x2="360" y2="190" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="360" cy="50" r="3" fill="#58a6ff" />
+          <circle cx="360" cy="190" r="3" fill="#58a6ff" />
+          <text x="384" y="118" fill="#38bdf8" font-size="12" font-weight="bold">C</text>
+
+          <!-- Resistor R com Polaridade Invertida (- superior, + inferior) -->
+          <line x1="440" y1="50" x2="440" y2="90" stroke="#58a6ff" stroke-width="2" />
+          <path d="M 440 90 L 440 94 L 432 99 L 448 107 L 432 115 L 448 123 L 432 131 L 448 139 L 440 144 L 440 150" stroke="#e3b341" stroke-width="2.5" fill="none" />
+          <line x1="440" y1="150" x2="440" y2="190" stroke="#58a6ff" stroke-width="2" />
+          <circle cx="440" cy="50" r="3" fill="#58a6ff" />
+          <circle cx="440" cy="190" r="3" fill="#58a6ff" />
+          <text x="460" y="122" fill="#e3b341" font-size="13" font-weight="bold">R</text>
+
+          <text x="456" y="70" fill="#f85149" font-size="14" font-weight="bold">-</text>
+          <text x="456" y="180" fill="#2ea043" font-size="14" font-weight="bold">+</text>
+          <text x="240" y="215" fill="#f0883e" font-size="12" font-weight="bold" text-anchor="middle">Buck-Boost &bull; |Vo/Vg| = D / (1 - D) (Polaridade Invertida)</text>
+        </svg>
+      `,
       inversor_ponte_spwm_bipolar: `
         <svg viewBox="0 0 520 220" xmlns="http://www.w3.org/2000/svg">
           <!-- Bloco Comparador PWM (Esquerda) -->
@@ -2148,6 +2441,184 @@ import {
         </div>
       `;
 
+
+      if (cat === "conversores_cc_cc") {
+        if (topologia === "buck_mcc") {
+          inputsHTML = `
+            <div class="card-subtitle" style="margin-bottom: 12px; padding: 8px 12px; background: rgba(56, 189, 248, 0.1); border-left: 3px solid #38bdf8; border-radius: 4px; font-size: 0.82rem; color: #7dd3fc;">
+              <strong>💡 Parâmetros pré-carregados do Exercício Resolvido (Slide 29):</strong> Vg = 15 V, Vo = 5 V, Po = 20 W, fs = 70 kHz, &Delta;iL = 25% (1 A), &Delta;Vo = 1% (50 mV).
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="input-vg">Tensão de Entrada V<sub>g</sub> [V]</label>
+                <input type="number" id="input-vg" step="any" value="15" required>
+              </div>
+              <div class="form-group">
+                <label for="input-vo">Tensão de Saída Desejada V<sub>o</sub> [V]</label>
+                <input type="number" id="input-vo" step="any" value="5" required>
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="input-po">Potência Nominal na Carga P<sub>o</sub> [W]</label>
+                <input type="number" id="input-po" step="any" value="20" required>
+              </div>
+              <div class="form-group">
+                <label for="input-fs">Frequência de Comutação f<sub>s</sub> [kHz]</label>
+                <input type="number" id="input-fs" step="any" value="70" required>
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="input-delta-il">Ondulação de Corrente no Indutor &Delta;i<sub>L</sub> [% de I<sub>o</sub>]</label>
+                <input type="number" id="input-delta-il" step="any" value="25" min="1" max="100" required>
+              </div>
+              <div class="form-group">
+                <label for="input-delta-vo">Ondulação de Tensão de Saída &Delta;v<sub>o</sub> [% de V<sub>o</sub>]</label>
+                <input type="number" id="input-delta-vo" step="any" value="1" min="0.01" max="20" required>
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="input-l-dcdc">Indutância L [&micro;H] (0 = Auto-Dimensionar)</label>
+                <input type="number" id="input-l-dcdc" step="any" value="0">
+              </div>
+              <div class="form-group">
+                <label for="input-c-dcdc">Capacitância C [&micro;F] (0 = Auto-Dimensionar)</label>
+                <input type="number" id="input-c-dcdc" step="any" value="0">
+              </div>
+            </div>
+          `;
+        } else if (topologia === "buck_mcd") {
+          inputsHTML = `
+            <div class="card-subtitle" style="margin-bottom: 12px; padding: 8px 12px; background: rgba(227, 179, 65, 0.1); border-left: 3px solid #e3b341; border-radius: 4px; font-size: 0.82rem; color: #f2cc60;">
+              <strong>💡 Operação em Condução Descontínua (MCD - Slides 30 a 35):</strong> A indutância L é menor que a crítica (L &lt; Lcrit), fazendo com que a corrente no indutor se anule a cada ciclo.
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="input-vg">Tensão de Entrada V<sub>g</sub> [V]</label>
+                <input type="number" id="input-vg" step="any" value="24" required>
+              </div>
+              <div class="form-group">
+                <label for="input-d-dcdc">Razão Cíclica Imposta D (0 a 1)</label>
+                <input type="number" id="input-d-dcdc" step="any" value="0.4" min="0.01" max="0.99" required>
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="input-r">Resistência de Carga R [&Omega;]</label>
+                <input type="number" id="input-r" step="any" value="20" required>
+              </div>
+              <div class="form-group">
+                <label for="input-fs">Frequência de Comutação f<sub>s</sub> [kHz]</label>
+                <input type="number" id="input-fs" step="any" value="50" required>
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="input-l-dcdc">Indutância L [&micro;H]</label>
+                <input type="number" id="input-l-dcdc" step="any" value="30" required>
+              </div>
+              <div class="form-group">
+                <label for="input-c-dcdc">Capacitância de Filtro C [&micro;F]</label>
+                <input type="number" id="input-c-dcdc" step="any" value="47" required>
+              </div>
+            </div>
+          `;
+        } else if (topologia === "boost_mcc") {
+          inputsHTML = `
+            <div class="card-subtitle" style="margin-bottom: 12px; padding: 8px 12px; background: rgba(46, 160, 67, 0.1); border-left: 3px solid #2ea043; border-radius: 4px; font-size: 0.82rem; color: #56d364;">
+              <strong>💡 Conversor Boost em MCC (Slides 41 a 50):</strong> Elevador de tensão (Vo &gt; Vg). Ganho estático: Vo/Vg = 1 / (1 - D).
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="input-vg">Tensão de Entrada V<sub>g</sub> [V]</label>
+                <input type="number" id="input-vg" step="any" value="12" required>
+              </div>
+              <div class="form-group">
+                <label for="input-vo">Tensão de Saída Desejada V<sub>o</sub> [V]</label>
+                <input type="number" id="input-vo" step="any" value="24" required>
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="input-po">Potência Nominal na Carga P<sub>o</sub> [W]</label>
+                <input type="number" id="input-po" step="any" value="48" required>
+              </div>
+              <div class="form-group">
+                <label for="input-fs">Frequência de Comutação f<sub>s</sub> [kHz]</label>
+                <input type="number" id="input-fs" step="any" value="50" required>
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="input-delta-il">Ondulação de Corrente &Delta;i<sub>L</sub> [% de I<sub>in</sub>]</label>
+                <input type="number" id="input-delta-il" step="any" value="20" min="1" max="100" required>
+              </div>
+              <div class="form-group">
+                <label for="input-delta-vo">Ondulação de Tensão de Saída &Delta;v<sub>o</sub> [% de V<sub>o</sub>]</label>
+                <input type="number" id="input-delta-vo" step="any" value="1" min="0.01" max="20" required>
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="input-l-dcdc">Indutância L [&micro;H] (0 = Auto-Dimensionar)</label>
+                <input type="number" id="input-l-dcdc" step="any" value="0">
+              </div>
+              <div class="form-group">
+                <label for="input-c-dcdc">Capacitância C [&micro;F] (0 = Auto-Dimensionar)</label>
+                <input type="number" id="input-c-dcdc" step="any" value="0">
+              </div>
+            </div>
+          `;
+        } else if (topologia === "buck_boost_mcc") {
+          inputsHTML = `
+            <div class="card-subtitle" style="margin-bottom: 12px; padding: 8px 12px; background: rgba(240, 136, 62, 0.1); border-left: 3px solid #f0883e; border-radius: 4px; font-size: 0.82rem; color: #ffb454;">
+              <strong>💡 Conversor Buck-Boost em MCC (Slides 53 a 64):</strong> Abaixador/Elevador com inversão de polaridade. |Vo/Vg| = D / (1 - D).
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="input-vg">Tensão de Entrada V<sub>g</sub> [V]</label>
+                <input type="number" id="input-vg" step="any" value="20" required>
+              </div>
+              <div class="form-group">
+                <label for="input-vo">Módulo da Tensão de Saída |V<sub>o</sub>| [V]</label>
+                <input type="number" id="input-vo" step="any" value="12" required>
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="input-po">Potência Nominal na Carga P<sub>o</sub> [W]</label>
+                <input type="number" id="input-po" step="any" value="36" required>
+              </div>
+              <div class="form-group">
+                <label for="input-fs">Frequência de Comutação f<sub>s</sub> [kHz]</label>
+                <input type="number" id="input-fs" step="any" value="60" required>
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="input-delta-il">Ondulação de Corrente &Delta;i<sub>L</sub> [% de I<sub>L</sub>]</label>
+                <input type="number" id="input-delta-il" step="any" value="25" min="1" max="100" required>
+              </div>
+              <div class="form-group">
+                <label for="input-delta-vo">Ondulação de Tensão de Saída &Delta;v<sub>o</sub> [% de |V<sub>o</sub>|]</label>
+                <input type="number" id="input-delta-vo" step="any" value="1" min="0.01" max="20" required>
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label for="input-l-dcdc">Indutância L [&micro;H] (0 = Auto-Dimensionar)</label>
+                <input type="number" id="input-l-dcdc" step="any" value="0">
+              </div>
+              <div class="form-group">
+                <label for="input-c-dcdc">Capacitância C [&micro;F] (0 = Auto-Dimensionar)</label>
+                <input type="number" id="input-c-dcdc" step="any" value="0">
+              </div>
+            </div>
+          `;
+        }
+      }
       if (cat === "conversores_cc_ca") {
         inputsHTML = `
           <div class="form-group">

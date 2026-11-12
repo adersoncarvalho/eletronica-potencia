@@ -459,7 +459,7 @@
       const T = 1 / freq;
       const N = plotData.t.length;
 
-      const t_sec = plotData.t.map(ms => ms / 1000);
+      const t_sec = plotData.is_dcdc ? plotData.t.map(us => us / 1e6) : plotData.t.map(ms => ms / 1000);
       const x1_target = T;
       const x2_target = 2 * T;
 
@@ -932,7 +932,7 @@
             { label: "G3 - Fase C (V)", data: plotData.gate3, color: "#fb923c", borderWidth: 2 }
           ], "Pulsos de Gate G1, G2, G3 (V)", false, plotData);
         } else {
-          const labelGate = plotData.topologia.includes("_spwm_") ? "G1(t) - Pulso PWM Chave S1 (V)" : (plotData.is_inversor ? "G1(t) - Sinal de Comando Chave S1 (V)" : "G(t) - Pulso de Disparo / Gate (V)");
+          const labelGate = plotData.is_dcdc ? "G1(t) - Comando PWM Chave Q1 (V)" : (plotData.topologia.includes("_spwm_") ? "G1(t) - Pulso PWM Chave S1 (V)" : (plotData.is_inversor ? "G1(t) - Sinal de Comando Chave S1 (V)" : "G(t) - Pulso de Disparo / Gate (V)"));
           chartGateInst = criarSubplot("chartGate", labelGate, plotData.gate, "Gate G(t) (V)", false, plotData, "#2ea043");
         }
       } else {
@@ -1030,7 +1030,7 @@
         boxID3.style.display = "none";
       }
 
-      chartIInst = criarSubplot("chartI", "i(t)", plotData.i_out, "Corrente na carga (A)", false, plotData, "#f0883e");
+      chartIInst = criarSubplot("chartI", plotData.is_dcdc ? "iL(t) - Corrente no Indutor (A)" : "i(t)", plotData.i_out, plotData.is_dcdc ? "Corrente iL (A)" : "Corrente na carga (A)", false, plotData, "#f0883e");
 
       const boxIg = document.getElementById("box-chartIg");
       if (plotData.tem_ig && (plotData.is_onda_completa || plotData.topologia === "tri_ponte_completa_r" || plotData.topologia === "tri_ponte_controlado_r" || plotData.is_inversor)) {
@@ -1098,7 +1098,7 @@
         boxes.id2.style.display = ultimoPlotData.tem_d2 ? "block" : "none";
         boxes.id3.style.display = ultimoPlotData.tem_d3 ? "block" : "none";
         boxes.i.style.display = "block";
-        boxes.ig.style.display = (ultimoPlotData.tem_ig && (ultimoPlotData.is_onda_completa || ultimoPlotData.topologia === "tri_ponte_completa_r" || ultimoPlotData.topologia === "tri_ponte_controlado_r" || ultimoPlotData.is_inversor)) ? "block" : "none";
+        boxes.ig.style.display = (ultimoPlotData.tem_ig && (ultimoPlotData.is_onda_completa || ultimoPlotData.topologia === "tri_ponte_completa_r" || ultimoPlotData.topologia === "tri_ponte_controlado_r" || ultimoPlotData.is_inversor || ultimoPlotData.is_dcdc)) ? "block" : "none";
         if (blockMeasureSection) blockMeasureSection.style.display = "flex";
         if (blockMeasureCarga) blockMeasureCarga.style.display = "block";
         if (blockMeasureFonte) blockMeasureFonte.style.display = "block";
@@ -1138,7 +1138,7 @@
         boxes.id2.style.display = "none";
         boxes.id3.style.display = "none";
         boxes.i.style.display = "none";
-        boxes.ig.style.display = (ultimoPlotData.tem_ig && (ultimoPlotData.is_onda_completa || ultimoPlotData.topologia === "tri_ponte_completa_r" || ultimoPlotData.topologia === "tri_ponte_controlado_r" || ultimoPlotData.is_inversor)) ? "block" : "none";
+        boxes.ig.style.display = (ultimoPlotData.tem_ig && (ultimoPlotData.is_onda_completa || ultimoPlotData.topologia === "tri_ponte_completa_r" || ultimoPlotData.topologia === "tri_ponte_controlado_r" || ultimoPlotData.is_inversor || ultimoPlotData.is_dcdc)) ? "block" : "none";
         if (blockMeasureSection) blockMeasureSection.style.display = "flex";
         if (blockMeasureCarga) blockMeasureCarga.style.display = "none";
         if (blockMeasureFonte) blockMeasureFonte.style.display = "block";
