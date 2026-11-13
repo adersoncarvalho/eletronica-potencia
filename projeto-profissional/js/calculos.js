@@ -3421,7 +3421,7 @@ import { atualizarGrafico } from './graficos.js';
         const I_g_med = I_Q1_med;
         const P_in = V_g * I_g_med;
 
-        plotTitle = `Conversor Buck em MCC: Vg = ${V_g.toFixed(1)} V &rarr; Vo = ${V_o.toFixed(2)} V, Po = ${P_o.toFixed(1)} W, fs = ${fs_kHz.toFixed(0)} kHz (Slide 29)`;
+        plotTitle = `Conversor Buck em MCC: Vg = ${V_g.toFixed(1)} V → Vo = ${V_o.toFixed(2)} V, Po = ${P_o.toFixed(1)} W, fs = ${fs_kHz.toFixed(0)} kHz (Slide 29)`;
 
         summaryHTML = `
           <div class="stat-box"><div class="stat-label">Razão Cíclica D</div><div class="stat-value">${(D * 100).toFixed(2)}%</div></div>
@@ -3553,7 +3553,7 @@ Rload out 0 ${R.toFixed(3)}
         const I_D1_med = (delta_i * tx) / (2 * Ts);
         const I_D1_ef = delta_i * Math.sqrt(tx / (3 * Ts));
 
-        plotTitle = `Conversor Buck em MCD: Vg = ${V_g.toFixed(1)} V, D = ${D.toFixed(2)}, R = ${R} &Omega;, L = ${L_uH} &micro;H &rarr; Vo = ${V_o.toFixed(2)} V (Slides 30 a 35)`;
+        plotTitle = `Conversor Buck em MCD: Vg = ${V_g.toFixed(1)} V, D = ${D.toFixed(2)}, R = ${R} Ω, L = ${L_uH} µH → Vo = ${V_o.toFixed(2)} V (Slides 30 a 35)`;
 
         summaryHTML = `
           <div class="stat-box"><div class="stat-label">Regime Operação</div><div class="stat-value" style="color: #e3b341;">${isMCD ? "MCD (Descontínuo)" : "MCC (Contínuo)"}</div></div>
@@ -3633,7 +3633,7 @@ Rload out 0 ${R.toFixed(3)}
         const I_D1_med = I_g * (1 - D);
         const I_D1_ef = Math.sqrt((1 - D) * (I_g * I_g + (delta_i * delta_i) / 12));
 
-        plotTitle = `Conversor Boost em MCC: Vg = ${V_g.toFixed(1)} V &rarr; Vo = ${V_o.toFixed(1)} V (Elevador), Po = ${P_o.toFixed(1)} W, fs = ${fs_kHz.toFixed(0)} kHz (Slides 41 a 50)`;
+        plotTitle = `Conversor Boost em MCC: Vg = ${V_g.toFixed(1)} V → Vo = ${V_o.toFixed(1)} V (Elevador), Po = ${P_o.toFixed(1)} W, fs = ${fs_kHz.toFixed(0)} kHz (Slides 41 a 50)`;
 
         summaryHTML = `
           <div class="stat-box"><div class="stat-label">Razão Cíclica D</div><div class="stat-value">${(D * 100).toFixed(2)}%</div></div>
@@ -3711,7 +3711,7 @@ Rload out 0 ${R.toFixed(3)}
         const I_D1_med = I_L_med * (1 - D);
         const I_D1_ef = Math.sqrt((1 - D) * (I_L_med * I_L_med + (delta_i * delta_i) / 12));
 
-        plotTitle = `Conversor Buck-Boost em MCC: Vg = ${V_g.toFixed(1)} V &rarr; Vo = -${V_o_abs.toFixed(1)} V (Inversor), Po = ${P_o.toFixed(1)} W (Slides 53 a 64)`;
+        plotTitle = `Conversor Buck-Boost em MCC: Vg = ${V_g.toFixed(1)} V → Vo = -${V_o_abs.toFixed(1)} V (Inversor), Po = ${P_o.toFixed(1)} W (Slides 53 a 64)`;
 
         summaryHTML = `
           <div class="stat-box"><div class="stat-label">Razão Cíclica D</div><div class="stat-value">${(D * 100).toFixed(2)}%</div></div>
