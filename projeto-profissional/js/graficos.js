@@ -164,7 +164,7 @@
             },
             tooltip: {
               callbacks: {
-                title: function(items) { return `Tempo = ${items[0].label} ms`; },
+                title: function(items) { return `Tempo = ${items[0].label} ${plotData.is_dcdc ? 'µs' : 'ms'}`; },
                 label: function(item) { return ` ${item.dataset.label}: ${item.parsed.y.toFixed(2)}`; }
               }
             }
@@ -189,7 +189,7 @@
               },
               title: {
                 display: showXAxis,
-                text: 'Tempo (ms)',
+                text: plotData.is_dcdc ? 'Tempo (µs)' : 'Tempo (ms)',
                 color: theme.titleColor,
                 font: { size: 13, weight: '600' }
               },
@@ -261,7 +261,7 @@
             },
             tooltip: {
               callbacks: {
-                title: function(items) { return `Tempo = ${items[0].label} ms`; },
+                title: function(items) { return `Tempo = ${items[0].label} ${plotData.is_dcdc ? 'µs' : 'ms'}`; },
                 label: function(item) { return ` ${item.dataset.label}: ${item.parsed.y.toFixed(2)}`; }
               }
             }
@@ -286,7 +286,7 @@
               },
               title: {
                 display: showXAxis,
-                text: 'Tempo (ms)',
+                text: plotData.is_dcdc ? 'Tempo (µs)' : 'Tempo (ms)',
                 color: theme.titleColor,
                 font: { size: 13, weight: '600' }
               },
@@ -371,7 +371,7 @@
             },
             tooltip: {
               callbacks: {
-                title: function(items) { return `Tempo = ${items[0].label} ms`; },
+                title: function(items) { return `Tempo = ${items[0].label} ${plotData.is_dcdc ? 'µs' : 'ms'}`; },
                 label: function(item) { return ` ${item.dataset.label}: ${item.parsed.y.toFixed(2)}`; }
               }
             }
@@ -396,7 +396,7 @@
               },
               title: {
                 display: true,
-                text: 'Tempo (ms)',
+                text: plotData.is_dcdc ? 'Tempo (µs)' : 'Tempo (ms)',
                 color: theme.titleColor,
                 font: { size: 13, weight: '600' }
               },
@@ -1043,10 +1043,10 @@
       chartIInst = criarSubplot("chartI", plotData.is_dcdc ? "iL(t) - Corrente no Indutor (A)" : "i(t)", plotData.i_out, plotData.is_dcdc ? "Corrente iL (A)" : "Corrente na carga (A)", false, plotData, "#f0883e");
 
       const boxIg = document.getElementById("box-chartIg");
-      if (plotData.tem_ig && (plotData.is_onda_completa || plotData.topologia === "tri_ponte_completa_r" || plotData.topologia === "tri_ponte_controlado_r" || plotData.is_inversor)) {
+      if (plotData.tem_ig && (plotData.is_onda_completa || plotData.topologia === "tri_ponte_completa_r" || plotData.topologia === "tri_ponte_controlado_r" || plotData.is_inversor || plotData.is_dcdc)) {
         boxIg.style.display = "block";
-        const labelIg = plotData.is_inversor ? "iCC(t) - Corrente Fonte CC (A)" : (plotData.is_trifasico ? "ia(t) - Corrente Fase A Fonte CA (A)" : "ig(t) - Corrente Fonte CA (A)");
-        const titleIg = plotData.is_inversor ? "Corrente iCC (A)" : "Corrente CA (A)";
+        const labelIg = plotData.is_dcdc ? "ig(t) - Corrente Fonte CC (A)" : (plotData.is_inversor ? "iCC(t) - Corrente Fonte CC (A)" : (plotData.is_trifasico ? "ia(t) - Corrente Fase A Fonte CA (A)" : "ig(t) - Corrente Fonte CA (A)"));
+        const titleIg = plotData.is_dcdc ? "Corrente ig (A)" : (plotData.is_inversor ? "Corrente iCC (A)" : "Corrente CA (A)");
         chartIgInst = criarSubplot("chartIg", labelIg, plotData.i_fonte, titleIg, false, plotData, "#db61a2");
       } else {
         boxIg.style.display = "none";
