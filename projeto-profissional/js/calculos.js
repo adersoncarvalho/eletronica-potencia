@@ -3910,6 +3910,10 @@ Rload out 0 ${R.toFixed(3)}
           const t_cycle = t_sec % Ts_sec;
           const ton = D * Ts_sec;
 
+          const toff = Ts_sec - ton;
+          const dv_mean = (delta_i * Ts_sec / (12 * C)) * (1 - 2 * D);
+          let dv_inst = 0;
+
           v_in_val = V_g;
           if (t_cycle < ton) {
             gate_val = 10;
@@ -3918,15 +3922,18 @@ Rload out 0 ${R.toFixed(3)}
             i_d1_val = i_out_val;
             i_d2_val = 0;
             i_fonte_val = i_d1_val;
+            dv_inst = (-0.5 * delta_i * t_cycle + (delta_i / (2 * ton)) * t_cycle * t_cycle) / C;
           } else {
+            const tau = t_cycle - ton;
             gate_val = 0;
             v_d_val = -V_o;
-            i_out_val = IL_max - delta_i * ((t_cycle - ton) / (Ts_sec - ton));
+            i_out_val = IL_max - delta_i * (tau / toff);
             i_d1_val = 0;
             i_d2_val = i_out_val;
             i_fonte_val = 0;
+            dv_inst = (0.5 * delta_i * tau - (delta_i / (2 * toff)) * tau * tau) / C;
           }
-          v_out_val = V_o + (delta_v / 2) * Math.sin(2 * Math.PI * (t_cycle / Ts_sec) - Math.PI / 2);
+          v_out_val = V_o + dv_inst - dv_mean;
         } else if (topologia === "buck_mcd") {
           const V_g = parseFloat(document.getElementById("input-vg")?.value || 24);
           const D = parseFloat(document.getElementById("input-d-dcdc")?.value || 0.4);
