@@ -568,7 +568,9 @@
       const titleV = isCarga ? 'Tensão V_Carga [V]' : 'Tensão V_Fonte [V]';
       const titleI = isCarga ? 'Corrente I_Carga [A]' : 'Corrente I_Fonte [A]';
 
-      const timeLabels = plotData.t.map(ms => (ms / 1000).toFixed(4));
+      const timeLabels = plotData.is_dcdc
+        ? plotData.t.map(us => us.toFixed(2))
+        : plotData.t.map(ms => (ms / 1000).toFixed(4));
 
       return new Chart(ctx, {
         type: 'line',
@@ -620,7 +622,11 @@
             },
             tooltip: {
               callbacks: {
-                title: function(items) { return `Time = ${items[0].label} s (${(parseFloat(items[0].label)*1000).toFixed(2)} ms)`; },
+                title: function(items) {
+                  return plotData.is_dcdc
+                    ? `Time = ${items[0].label} µs`
+                    : `Time = ${items[0].label} s (${(parseFloat(items[0].label)*1000).toFixed(2)} ms)`;
+                },
                 label: function(item) {
                   const unit = item.datasetIndex === 0 ? ' V' : ' A';
                   return ` ${item.dataset.label}: ${item.parsed.y.toFixed(3)}${unit}`;
@@ -647,13 +653,14 @@
                 color: theme.tickColor,
                 maxTicksLimit: 9,
                 callback: function(val, idx) {
+                  if (plotData.is_dcdc) return plotData.t[idx].toFixed(1);
                   const tSec = plotData.t[idx] / 1000;
                   return tSec.toFixed(3);
                 }
               },
               title: {
                 display: true,
-                text: 'Time (s)',
+                text: plotData.is_dcdc ? 'Time (µs)' : 'Time (s)',
                 color: theme.titleColor,
                 font: { size: 12, weight: '600' }
               },
@@ -722,6 +729,7 @@
 
       function fmtTime(val) {
         if (modoEngenharia) {
+          if (Math.abs(val) < 1e-3 && val !== 0) return (val * 1e6).toFixed(2) + ' µs';
           return (val * 1000).toFixed(2) + ' ms';
         }
         return val.toExponential(5);
