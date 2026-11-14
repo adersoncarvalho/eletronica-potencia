@@ -3808,6 +3808,7 @@ Rload out 0 ${R.toFixed(3)}
         gate2: [],
         gate3: [],
         i_out: [],
+        i_carga: [],
         i_d1: [],
         i_d2: [],
         i_d3: [],
@@ -3934,6 +3935,8 @@ Rload out 0 ${R.toFixed(3)}
             dv_inst = (0.5 * delta_i * tau - (delta_i / (2 * toff)) * tau * tau) / C;
           }
           v_out_val = V_o + dv_inst - dv_mean;
+          const R_carga = (V_o * V_o) / P_o;
+          plotData.i_carga.push(v_out_val / R_carga);
         } else if (topologia === "buck_mcd") {
           const V_g = parseFloat(document.getElementById("input-vg")?.value || 24);
           const D = parseFloat(document.getElementById("input-d-dcdc")?.value || 0.4);

@@ -527,9 +527,10 @@
         return { P, S, PF };
       }
 
+      const iCargaArr = (plotData.i_carga && plotData.i_carga.length === plotData.v_out.length) ? plotData.i_carga : plotData.i_out;
       const vCargaStats = statsSignal(plotData.v_out);
-      const iCargaStats = statsSignal(plotData.i_out);
-      const pCargaStats = statsPower(plotData.v_out, plotData.i_out, vCargaStats.rms, iCargaStats.rms);
+      const iCargaStats = statsSignal(iCargaArr);
+      const pCargaStats = statsPower(plotData.v_out, iCargaArr, vCargaStats.rms, iCargaStats.rms);
 
       const vFonteStats = statsSignal(plotData.v_in);
       const iFonteStats = statsSignal(plotData.i_fonte);
@@ -564,7 +565,8 @@
       const labelV = isCarga ? 'V_Carga1' : 'V_Fonte1';
       const labelI = isCarga ? 'I_Carga1' : 'I_Fonte1';
       const dataV = isCarga ? plotData.v_out : plotData.v_in;
-      const dataI = isCarga ? plotData.i_out : plotData.i_fonte;
+      const iCargaArr = (plotData.i_carga && plotData.i_carga.length === plotData.v_out.length) ? plotData.i_carga : plotData.i_out;
+      const dataI = isCarga ? iCargaArr : plotData.i_fonte;
       const titleV = isCarga ? 'Tensão V_Carga [V]' : 'Tensão V_Fonte [V]';
       const titleI = isCarga ? 'Corrente I_Carga [A]' : 'Corrente I_Fonte [A]';
 
