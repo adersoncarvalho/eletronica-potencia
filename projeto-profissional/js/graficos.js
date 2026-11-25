@@ -11,6 +11,7 @@
     let chartID1Inst = null;
     let chartID2Inst = null;
     let chartID3Inst = null;
+    let chartVLInst = null;
     let chartIInst = null;
     let chartIgInst = null;
     let chartBothInst = null;
@@ -888,6 +889,7 @@
       if (chartID1Inst) chartID1Inst.destroy();
       if (chartID2Inst) chartID2Inst.destroy();
       if (chartID3Inst) chartID3Inst.destroy();
+      if (chartVLInst) chartVLInst.destroy();
       if (chartIInst) chartIInst.destroy();
       if (chartIgInst) chartIgInst.destroy();
       if (chartBothInst) chartBothInst.destroy();
@@ -1040,6 +1042,16 @@
         boxID3.style.display = "none";
       }
 
+      const boxVL = document.getElementById("box-chartVL");
+      if (plotData.tem_vl && plotData.v_l && plotData.v_l.length > 0) {
+        if (boxVL) boxVL.style.display = "block";
+        const labelVL = plotData.is_dcdc ? "vL(t) - Tensão no Indutor (V)" : "vL(t) - Tensão no Indutor L (V)";
+        const titleVL = "Tensão no Indutor vL (V)";
+        chartVLInst = criarSubplot("chartVL", labelVL, plotData.v_l, titleVL, false, plotData, "#a371f7");
+      } else {
+        if (boxVL) boxVL.style.display = "none";
+      }
+
       chartIInst = criarSubplot("chartI", plotData.is_dcdc ? "iL(t) - Corrente no Indutor (A)" : "i(t)", plotData.i_out, plotData.is_dcdc ? "Corrente iL (A)" : "Corrente na carga (A)", false, plotData, "#f0883e");
 
       const boxIg = document.getElementById("box-chartIg");
@@ -1090,6 +1102,7 @@
         id1: document.getElementById("box-chartID1"),
         id2: document.getElementById("box-chartID2"),
         id3: document.getElementById("box-chartID3"),
+        vl: document.getElementById("box-chartVL"),
         i: document.getElementById("box-chartI"),
         ig: document.getElementById("box-chartIg")
       };
@@ -1107,6 +1120,7 @@
         boxes.id1.style.display = ultimoPlotData.tem_diodos ? "block" : "none";
         boxes.id2.style.display = ultimoPlotData.tem_d2 ? "block" : "none";
         boxes.id3.style.display = ultimoPlotData.tem_d3 ? "block" : "none";
+        if (boxes.vl) boxes.vl.style.display = ultimoPlotData.tem_vl ? "block" : "none";
         boxes.i.style.display = "block";
         boxes.ig.style.display = (ultimoPlotData.tem_ig && (ultimoPlotData.is_onda_completa || ultimoPlotData.topologia === "tri_ponte_completa_r" || ultimoPlotData.topologia === "tri_ponte_controlado_r" || ultimoPlotData.is_inversor || ultimoPlotData.is_dcdc)) ? "block" : "none";
         if (blockMeasureSection) blockMeasureSection.style.display = "flex";
@@ -1121,6 +1135,7 @@
         boxes.id1.style.display = "none";
         boxes.id2.style.display = "none";
         boxes.id3.style.display = "none";
+        if (boxes.vl) boxes.vl.style.display = "none";
         boxes.i.style.display = "block";
         boxes.ig.style.display = "none";
         if (blockMeasureSection) blockMeasureSection.style.display = "flex";
@@ -1135,6 +1150,7 @@
         boxes.id1.style.display = ultimoPlotData.tem_diodos ? "block" : "none";
         boxes.id2.style.display = ultimoPlotData.tem_d2 ? "block" : "none";
         boxes.id3.style.display = ultimoPlotData.tem_d3 ? "block" : "none";
+        if (boxes.vl) boxes.vl.style.display = "none";
         boxes.i.style.display = "none";
         boxes.ig.style.display = "none";
         if (blockMeasureSection) blockMeasureSection.style.display = "none";
@@ -1147,6 +1163,7 @@
         boxes.id1.style.display = "none";
         boxes.id2.style.display = "none";
         boxes.id3.style.display = "none";
+        if (boxes.vl) boxes.vl.style.display = "none";
         boxes.i.style.display = "none";
         boxes.ig.style.display = (ultimoPlotData.tem_ig && (ultimoPlotData.is_onda_completa || ultimoPlotData.topologia === "tri_ponte_completa_r" || ultimoPlotData.topologia === "tri_ponte_controlado_r" || ultimoPlotData.is_inversor || ultimoPlotData.is_dcdc)) ? "block" : "none";
         if (blockMeasureSection) blockMeasureSection.style.display = "flex";
@@ -1173,6 +1190,7 @@
       if (p.tem_diodos) headers.push("iD1_A");
       if (p.tem_d2) headers.push("iD2_A");
       if (p.tem_d3) headers.push("iD3_A");
+      if (p.tem_vl) headers.push("vL_V");
       headers.push("io_A");
       if (p.tem_ig) headers.push("ig_A");
 
@@ -1191,6 +1209,7 @@
         if (p.tem_diodos) row.push(p.i_d1[i].toFixed(2));
         if (p.tem_d2) row.push(p.i_d2[i].toFixed(2));
         if (p.tem_d3) row.push(p.i_d3[i].toFixed(2));
+        if (p.tem_vl) row.push((p.v_l[i] || 0).toFixed(2));
         row.push(p.i_out[i].toFixed(2));
         if (p.tem_ig) row.push(p.i_fonte[i].toFixed(2));
         rows.push(row.join(","));
@@ -1221,6 +1240,7 @@
         { id: "box-chartID1", title: "Corrente no Semicondutor Principal iD1(t) / iT1(t)" },
         { id: "box-chartID2", title: "Corrente no Semicondutor Secundário iD2(t) / iT2(t) / Roda Livre" },
         { id: "box-chartID3", title: "Corrente no Semicondutor Fase C iD3(t) / iT3(t)" },
+        { id: "box-chartVL", title: "Tensão no Indutor vL(t)" },
         { id: "box-chartI", title: "Corrente na Carga io(t)" },
         { id: "box-chartIg", title: ultimoPlotData.is_trifasico ? "Corrente na Fonte CA ia(t)" : "Corrente na Fonte CA ig(t)" },
         { id: "box-chartMeasureCarga", title: "Formas de Onda na Carga: V_Carga e I_Carga" },

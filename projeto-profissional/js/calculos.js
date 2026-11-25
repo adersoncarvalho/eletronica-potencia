@@ -3782,6 +3782,7 @@ Rload out 0 ${R.toFixed(3)}
       const temGate = (isControlado || isInversor);
       const temVD = true;
       const temIg = (isOndaCompleta || isTrifasico || isInversor);
+      const temVL = isDCDC || topologia.includes("_rl") || topologia.includes("_spwm_");
 
       const plotData = {
         topologia: topologia,
@@ -3804,6 +3805,7 @@ Rload out 0 ${R.toFixed(3)}
         v_ca: [],
         v_out: [],
         v_d: [],
+        v_l: [],
         gate: [],
         gate2: [],
         gate3: [],
@@ -3826,6 +3828,7 @@ Rload out 0 ${R.toFixed(3)}
         tem_gate: temGate || isDCDC,
         tem_vd: temVD || isDCDC,
         tem_ig: temIg || isDCDC,
+        tem_vl: temVL,
         is_onda_completa: isOndaCompleta,
         is_controlado: isControlado,
         is_trifasico: isTrifasico,
@@ -3885,6 +3888,7 @@ Rload out 0 ${R.toFixed(3)}
         let gate_val = 0, gate2_val = 0, gate3_val = 0;
         let i_fonte_val = 0;
         let v_mod_val = 0, v_tri_val = 0;
+        let v_l_val = 0;
 
         if (topologia === "buck_mcc") {
           const V_g = parseFloat(document.getElementById("input-vg")?.value || 15);
@@ -3924,6 +3928,7 @@ Rload out 0 ${R.toFixed(3)}
             i_d2_val = 0;
             i_fonte_val = i_d1_val;
             dv_inst = (-0.5 * delta_i * t_cycle + (delta_i / (2 * ton)) * t_cycle * t_cycle) / C;
+            v_l_val = V_g - V_o;
           } else {
             const tau = t_cycle - ton;
             gate_val = 0;
@@ -3933,6 +3938,7 @@ Rload out 0 ${R.toFixed(3)}
             i_d2_val = i_out_val;
             i_fonte_val = 0;
             dv_inst = (0.5 * delta_i * tau - (delta_i / (2 * toff)) * tau * tau) / C;
+            v_l_val = -V_o;
           }
           v_out_val = V_o + dv_inst - dv_mean;
           const R_carga = (V_o * V_o) / P_o;
@@ -3966,6 +3972,7 @@ Rload out 0 ${R.toFixed(3)}
             i_d1_val = i_out_val;
             i_d2_val = 0;
             i_fonte_val = i_d1_val;
+            v_l_val = V_g - V_o;
           } else if (t_cycle < ton + tx) {
             gate_val = 0;
             v_d_val = -V_o;
@@ -3973,6 +3980,7 @@ Rload out 0 ${R.toFixed(3)}
             i_d1_val = 0;
             i_d2_val = i_out_val;
             i_fonte_val = 0;
+            v_l_val = -V_o;
           } else {
             gate_val = 0;
             v_d_val = 0;
@@ -3980,6 +3988,7 @@ Rload out 0 ${R.toFixed(3)}
             i_d1_val = 0;
             i_d2_val = 0;
             i_fonte_val = 0;
+            v_l_val = 0;
           }
           const t_dead = Math.max(0, Ts_sec - ton - tx);
           const vcAtTon = (0.5 * delta_i - I_o) * ton / C;
@@ -4036,6 +4045,7 @@ Rload out 0 ${R.toFixed(3)}
             i_d2_val = 0;
             i_fonte_val = i_out_val;
             v_out_val = V_o + (delta_v / 2) * (1 - 2 * (t_cycle / ton));
+            v_l_val = V_g;
           } else {
             gate_val = 0;
             v_d_val = V_g - V_o;
@@ -4044,6 +4054,7 @@ Rload out 0 ${R.toFixed(3)}
             i_d2_val = i_out_val;
             i_fonte_val = i_out_val;
             v_out_val = V_o - (delta_v / 2) + delta_v * ((t_cycle - ton) / (Ts_sec - ton));
+            v_l_val = V_g - V_o;
           }
           const R_carga = (V_o * V_o) / P_o;
           plotData.i_carga.push(v_out_val / R_carga);
@@ -4082,6 +4093,7 @@ Rload out 0 ${R.toFixed(3)}
             i_d2_val = 0;
             i_fonte_val = i_out_val;
             v_out_val = -V_o_abs - (delta_v / 2) * (1 - 2 * (t_cycle / ton));
+            v_l_val = V_g;
           } else {
             gate_val = 0;
             v_d_val = -V_o_abs;
@@ -4090,6 +4102,7 @@ Rload out 0 ${R.toFixed(3)}
             i_d2_val = i_out_val;
             i_fonte_val = 0;
             v_out_val = -V_o_abs + (delta_v / 2) - delta_v * ((t_cycle - ton) / (Ts_sec - ton));
+            v_l_val = -V_o_abs;
           }
           const R_carga = (V_o_abs * V_o_abs) / P_o;
           plotData.i_carga.push(v_out_val / R_carga);
@@ -4844,6 +4857,11 @@ Rload out 0 ${R.toFixed(3)}
         plotData.i_fonte.push(i_fonte_val);
         plotData.v_mod.push(v_mod_val);
         plotData.v_tri.push(v_tri_val);
+        if (!isDCDC && (topologia.includes("_rl") || topologia.includes("_spwm_"))) {
+          const R_tmp = parseFloat(document.getElementById("input-r")?.value || 0);
+          v_l_val = v_out_val - R_tmp * i_out_val;
+        }
+        plotData.v_l.push(v_l_val);
       }
 
       document.getElementById("summary-stats").innerHTML = summaryHTML;
