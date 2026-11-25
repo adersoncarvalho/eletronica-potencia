@@ -986,7 +986,10 @@
         boxID1.style.display = "block";
         let labelD1 = "iD1(t) - Diodo Principal (A)";
         let titleD1 = "Corrente iD1 (A)";
-        if (plotData.is_inversor) {
+        if (plotData.is_dcdc) {
+          labelD1 = "iQ1(t) - Corrente no Transistor / Chave Q1 (A)";
+          titleD1 = "Corrente na Chave iQ1 (A)";
+        } else if (plotData.is_inversor) {
           labelD1 = plotData.topologia.includes("_spwm_") ? "iS1(t) - Chave S1 (Pulsos PWM) (A)" : (plotData.topologia.includes("ponte_completa") ? "iS1,S2(t) - Chaves S1-S2 (A)" : "iS1(t) - Chave S1 (A)");
           titleD1 = plotData.topologia.includes("_spwm_") ? "Corrente iS1 (A)" : (plotData.topologia.includes("ponte_completa") ? "Corrente iS1,S2 (A)" : "Corrente iS1 (A)");
         } else if (plotData.is_controlado) {
@@ -1013,7 +1016,12 @@
         boxID2.style.display = "block";
         let labelD2 = "iD2(t) - Diodo Roda Livre (A)";
         let titleD2 = "Corrente iD2 (A)";
-        if (plotData.is_inversor) {
+        if (plotData.is_dcdc) {
+          labelD2 = (plotData.topologia === "buck_mcc" || plotData.topologia === "buck_mcd")
+            ? "iD1(t) - Corrente no Diodo de Roda Livre D1 (A)"
+            : "iD1(t) - Corrente no Diodo D1 (A)";
+          titleD2 = "Corrente no Diodo iD1 (A)";
+        } else if (plotData.is_inversor) {
           labelD2 = "iD(t) - Diodos de Retorno (Regeneração) (A)";
           titleD2 = "Corrente iD (A)";
         } else if (plotData.is_controlado) {
@@ -1221,8 +1229,12 @@
       headers.push("vo_V");
       if (p.tem_gate) headers.push("gate_V");
       if (p.tem_vd) headers.push("vD_V");
-      if (p.tem_diodos) headers.push("iD1_A");
-      if (p.tem_d2) headers.push("iD2_A");
+      if (p.is_dcdc) {
+        headers.push("iQ1_A", "iD1_A");
+      } else {
+        if (p.tem_diodos) headers.push("iD1_A");
+        if (p.tem_d2) headers.push("iD2_A");
+      }
       if (p.tem_d3) headers.push("iD3_A");
       if (p.tem_vl) headers.push("vL_V");
       headers.push(p.is_dcdc ? "iL_A" : "io_A");
@@ -1275,8 +1287,8 @@
         { id: "box-chartVo", title: "Tensão Retificada na Carga vo(t)" },
         { id: "box-chartGate", title: ultimoPlotData.topologia === "tri_meia_onda_controlado_r" ? "Pulsos de Gate G1, G2, G3" : "Pulsos de Gate / Disparo G(t)" },
         { id: "box-chartVD", title: "Tensão Reversa / Bloqueio no Semicondutor vD(t) / vT(t)" },
-        { id: "box-chartID1", title: "Corrente no Semicondutor Principal iD1(t) / iT1(t)" },
-        { id: "box-chartID2", title: "Corrente no Semicondutor Secundário iD2(t) / iT2(t) / Roda Livre" },
+        { id: "box-chartID1", title: ultimoPlotData.is_dcdc ? "Corrente na Chave Q1 iQ1(t)" : "Corrente no Semicondutor Principal iD1(t) / iT1(t)" },
+        { id: "box-chartID2", title: ultimoPlotData.is_dcdc ? "Corrente no Diodo D1 iD1(t)" : "Corrente no Semicondutor Secundário iD2(t) / iT2(t) / Roda Livre" },
         { id: "box-chartID3", title: "Corrente no Semicondutor Fase C iD3(t) / iT3(t)" },
         { id: "box-chartVL", title: "Tensão no Indutor vL(t)" },
         { id: "box-chartI", title: ultimoPlotData.is_dcdc ? "Corrente no Indutor iL(t)" : "Corrente na Carga io(t)" },
