@@ -173,12 +173,14 @@ import { atualizarGrafico } from './graficos.js';
       };
     }
 
-    window.puchlowskiAbaAtiva = window.puchlowskiAbaAtiva || 'tabela';
-    window.tabelaPuchlowskiAberta = window.tabelaPuchlowskiAberta || false;
-    window.rodaLivreAbaAtiva = window.rodaLivreAbaAtiva || 'carga';
-    window.tabelaRodaLivreAberta = window.tabelaRodaLivreAberta || false;
-    window.abacoRLEAberta = window.abacoRLEAberta || false;
-    window.tabelaBetaAberta = window.tabelaBetaAberta || false;
+    if (typeof window !== "undefined") {
+      window.puchlowskiAbaAtiva = window.puchlowskiAbaAtiva || 'tabela';
+      window.tabelaPuchlowskiAberta = window.tabelaPuchlowskiAberta || false;
+      window.rodaLivreAbaAtiva = window.rodaLivreAbaAtiva || 'carga';
+      window.tabelaRodaLivreAberta = window.tabelaRodaLivreAberta || false;
+      window.abacoRLEAberta = window.abacoRLEAberta || false;
+      window.tabelaBetaAberta = window.tabelaBetaAberta || false;
+    }
 
     function mostrarRodaLivreAba(aba) {
       window.rodaLivreAbaAtiva = aba;

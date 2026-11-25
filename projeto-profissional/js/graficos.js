@@ -1069,7 +1069,7 @@
       const boxVC = document.getElementById("box-chartVC");
       if (plotData.tem_vc && plotData.v_cap && plotData.v_cap.length > 0) {
         if (boxVC) boxVC.style.display = "block";
-        const labelVC = "vC(t) - Tensão no Capacitor (V)";
+        const labelVC = "vC(t) - Tensão no Capacitor (Ondulação ΔvC) (V)";
         const titleVC = "Tensão no Capacitor vC (V)";
         chartVCInst = criarSubplot("chartVC", labelVC, plotData.v_cap, titleVC, false, plotData, "#38bdf8");
       } else {
