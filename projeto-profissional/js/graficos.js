@@ -12,6 +12,8 @@
     let chartID2Inst = null;
     let chartID3Inst = null;
     let chartVLInst = null;
+    let chartVCInst = null;
+    let chartICInst = null;
     let chartIInst = null;
     let chartIgInst = null;
     let chartBothInst = null;
@@ -830,14 +832,14 @@
 
     function toggleFormatoMeasure(tipo) {
       formatoMeasureEngenharia = !formatoMeasureEngenharia;
-      if (window.ultimasMedicoesPSIM) {
+      if (typeof window !== "undefined" && window.ultimasMedicoesPSIM) {
         renderizarTabelasMeasure(window.ultimasMedicoesPSIM);
       }
     }
-    window.toggleFormatoMeasure = toggleFormatoMeasure;
+    if (typeof window !== "undefined") window.toggleFormatoMeasure = toggleFormatoMeasure;
 
     var ultimoPlotData = null;
-    window.ultimoPlotData = null;
+    if (typeof window !== "undefined") window.ultimoPlotData = null;
     let canalFiltroAtual = "todos";
 
     function atualizarGrafico(plotData) {
@@ -890,6 +892,8 @@
       if (chartID2Inst) chartID2Inst.destroy();
       if (chartID3Inst) chartID3Inst.destroy();
       if (chartVLInst) chartVLInst.destroy();
+      if (chartVCInst) chartVCInst.destroy();
+      if (chartICInst) chartICInst.destroy();
       if (chartIInst) chartIInst.destroy();
       if (chartIgInst) chartIgInst.destroy();
       if (chartBothInst) chartBothInst.destroy();
@@ -1054,6 +1058,26 @@
 
       chartIInst = criarSubplot("chartI", plotData.is_dcdc ? "iL(t) - Corrente no Indutor (A)" : "i(t)", plotData.i_out, plotData.is_dcdc ? "Corrente iL (A)" : "Corrente na carga (A)", false, plotData, "#f0883e");
 
+      const boxVC = document.getElementById("box-chartVC");
+      if (plotData.tem_vc && plotData.v_cap && plotData.v_cap.length > 0) {
+        if (boxVC) boxVC.style.display = "block";
+        const labelVC = "vC(t) - Tensão no Capacitor (V)";
+        const titleVC = "Tensão no Capacitor vC (V)";
+        chartVCInst = criarSubplot("chartVC", labelVC, plotData.v_cap, titleVC, false, plotData, "#38bdf8");
+      } else {
+        if (boxVC) boxVC.style.display = "none";
+      }
+
+      const boxIC = document.getElementById("box-chartIC");
+      if (plotData.tem_ic && plotData.i_cap && plotData.i_cap.length > 0) {
+        if (boxIC) boxIC.style.display = "block";
+        const labelIC = "iC(t) - Corrente no Capacitor (A)";
+        const titleIC = "Corrente no Capacitor iC (A)";
+        chartICInst = criarSubplot("chartIC", labelIC, plotData.i_cap, titleIC, false, plotData, "#2dd4bf");
+      } else {
+        if (boxIC) boxIC.style.display = "none";
+      }
+
       const boxIg = document.getElementById("box-chartIg");
       if (plotData.tem_ig && (plotData.is_onda_completa || plotData.topologia === "tri_ponte_completa_r" || plotData.topologia === "tri_ponte_controlado_r" || plotData.is_inversor || plotData.is_dcdc)) {
         boxIg.style.display = "block";
@@ -1104,6 +1128,8 @@
         id3: document.getElementById("box-chartID3"),
         vl: document.getElementById("box-chartVL"),
         i: document.getElementById("box-chartI"),
+        vc: document.getElementById("box-chartVC"),
+        ic: document.getElementById("box-chartIC"),
         ig: document.getElementById("box-chartIg")
       };
 
@@ -1122,6 +1148,8 @@
         boxes.id3.style.display = ultimoPlotData.tem_d3 ? "block" : "none";
         if (boxes.vl) boxes.vl.style.display = ultimoPlotData.tem_vl ? "block" : "none";
         boxes.i.style.display = "block";
+        if (boxes.vc) boxes.vc.style.display = ultimoPlotData.tem_vc ? "block" : "none";
+        if (boxes.ic) boxes.ic.style.display = ultimoPlotData.tem_ic ? "block" : "none";
         boxes.ig.style.display = (ultimoPlotData.tem_ig && (ultimoPlotData.is_onda_completa || ultimoPlotData.topologia === "tri_ponte_completa_r" || ultimoPlotData.topologia === "tri_ponte_controlado_r" || ultimoPlotData.is_inversor || ultimoPlotData.is_dcdc)) ? "block" : "none";
         if (blockMeasureSection) blockMeasureSection.style.display = "flex";
         if (blockMeasureCarga) blockMeasureCarga.style.display = "block";
@@ -1137,6 +1165,8 @@
         boxes.id3.style.display = "none";
         if (boxes.vl) boxes.vl.style.display = "none";
         boxes.i.style.display = "block";
+        if (boxes.vc) boxes.vc.style.display = ultimoPlotData.tem_vc ? "block" : "none";
+        if (boxes.ic) boxes.ic.style.display = ultimoPlotData.tem_ic ? "block" : "none";
         boxes.ig.style.display = "none";
         if (blockMeasureSection) blockMeasureSection.style.display = "flex";
         if (blockMeasureCarga) blockMeasureCarga.style.display = "block";
@@ -1152,6 +1182,8 @@
         boxes.id3.style.display = ultimoPlotData.tem_d3 ? "block" : "none";
         if (boxes.vl) boxes.vl.style.display = "none";
         boxes.i.style.display = "none";
+        if (boxes.vc) boxes.vc.style.display = "none";
+        if (boxes.ic) boxes.ic.style.display = "none";
         boxes.ig.style.display = "none";
         if (blockMeasureSection) blockMeasureSection.style.display = "none";
       } else if (modo === "fontes") {
@@ -1165,6 +1197,8 @@
         boxes.id3.style.display = "none";
         if (boxes.vl) boxes.vl.style.display = "none";
         boxes.i.style.display = "none";
+        if (boxes.vc) boxes.vc.style.display = "none";
+        if (boxes.ic) boxes.ic.style.display = "none";
         boxes.ig.style.display = (ultimoPlotData.tem_ig && (ultimoPlotData.is_onda_completa || ultimoPlotData.topologia === "tri_ponte_completa_r" || ultimoPlotData.topologia === "tri_ponte_controlado_r" || ultimoPlotData.is_inversor || ultimoPlotData.is_dcdc)) ? "block" : "none";
         if (blockMeasureSection) blockMeasureSection.style.display = "flex";
         if (blockMeasureCarga) blockMeasureCarga.style.display = "none";
@@ -1191,7 +1225,9 @@
       if (p.tem_d2) headers.push("iD2_A");
       if (p.tem_d3) headers.push("iD3_A");
       if (p.tem_vl) headers.push("vL_V");
-      headers.push("io_A");
+      headers.push(p.is_dcdc ? "iL_A" : "io_A");
+      if (p.tem_vc) headers.push("vC_V");
+      if (p.tem_ic) headers.push("iC_A");
       if (p.tem_ig) headers.push("ig_A");
 
       const rows = [headers.join(",")];
@@ -1211,6 +1247,8 @@
         if (p.tem_d3) row.push(p.i_d3[i].toFixed(2));
         if (p.tem_vl) row.push((p.v_l[i] || 0).toFixed(2));
         row.push(p.i_out[i].toFixed(2));
+        if (p.tem_vc) row.push((p.v_cap[i] || 0).toFixed(2));
+        if (p.tem_ic) row.push((p.i_cap[i] || 0).toFixed(2));
         if (p.tem_ig) row.push(p.i_fonte[i].toFixed(2));
         rows.push(row.join(","));
       }
@@ -1241,7 +1279,9 @@
         { id: "box-chartID2", title: "Corrente no Semicondutor Secundário iD2(t) / iT2(t) / Roda Livre" },
         { id: "box-chartID3", title: "Corrente no Semicondutor Fase C iD3(t) / iT3(t)" },
         { id: "box-chartVL", title: "Tensão no Indutor vL(t)" },
-        { id: "box-chartI", title: "Corrente na Carga io(t)" },
+        { id: "box-chartI", title: ultimoPlotData.is_dcdc ? "Corrente no Indutor iL(t)" : "Corrente na Carga io(t)" },
+        { id: "box-chartVC", title: "Tensão no Capacitor vC(t)" },
+        { id: "box-chartIC", title: "Corrente no Capacitor iC(t)" },
         { id: "box-chartIg", title: ultimoPlotData.is_trifasico ? "Corrente na Fonte CA ia(t)" : "Corrente na Fonte CA ig(t)" },
         { id: "box-chartMeasureCarga", title: "Formas de Onda na Carga: V_Carga e I_Carga" },
         { id: "box-chartMeasureFonte", title: ultimoPlotData.is_inversor ? "Formas de Onda na Fonte CC: V_Fonte e I_Fonte" : "Formas de Onda na Fonte: V_Fonte e I_Fonte" }
@@ -1355,6 +1395,10 @@
       document.body.removeChild(link);
     }
 
+    function obterUltimoPlotData() {
+      return ultimoPlotData;
+    }
+
 export {
   criarSubplot,
   criarSubplotMulti,
@@ -1365,5 +1409,6 @@ export {
   salvarOsciloscopioPNG,
   calcularMedicoesPSIM,
   renderizarTabelasMeasure,
-  toggleFormatoMeasure
+  toggleFormatoMeasure,
+  obterUltimoPlotData
 };

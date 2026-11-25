@@ -3783,6 +3783,8 @@ Rload out 0 ${R.toFixed(3)}
       const temVD = true;
       const temIg = (isOndaCompleta || isTrifasico || isInversor);
       const temVL = isDCDC || topologia.includes("_rl") || topologia.includes("_spwm_");
+      const temVC = isDCDC || topologia === "mono_meia_onda_rc";
+      const temIC = isDCDC || topologia === "mono_meia_onda_rc";
 
       const plotData = {
         topologia: topologia,
@@ -3806,6 +3808,7 @@ Rload out 0 ${R.toFixed(3)}
         v_out: [],
         v_d: [],
         v_l: [],
+        v_cap: [],
         gate: [],
         gate2: [],
         gate3: [],
@@ -3815,6 +3818,7 @@ Rload out 0 ${R.toFixed(3)}
         i_d2: [],
         i_d3: [],
         i_fonte: [],
+        i_cap: [],
         tem_diodos: temDiodos,
         tem_d2: temD2,
         tem_d3: temD3,
@@ -3829,6 +3833,8 @@ Rload out 0 ${R.toFixed(3)}
         tem_vd: temVD || isDCDC,
         tem_ig: temIg || isDCDC,
         tem_vl: temVL,
+        tem_vc: temVC,
+        tem_ic: temIC,
         is_onda_completa: isOndaCompleta,
         is_controlado: isControlado,
         is_trifasico: isTrifasico,
@@ -3889,6 +3895,8 @@ Rload out 0 ${R.toFixed(3)}
         let i_fonte_val = 0;
         let v_mod_val = 0, v_tri_val = 0;
         let v_l_val = 0;
+        let v_cap_val = 0;
+        let i_cap_val = 0;
 
         if (topologia === "buck_mcc") {
           const V_g = parseFloat(document.getElementById("input-vg")?.value || 15);
@@ -3941,6 +3949,8 @@ Rload out 0 ${R.toFixed(3)}
             v_l_val = -V_o;
           }
           v_out_val = V_o + dv_inst - dv_mean;
+          v_cap_val = v_out_val;
+          i_cap_val = i_out_val - I_o;
           const R_carga = (V_o * V_o) / P_o;
           plotData.i_carga.push(v_out_val / R_carga);
         } else if (topologia === "buck_mcd") {
@@ -4009,6 +4019,8 @@ Rload out 0 ${R.toFixed(3)}
             delta_vc = vcAtEnd - (I_o * w) / C;
           }
           v_out_val = V_o + (delta_vc - vcAvg);
+          v_cap_val = v_out_val;
+          i_cap_val = i_out_val - I_o;
           plotData.i_carga.push(v_out_val / R);
         } else if (topologia === "boost_mcc") {
           const V_g = parseFloat(document.getElementById("input-vg")?.value || 12);
@@ -4056,6 +4068,8 @@ Rload out 0 ${R.toFixed(3)}
             v_out_val = V_o - (delta_v / 2) + delta_v * ((t_cycle - ton) / (Ts_sec - ton));
             v_l_val = V_g - V_o;
           }
+          v_cap_val = v_out_val;
+          i_cap_val = (t_cycle < ton) ? (-I_o) : (i_out_val - I_o);
           const R_carga = (V_o * V_o) / P_o;
           plotData.i_carga.push(v_out_val / R_carga);
         } else if (topologia === "buck_boost_mcc") {
@@ -4104,6 +4118,8 @@ Rload out 0 ${R.toFixed(3)}
             v_out_val = -V_o_abs + (delta_v / 2) - delta_v * ((t_cycle - ton) / (Ts_sec - ton));
             v_l_val = -V_o_abs;
           }
+          v_cap_val = Math.abs(v_out_val);
+          i_cap_val = (t_cycle < ton) ? (-I_o) : (i_out_val - I_o);
           const R_carga = (V_o_abs * V_o_abs) / P_o;
           plotData.i_carga.push(v_out_val / R_carga);
         } else if (topologia === "mono_meia_onda_r") {
@@ -4206,6 +4222,8 @@ Rload out 0 ${R.toFixed(3)}
             i_d1_val = 0;
             i_out_val = v_out_val / Ro;
           }
+          v_cap_val = v_out_val;
+          i_cap_val = i_d1_val - i_out_val;
         } else if (topologia === "mono_onda_completa_ponte_r") {
           const R = parseFloat(document.getElementById("input-r").value);
           v_out_val = Math.abs(v_in_val);
@@ -4862,6 +4880,8 @@ Rload out 0 ${R.toFixed(3)}
           v_l_val = v_out_val - R_tmp * i_out_val;
         }
         plotData.v_l.push(v_l_val);
+        plotData.v_cap.push(v_cap_val);
+        plotData.i_cap.push(i_cap_val);
       }
 
       document.getElementById("summary-stats").innerHTML = summaryHTML;
