@@ -31,7 +31,7 @@ import {
   gerarAbacoPuchlowskiSVG,
   gerarAbacoPuchlowskiA02SVG,
   executarCalculo
-} from './calculos.js?v=2.2';
+} from './calculos.js?v=2.3';
 
 import {
   atualizarGrafico,
