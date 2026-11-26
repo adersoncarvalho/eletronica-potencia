@@ -3837,6 +3837,7 @@ Rload out 0 ${R.toFixed(3)}
         tem_vl: temVL,
         tem_vc: temVC,
         tem_ic: temIC,
+        tem_io: isDCDC,
         is_onda_completa: isOndaCompleta,
         is_controlado: isControlado,
         is_trifasico: isTrifasico,
@@ -4123,7 +4124,7 @@ Rload out 0 ${R.toFixed(3)}
           v_cap_val = Math.abs(v_out_val);
           i_cap_val = (t_cycle < ton) ? (-I_o) : (i_out_val - I_o);
           const R_carga = (V_o_abs * V_o_abs) / P_o;
-          plotData.i_carga.push(v_out_val / R_carga);
+          plotData.i_carga.push(Math.abs(v_out_val) / R_carga);
         } else if (topologia === "mono_meia_onda_r") {
           const R = parseFloat(document.getElementById("input-r").value);
           if (theta <= Math.PI) {

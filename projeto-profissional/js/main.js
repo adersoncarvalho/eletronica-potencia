@@ -31,7 +31,7 @@ import {
   gerarAbacoPuchlowskiSVG,
   gerarAbacoPuchlowskiA02SVG,
   executarCalculo
-} from './calculos.js?v=2.1';
+} from './calculos.js?v=2.2';
 
 import {
   atualizarGrafico,
@@ -39,7 +39,7 @@ import {
   exportarCSV,
   salvarOsciloscopioPNG,
   toggleFormatoMeasure
-} from './graficos.js?v=2.1';
+} from './graficos.js?v=2.2';
 
     // Submodelos por categoria
     const topologiasPorCategoria = {
