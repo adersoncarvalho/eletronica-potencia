@@ -41,6 +41,14 @@ import {
   toggleFormatoMeasure
 } from './graficos.js?v=2.2';
 
+import {
+  renderizarLista1P2,
+  togglePassosGlobalLista1P2,
+  togglePassoIndividualLista1P2,
+  filtrarLista1P2,
+  obterConfigSimulacaoLista1P2
+} from './lista1_p2.js?v=2.4';
+
     // Submodelos por categoria
     const topologiasPorCategoria = {
       monofasicos_nao_controlados: [
@@ -3160,6 +3168,76 @@ function aplicarIndutorCritico() {
   }, 60);
 }
 window.aplicarIndutorCritico = aplicarIndutorCritico;
+
+let lista1P2Renderizada = false;
+
+function alternarAbaPrincipal(aba) {
+  const secCalc = document.getElementById("secao-calculadora");
+  const secLista = document.getElementById("secao-lista1-p2");
+  const btnCalc = document.getElementById("tab-btn-calculadora");
+  const btnLista = document.getElementById("tab-btn-lista1-p2");
+  if (!secCalc || !secLista) return;
+
+  if (aba === "lista1_p2") {
+    secCalc.style.display = "none";
+    secLista.style.display = "block";
+    if (btnCalc) btnCalc.classList.remove("active");
+    if (btnLista) btnLista.classList.add("active");
+    if (!lista1P2Renderizada) {
+      renderizarLista1P2();
+      lista1P2Renderizada = true;
+    }
+  } else {
+    secLista.style.display = "none";
+    secCalc.style.display = "block";
+    if (btnLista) btnLista.classList.remove("active");
+    if (btnCalc) btnCalc.classList.add("active");
+  }
+}
+
+function simularExercicioLista1P2(id) {
+  const cfg = obterConfigSimulacaoLista1P2(id);
+  if (!cfg) return;
+
+  alternarAbaPrincipal("calculadora");
+
+  const selCat = document.getElementById("select-categoria");
+  const selTop = document.getElementById("select-topologia");
+  if (selCat) {
+    selCat.value = "conversores_cc_cc";
+    atualizarSubmodelos();
+  }
+  if (selTop) {
+    selTop.value = cfg.topologia;
+    atualizarInterface();
+  }
+
+  const setVal = (elId, val) => {
+    const el = document.getElementById(elId);
+    if (el) el.value = val;
+  };
+  setVal("input-vg", cfg.vg);
+  setVal("input-vo", cfg.vo);
+  setVal("input-po", cfg.po);
+  setVal("input-fs", cfg.fs);
+  setVal("input-delta-il", cfg.dil);
+  setVal("input-delta-vo", cfg.dvo);
+  setVal("input-l-dcdc", 0);
+  setVal("input-c-dcdc", 0);
+
+  executarCalculo();
+
+  setTimeout(() => {
+    const res = document.getElementById("card-resultados");
+    if (res) res.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 80);
+}
+
+window.alternarAbaPrincipal = alternarAbaPrincipal;
+window.togglePassosGlobalLista1P2 = togglePassosGlobalLista1P2;
+window.togglePassoIndividualLista1P2 = togglePassoIndividualLista1P2;
+window.filtrarLista1P2 = filtrarLista1P2;
+window.simularExercicioLista1P2 = simularExercicioLista1P2;
 
 // Disparo inicial garantido
 atualizarSubmodelos();

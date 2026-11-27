@@ -13,7 +13,7 @@
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/styles.css?v=2.4">
 </head>
 <body>
 
@@ -32,6 +32,17 @@
       </div>
     </header>
 
+    <!-- NAVEGAÇÃO PRINCIPAL: CALCULADORA vs LISTA 1 P2 -->
+    <nav class="main-nav-tabs" aria-label="Modo de uso">
+      <button type="button" id="tab-btn-calculadora" class="main-tab-btn active" onclick="alternarAbaPrincipal('calculadora')">
+        Calculadora &amp; Osciloscópio
+      </button>
+      <button type="button" id="tab-btn-lista1-p2" class="main-tab-btn" onclick="alternarAbaPrincipal('lista1_p2')">
+        Lista 1 P2 — Estudo (Conversores CC-CC) <span class="tab-badge">13 Ex.</span>
+      </button>
+    </nav>
+
+    <div id="secao-calculadora">
     <!-- 1. SELEÇÃO DINÂMICA (Menus Cascata) -->
     <div class="card">
       <div class="card-title">1. Configuração do Conversor</div>
@@ -360,6 +371,10 @@
         </div>
       </div>
     </div>
+    </div><!-- /#secao-calculadora -->
+
+    <!-- SEÇÃO DE ESTUDO: LISTA 1 P2 (CONVERSORES CC-CC) -->
+    <section id="secao-lista1-p2" style="display: none;"></section>
 
     <footer>
       Desenvolvido por Aderson Carvalho - Outubro/2026 &bull; contato: aderson@alunos.utfpr.edu.br<br>
@@ -367,6 +382,6 @@
     </footer>
   </div>
 
-  <script type="module" src="js/main.js?v=2.3"></script>
+  <script type="module" src="js/main.js?v=2.4"></script>
 </body>
 </html>
